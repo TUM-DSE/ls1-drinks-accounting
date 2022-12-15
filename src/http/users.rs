@@ -8,12 +8,6 @@ use axum::{Extension, Json, Router};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-/// A wrapper type for all requests/responses from these routes.
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct UserBody<T> {
-    user: T,
-}
-
 #[derive(Deserialize, Clone)]
 pub struct CreateUser {
     first_name: String,
@@ -32,23 +26,23 @@ pub struct UserResponse {
 
 pub async fn create_user(
     state: Extension<ApiContext>,
-    Json(body): Json<UserBody<CreateUser>>,
+    Json(body): Json<CreateUser>,
 ) -> Result<impl IntoResponse, ApiError> {
     let user_id = sqlx::query_scalar!(
         // language=postgresql
         r#"insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"#,
-        body.user.first_name,
-        body.user.last_name,
-        body.user.email,
+        body.first_name,
+        body.last_name,
+        body.email,
     )
     .fetch_one(&state.db)
     .await?;
 
     let user = UserResponse {
         id: user_id,
-        first_name: body.user.first_name,
-        last_name: body.user.last_name,
-        email: body.user.email,
+        first_name: body.first_name,
+        last_name: body.last_name,
+        email: body.email,
         balance: 0.0,
     };
 

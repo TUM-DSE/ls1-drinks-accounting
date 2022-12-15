@@ -5,6 +5,7 @@ use serde::Serialize;
 
 pub enum ApiError {
     DatabaseError(sqlx::Error),
+    NotFound(String),
     BadRequest(String),
 }
 
@@ -44,6 +45,7 @@ impl IntoResponse for ApiError {
             ApiError::BadRequest(msg) => {
                 (StatusCode::BAD_REQUEST, ErrorResponse::new(msg)).into_response()
             }
+            ApiError::NotFound(msg) => (StatusCode::NOT_FOUND, ErrorResponse::new(msg)).into_response(),
         }
     }
 }

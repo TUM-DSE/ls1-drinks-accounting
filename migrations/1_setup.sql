@@ -26,7 +26,7 @@ create table deposits
     date   timestamp        not null default now(),
     amount int              not null,
 
-    foreign key ("user") references users
+    constraint fk_user foreign key ("user") references users (id)
 );
 
 create table transactions
@@ -36,7 +36,7 @@ create table transactions
     date   timestamp        not null default now(),
     drink  UUID             not null,
 
-    foreign key (drink) references drinks
+    constraint fk_drink foreign key (drink) references drinks (id)
 );
 
 create view balances as

@@ -47,5 +47,5 @@ pub async fn get_users() -> impl IntoResponse {
 pub fn router<T: Send + Clone + Sync + 'static>() -> Router<T> {
     Router::new()
         .route("/api/users", get(get_users))
-        .route("/api/user", post(create_user))
+        .route("/api/users", post(create_user))
 }

@@ -42,5 +42,5 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
 
 fn api_router<T: Send + Clone + Sync + 'static>() -> Router<T> {
     users::router()
-        .merge(users::router())
+        // .merge(users::router())
 }

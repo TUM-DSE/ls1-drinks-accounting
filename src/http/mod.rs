@@ -6,10 +6,10 @@ use std::sync::Arc;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
 
-pub mod errors;
-pub mod users;
 pub mod drinks;
+pub mod errors;
 pub mod transactions;
+pub mod users;
 
 #[derive(Clone)]
 pub struct ApiContext {

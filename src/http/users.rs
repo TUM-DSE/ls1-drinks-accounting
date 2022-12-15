@@ -1,44 +1,29 @@
+use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
+use crate::types::users::User;
 use anyhow::Result;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Extension, Json, Router};
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+use serde::Deserialize;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize)]
 pub struct CreateUser {
     first_name: String,
     last_name: String,
     email: String,
 }
 
-#[derive(Serialize, Clone)]
-pub struct UserResponse {
-    pub id: Uuid,
-    pub first_name: String,
-    pub last_name: String,
-    pub email: String,
-    pub balance: f64,
-}
-
 pub async fn create_user(
     state: Extension<ApiContext>,
     Json(body): Json<CreateUser>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let user_id = sqlx::query_scalar!(
-        // language=postgresql
-        r#"insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"#,
-        body.first_name,
-        body.last_name,
-        body.email,
-    )
-    .fetch_one(&state.db)
-    .await?;
+    let user_id =
+        db::users::insert(&state.db, &body.first_name, &body.last_name, &body.email).await?;
 
-    let user = UserResponse {
+    let user = User {
         id: user_id,
         first_name: body.first_name,
         last_name: body.last_name,
@@ -50,21 +35,7 @@ pub async fn create_user(
 }
 
 pub async fn get_users(state: Extension<ApiContext>) -> Result<impl IntoResponse, ApiError> {
-    let users = sqlx::query!(
-        // language=postgresql
-        r#"select id, first_name, last_name, email, balances.sum from users left outer join balances on balances."user" = users.id"#
-    )
-        .map(|row| {
-            UserResponse {
-                id: row.id,
-                first_name: row.first_name,
-                last_name: row.last_name,
-                email: row.email,
-                balance: (row.sum.unwrap_or(0) as f64) / 100.0,
-            }
-        })
-        .fetch_all(&state.db)
-        .await?;
+    let users = db::users::get_all(&state.db).await?;
 
     Ok((StatusCode::OK, Json(users)))
 }

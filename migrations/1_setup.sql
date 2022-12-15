@@ -7,7 +7,9 @@ create table users
     first_name text                     not null,
     last_name  text                     not null,
     email      text                     not null,
-    registered timestamp with time zone not null default now()
+    registered timestamp with time zone not null default now(),
+
+    constraint unique_email unique (email)
 );
 
 create table drinks

@@ -22,3 +22,4 @@ anyhow = "1.0.48"
 log = "0.4.17"
 clap = { version = "4.0.29", features = ["derive", "env"] }
 tower-http = { version = "0.3.5", features = ["trace"] }
+axum-debug = "0.3.3"

@@ -17,11 +17,11 @@ pub struct CreateUser {
 
 #[derive(Serialize, Clone)]
 pub struct UserResponse {
-    id: Uuid,
-    first_name: String,
-    last_name: String,
-    email: String,
-    balance: f64,
+    pub id: Uuid,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+    pub balance: f64,
 }
 
 pub async fn create_user(

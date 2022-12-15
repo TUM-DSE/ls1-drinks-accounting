@@ -9,6 +9,7 @@ use tower_http::trace::TraceLayer;
 pub mod errors;
 pub mod users;
 pub mod drinks;
+pub mod transactions;
 
 #[derive(Clone)]
 pub struct ApiContext {
@@ -35,4 +36,5 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
 fn api_router<T: Send + Clone + Sync + 'static>() -> Router<T> {
     users::router()
         .merge(drinks::router())
+        .merge(transactions::router())
 }

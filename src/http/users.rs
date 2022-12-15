@@ -27,9 +27,8 @@ pub struct UserResponse {
     first_name: String,
     last_name: String,
     email: String,
+    balance: f64,
 }
-
-static mut USERS: Vec<UserResponse> = vec![];
 
 pub async fn create_user(
     state: Extension<ApiContext>,
@@ -50,15 +49,30 @@ pub async fn create_user(
         first_name: body.user.first_name,
         last_name: body.user.last_name,
         email: body.user.email,
+        balance: 0.0,
     };
 
     Ok((StatusCode::CREATED, Json(user)))
 }
 
-pub async fn get_users() -> impl IntoResponse {
-    let u = unsafe { &USERS };
+pub async fn get_users(state: Extension<ApiContext>) -> Result<impl IntoResponse, ApiError> {
+    let users = sqlx::query!(
+        // language=postgresql
+        r#"select id, first_name, last_name, email, balances.sum from users left outer join balances on balances."user" = users.id"#
+    )
+        .map(|row| {
+            UserResponse {
+                id: row.id,
+                first_name: row.first_name,
+                last_name: row.last_name,
+                email: row.email,
+                balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+            }
+        })
+        .fetch_all(&state.db)
+        .await?;
 
-    (StatusCode::OK, Json(u))
+    Ok((StatusCode::OK, Json(users)))
 }
 
 pub fn router<T: Send + Clone + Sync + 'static>() -> Router<T> {

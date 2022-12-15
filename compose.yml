@@ -1,0 +1,16 @@
+version: "3"
+
+volumes:
+    db-data:
+
+services:
+    db:
+        image: "postgres:14-alpine"
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_DB=drinks-accounting
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=qwertyuiop

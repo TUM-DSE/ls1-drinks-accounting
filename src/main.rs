@@ -2,9 +2,9 @@ mod config;
 mod http;
 
 use anyhow::Context;
-use sqlx::postgres::PgPoolOptions;
-use config::Config;
 use clap::Parser;
+use config::Config;
+use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

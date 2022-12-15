@@ -1,17 +1,13 @@
-use std::sync::Arc;
+use crate::config::Config;
 use anyhow::Context;
 use axum::{Extension, Router};
-use axum::extract::{FromRef, FromRequestParts};
-use axum::http::request::Parts;
-use axum::http::StatusCode;
-use axum::middleware::AddExtension;
 use sqlx::PgPool;
+use std::sync::Arc;
 use tower::ServiceBuilder;
-use crate::config::Config;
 use tower_http::trace::TraceLayer;
 
-pub mod users;
 pub mod errors;
+pub mod users;
 
 #[derive(Clone)]
 pub struct ApiContext {

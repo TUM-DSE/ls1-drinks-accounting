@@ -1,6 +1,6 @@
-use axum::http::{StatusCode};
-use axum::Json;
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
+use axum::Json;
 use serde::Serialize;
 
 pub enum ApiError {
@@ -15,7 +15,9 @@ pub struct ErrorResponse {
 
 impl ErrorResponse {
     fn new(message: impl Into<String>) -> Json<Self> {
-        Json(Self { message: message.into() })
+        Json(Self {
+            message: message.into(),
+        })
     }
 }
 
@@ -34,9 +36,14 @@ impl From<sqlx::Error> for ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         match self {
-            ApiError::DatabaseError(_) =>
-                (StatusCode::INTERNAL_SERVER_ERROR, ErrorResponse::new("An unexpected exception has occured")).into_response(),
-            ApiError::BadRequest(msg) => (StatusCode::BAD_REQUEST, ErrorResponse::new(msg)).into_response(),
+            ApiError::DatabaseError(_) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                ErrorResponse::new("An unexpected exception has occured"),
+            )
+                .into_response(),
+            ApiError::BadRequest(msg) => {
+                (StatusCode::BAD_REQUEST, ErrorResponse::new(msg)).into_response()
+            }
         }
     }
 }

@@ -1,18 +1,13 @@
-use std::sync::Arc;
-use axum::http::StatusCode;
-use axum::{Extension, Json, Router};
-use axum::response::{IntoResponse, Response};
-use axum::routing::{get, post};
-use serde::{Serialize, Deserialize};
-use uuid::Uuid;
+use crate::http::errors::ApiError;
 use crate::http::ApiContext;
 use anyhow::Result;
-use axum::extract::State;
-use crate::http::errors::ApiError;
-use sqlx::Error;
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::routing::{get, post};
+use axum::{Extension, Json, Router};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
-// use crate::http::errors::ApiError;
-//
 /// A wrapper type for all requests/responses from these routes.
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct UserBody<T> {
@@ -36,7 +31,10 @@ pub struct UserResponse {
 
 static mut USERS: Vec<UserResponse> = vec![];
 
-pub async fn create_user(state: Extension<ApiContext>, Json(body): Json<UserBody<CreateUser>>) -> Result<impl IntoResponse, ApiError> {
+pub async fn create_user(
+    state: Extension<ApiContext>,
+    Json(body): Json<UserBody<CreateUser>>,
+) -> Result<impl IntoResponse, ApiError> {
     let user_id = sqlx::query_scalar!(
         // language=postgresql
         r#"insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"#,
@@ -44,11 +42,8 @@ pub async fn create_user(state: Extension<ApiContext>, Json(body): Json<UserBody
         body.user.last_name,
         body.user.email,
     )
-        .fetch_one(&state.db)
-        .await?;
-        // .on_constraint("unique_email", |_| {
-        //     ApiError::BadRequest("email is not unique".into())
-        // })?;
+    .fetch_one(&state.db)
+    .await?;
 
     let user = UserResponse {
         id: user_id,

@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct LS1DrinksAccountingApp: App {
+    let model = Model.shared
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(model)
+                .environmentObject(model)
         }
     }
 }

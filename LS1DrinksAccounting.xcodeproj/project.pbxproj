@@ -7,18 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B6B3052294632770053052B /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3051294632770053052B /* EditView.swift */; };
+		5B6B3054294634900053052B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3053294634900053052B /* Item.swift */; };
+		5B6B3058294755A80053052B /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3057294755A80053052B /* AddPersonView.swift */; };
+		5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B30592947578C0053052B /* EditDrinksView.swift */; };
+		5B6B305C294767860053052B /* SelectDrinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B305B294767860053052B /* SelectDrinkView.swift */; };
+		5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B305E294772D00053052B /* OverviewViewModel.swift */; };
+		5B6B3061294797B30053052B /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3060294797B30053052B /* TransactionsView.swift */; };
+		5B6B3063294797E70053052B /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3062294797E70053052B /* TransactionsViewModel.swift */; };
+		5B6B30652947986B0053052B /* TransactionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B30642947986B0053052B /* TransactionItem.swift */; };
+		5B6B306729479D880053052B /* DrinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B306629479D880053052B /* DrinksViewModel.swift */; };
+		5B6B30692947A0070053052B /* BlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B30682947A0070053052B /* BlurView.swift */; };
 		5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0042944A0D800A709F8 /* LS1DrinksAccountingApp.swift */; };
 		5B6CA0072944A0D800A709F8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0062944A0D800A709F8 /* ContentView.swift */; };
 		5B6CA0092944A0D900A709F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CA0082944A0D900A709F8 /* Assets.xcassets */; };
 		5B6CA00C2944A0D900A709F8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CA00B2944A0D900A709F8 /* Preview Assets.xcassets */; };
+		5B6CA0142944A86800A709F8 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0132944A86800A709F8 /* Model.swift */; };
+		5B6CA0162944A87F00A709F8 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0152944A87F00A709F8 /* Person.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5B6B3051294632770053052B /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		5B6B3053294634900053052B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		5B6B3057294755A80053052B /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
+		5B6B30592947578C0053052B /* EditDrinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDrinksView.swift; sourceTree = "<group>"; };
+		5B6B305B294767860053052B /* SelectDrinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDrinkView.swift; sourceTree = "<group>"; };
+		5B6B305E294772D00053052B /* OverviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewViewModel.swift; sourceTree = "<group>"; };
+		5B6B3060294797B30053052B /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
+		5B6B3062294797E70053052B /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
+		5B6B30642947986B0053052B /* TransactionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionItem.swift; sourceTree = "<group>"; };
+		5B6B306629479D880053052B /* DrinksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksViewModel.swift; sourceTree = "<group>"; };
+		5B6B30682947A0070053052B /* BlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
 		5B6CA0012944A0D800A709F8 /* LS1DrinksAccounting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LS1DrinksAccounting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6CA0042944A0D800A709F8 /* LS1DrinksAccountingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LS1DrinksAccountingApp.swift; sourceTree = "<group>"; };
 		5B6CA0062944A0D800A709F8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5B6CA0082944A0D900A709F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B6CA00B2944A0D900A709F8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5B6CA0132944A86800A709F8 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		5B6CA0152944A87F00A709F8 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +58,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B6B305D294772960053052B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5B6B305E294772D00053052B /* OverviewViewModel.swift */,
+				5B6B3062294797E70053052B /* TransactionsViewModel.swift */,
+				5B6B306629479D880053052B /* DrinksViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		5B6C9FF82944A0D800A709F8 = {
 			isa = PBXGroup;
 			children = (
@@ -51,6 +87,9 @@
 		5B6CA0032944A0D800A709F8 /* LS1DrinksAccounting */ = {
 			isa = PBXGroup;
 			children = (
+				5B6B305D294772960053052B /* ViewModel */,
+				5B7230952945243800DFEBC9 /* Views */,
+				5B6CA0122944A85700A709F8 /* Model */,
 				5B6CA0042944A0D800A709F8 /* LS1DrinksAccountingApp.swift */,
 				5B6CA0062944A0D800A709F8 /* ContentView.swift */,
 				5B6CA0082944A0D900A709F8 /* Assets.xcassets */,
@@ -65,6 +104,30 @@
 				5B6CA00B2944A0D900A709F8 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		5B6CA0122944A85700A709F8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5B6CA0132944A86800A709F8 /* Model.swift */,
+				5B6CA0152944A87F00A709F8 /* Person.swift */,
+				5B6B3053294634900053052B /* Item.swift */,
+				5B6B30642947986B0053052B /* TransactionItem.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5B7230952945243800DFEBC9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5B6B3051294632770053052B /* EditView.swift */,
+				5B6B3057294755A80053052B /* AddPersonView.swift */,
+				5B6B30592947578C0053052B /* EditDrinksView.swift */,
+				5B6B305B294767860053052B /* SelectDrinkView.swift */,
+				5B6B3060294797B30053052B /* TransactionsView.swift */,
+				5B6B30682947A0070053052B /* BlurView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +200,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6CA0142944A86800A709F8 /* Model.swift in Sources */,
+				5B6B305C294767860053052B /* SelectDrinkView.swift in Sources */,
+				5B6B30692947A0070053052B /* BlurView.swift in Sources */,
+				5B6B3052294632770053052B /* EditView.swift in Sources */,
+				5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */,
 				5B6CA0072944A0D800A709F8 /* ContentView.swift in Sources */,
+				5B6B30652947986B0053052B /* TransactionItem.swift in Sources */,
+				5B6B3061294797B30053052B /* TransactionsView.swift in Sources */,
+				5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */,
+				5B6B3063294797E70053052B /* TransactionsViewModel.swift in Sources */,
+				5B6B306729479D880053052B /* DrinksViewModel.swift in Sources */,
+				5B6CA0162944A87F00A709F8 /* Person.swift in Sources */,
+				5B6B3054294634900053052B /* Item.swift in Sources */,
 				5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */,
+				5B6B3058294755A80053052B /* AddPersonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

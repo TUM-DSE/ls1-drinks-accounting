@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Item: Identifiable {
+struct Drink: Identifiable, Hashable, Equatable, Codable {
     let id: UUID
     var name: String
     var price: Double
@@ -19,8 +19,4 @@ struct Item: Identifiable {
         self.price = price
         self.icon = icon
     }
-}
-
-extension Item: Hashable, Equatable {
-    
 }

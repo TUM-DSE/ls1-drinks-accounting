@@ -7,11 +7,12 @@
 
 import Foundation
 
+@MainActor
 class TransactionsViewModel: ObservableObject {
     private let model: Model
-    private let person: Person
+    private let person: User
     
-    init(_ model: Model, person: Person) {
+    init(_ model: Model, person: User) {
         self.model = model
         self.person = person
     }

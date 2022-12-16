@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5B6B3052294632770053052B /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3051294632770053052B /* EditView.swift */; };
-		5B6B3054294634900053052B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3053294634900053052B /* Item.swift */; };
+		5B6B3054294634900053052B /* Drink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3053294634900053052B /* Drink.swift */; };
 		5B6B3058294755A80053052B /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3057294755A80053052B /* AddPersonView.swift */; };
 		5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B30592947578C0053052B /* EditDrinksView.swift */; };
 		5B6B305C294767860053052B /* SelectDrinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B305B294767860053052B /* SelectDrinkView.swift */; };
@@ -23,12 +23,18 @@
 		5B6CA0092944A0D900A709F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CA0082944A0D900A709F8 /* Assets.xcassets */; };
 		5B6CA00C2944A0D900A709F8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CA00B2944A0D900A709F8 /* Preview Assets.xcassets */; };
 		5B6CA0142944A86800A709F8 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0132944A86800A709F8 /* Model.swift */; };
-		5B6CA0162944A87F00A709F8 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0152944A87F00A709F8 /* Person.swift */; };
+		5B6CA0162944A87F00A709F8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0152944A87F00A709F8 /* User.swift */; };
+		5BA34401294CAC84005C0199 /* EditDrinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */; };
+		5BEDC654294C78B800D32DC7 /* UsersApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC653294C78B800D32DC7 /* UsersApi.swift */; };
+		5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC655294C798900D32DC7 /* NetworkConfig.swift */; };
+		5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC657294C9A1100D32DC7 /* Errors.swift */; };
+		5BEDC65A294C9F0700D32DC7 /* DrinksApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */; };
+		5BEDC65C294CA3D300D32DC7 /* AddPersonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC65B294CA3D300D32DC7 /* AddPersonViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5B6B3051294632770053052B /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
-		5B6B3053294634900053052B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		5B6B3053294634900053052B /* Drink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drink.swift; sourceTree = "<group>"; };
 		5B6B3057294755A80053052B /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
 		5B6B30592947578C0053052B /* EditDrinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDrinksView.swift; sourceTree = "<group>"; };
 		5B6B305B294767860053052B /* SelectDrinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDrinkView.swift; sourceTree = "<group>"; };
@@ -44,7 +50,13 @@
 		5B6CA0082944A0D900A709F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B6CA00B2944A0D900A709F8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5B6CA0132944A86800A709F8 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		5B6CA0152944A87F00A709F8 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		5B6CA0152944A87F00A709F8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDrinksViewModel.swift; sourceTree = "<group>"; };
+		5BEDC653294C78B800D32DC7 /* UsersApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersApi.swift; sourceTree = "<group>"; };
+		5BEDC655294C798900D32DC7 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
+		5BEDC657294C9A1100D32DC7 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksApi.swift; sourceTree = "<group>"; };
+		5BEDC65B294CA3D300D32DC7 /* AddPersonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,8 +74,10 @@
 			isa = PBXGroup;
 			children = (
 				5B6B305E294772D00053052B /* OverviewViewModel.swift */,
+				5BEDC65B294CA3D300D32DC7 /* AddPersonViewModel.swift */,
 				5B6B3062294797E70053052B /* TransactionsViewModel.swift */,
 				5B6B306629479D880053052B /* DrinksViewModel.swift */,
+				5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -87,6 +101,7 @@
 		5B6CA0032944A0D800A709F8 /* LS1DrinksAccounting */ = {
 			isa = PBXGroup;
 			children = (
+				5BEDC652294C786600D32DC7 /* Network */,
 				5B6B305D294772960053052B /* ViewModel */,
 				5B7230952945243800DFEBC9 /* Views */,
 				5B6CA0122944A85700A709F8 /* Model */,
@@ -110,8 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				5B6CA0132944A86800A709F8 /* Model.swift */,
-				5B6CA0152944A87F00A709F8 /* Person.swift */,
-				5B6B3053294634900053052B /* Item.swift */,
+				5B6CA0152944A87F00A709F8 /* User.swift */,
+				5B6B3053294634900053052B /* Drink.swift */,
 				5B6B30642947986B0053052B /* TransactionItem.swift */,
 			);
 			path = Model;
@@ -128,6 +143,17 @@
 				5B6B30682947A0070053052B /* BlurView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		5BEDC652294C786600D32DC7 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				5BEDC655294C798900D32DC7 /* NetworkConfig.swift */,
+				5BEDC657294C9A1100D32DC7 /* Errors.swift */,
+				5BEDC653294C78B800D32DC7 /* UsersApi.swift */,
+				5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,18 +228,24 @@
 			files = (
 				5B6CA0142944A86800A709F8 /* Model.swift in Sources */,
 				5B6B305C294767860053052B /* SelectDrinkView.swift in Sources */,
+				5BA34401294CAC84005C0199 /* EditDrinksViewModel.swift in Sources */,
 				5B6B30692947A0070053052B /* BlurView.swift in Sources */,
 				5B6B3052294632770053052B /* EditView.swift in Sources */,
 				5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */,
+				5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */,
+				5BEDC654294C78B800D32DC7 /* UsersApi.swift in Sources */,
+				5BEDC65C294CA3D300D32DC7 /* AddPersonViewModel.swift in Sources */,
 				5B6CA0072944A0D800A709F8 /* ContentView.swift in Sources */,
 				5B6B30652947986B0053052B /* TransactionItem.swift in Sources */,
 				5B6B3061294797B30053052B /* TransactionsView.swift in Sources */,
 				5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */,
 				5B6B3063294797E70053052B /* TransactionsViewModel.swift in Sources */,
 				5B6B306729479D880053052B /* DrinksViewModel.swift in Sources */,
-				5B6CA0162944A87F00A709F8 /* Person.swift in Sources */,
-				5B6B3054294634900053052B /* Item.swift in Sources */,
+				5B6CA0162944A87F00A709F8 /* User.swift in Sources */,
+				5BEDC65A294C9F0700D32DC7 /* DrinksApi.swift in Sources */,
+				5B6B3054294634900053052B /* Drink.swift in Sources */,
 				5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */,
+				5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */,
 				5B6B3058294755A80053052B /* AddPersonView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

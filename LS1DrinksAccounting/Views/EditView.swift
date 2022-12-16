@@ -18,6 +18,15 @@ struct EditView: View {
         var id: Self { self }
     }
     
+    var formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.current
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "EUR"
+        
+        return formatter
+    }()
+    
     @State var selectedTab: SelectedTab = .people
     
     var body: some View {
@@ -35,7 +44,7 @@ struct EditView: View {
                             Label(person.name, systemImage: "person")
                         }
                         NavigationLink(destination: {
-                            AddPersonView()
+                            AddPersonView(model: model)
                         }, label: {
                             Label("Add person", systemImage: "plus")
                         })
@@ -44,17 +53,17 @@ struct EditView: View {
                     List {
                         ForEach(Array(model.drinks)) { drink in
                             NavigationLink(destination: {
-                                EditDrinksView(drink)
+                                EditDrinksView(drink, model: model)
                             }, label: {
                                 HStack {
                                     Label(drink.name, systemImage: drink.icon)
                                     Spacer()
-                                    Text("0.50€")
+                                    Text(formatter.string(from: NSNumber(value: drink.price)) ?? "n/a")
                                 }
                             })
                         }
                         NavigationLink(destination: {
-                            EditDrinksView(nil)
+                            EditDrinksView(nil, model: model)
                         }, label: {
                             Label("Add drink", systemImage: "plus")
                         })

@@ -10,6 +10,6 @@ import Foundation
 struct TransactionItem: Identifiable {
     let id: UUID
     let date: Date
-    let item: Item
+    let item: Drink
     let price: Double
 }

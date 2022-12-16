@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class OverviewViewModel: ObservableObject {
     
     private let model: Model
@@ -19,7 +20,7 @@ class OverviewViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var hasError = false
     
-    var people: [Person] {
+    var people: [User] {
         model.people.sorted(by: { $0.name < $1.name })
     }
     
@@ -29,6 +30,7 @@ class OverviewViewModel: ObservableObject {
         
         do {
             try await model.loadUsers()
+            try await model.loadDrinks()
         } catch {
             hasError = true
         }

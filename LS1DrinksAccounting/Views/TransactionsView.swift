@@ -42,14 +42,13 @@ struct TransactionsView: View {
         }
     }
     
-    init(model: Model, person: Person) {
+    init(model: Model, person: User) {
         viewModel = TransactionsViewModel(model, person: person)
     }
 }
 
 struct TransactionsView_Previews: PreviewProvider {
     static var previews: some View {
-        TransactionsView(model: Model.shared, person: Person(name: "Test", email: "a@example.com", balance: -1.0))
+        TransactionsView(model: Model.shared, person: User(first_name: "Max", last_name: "Mustermann", email: "a@example.com", balance: -1.0))
     }
 }
-

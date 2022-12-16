@@ -7,71 +7,64 @@
 
 import Foundation
 
+@MainActor
 class Model: ObservableObject {
-    private init() {}
+    private let usersApi: UsersApi
+    private let drinksApi: DrinksApi
+    
+    private init() {
+        let config = NetworkConfig()
+        self.usersApi = UsersApi(config)
+        self.drinksApi = DrinksApi(config)
+    }
     
     static let shared = Model()
     
     @Published
-    var people: [Person] = []
+    var people: [User] = []
     
     @Published
-    var drinks: Set<Item> = []
+    var drinks: [Drink] = []
     
     func loadUsers() async throws {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
+        let users = try await usersApi.getUsers()
         
-        people = [
-            Person(name: "Martin Fink", email: "Martin.Fink@in.tum.de", balance: -1.4),
-            Person(name: "Max Mustermann", email: "max.muster@in.tum.de", balance: 12.5),
-            Person(name: "John Doe", email: "john.doe@in.tum.de", balance: 10.0),
-        ]
+        people = users
     }
     
-    func addUser(name: String, email: String) async throws {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
+    func addUser(first_name: String, last_name: String, email: String) async throws {
+        let result = try await usersApi.addUser(user: CreateUser(first_name: first_name, last_name: last_name, email: email))
         
-        people.append(Person(name: name, email: email))
+        people.append(result)
     }
     
     func loadDrinks() async throws {
-        //        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
-        
-        drinks = [
-            Item(name: "Coffee", price: 0.5, icon: "cup.and.saucer"),
-            Item(name: "Coffee with milk", price: 0.7, icon: "mug"),
-            Item(name: "Spezi", price: 1.5, icon: "mug"),
-            Item(name: "Coffee2", price: 0.5, icon: "cup.and.saucer"),
-            Item(name: "Coffee with milk2", price: 0.7, icon: "mug"),
-            Item(name: "Spezi2", price: 1.5, icon: "mug"),
-            Item(name: "Coffee3", price: 0.5, icon: "cup.and.saucer"),
-            Item(name: "Coffee with milk3", price: 0.7, icon: "mug"),
-            Item(name: "Spezi3", price: 1.5, icon: "mug"),
-        ]
+        self.drinks = try await drinksApi.getDrinks()
     }
     
-    func addDrink(name: String, price: Double) async throws {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
+    func addDrink(name: String, icon: String, price: Double) async throws {
+        let drink = try await drinksApi.create(drink: CreateDrink(name: name, icon: icon, price: price))
         
-        drinks.insert(Item(name: name, price: price, icon: "cup.and.saucer"))
+        drinks.append(drink)
     }
     
-    func updateDrink(_ drink: Item) async throws {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
+    func updateDrink(id: UUID, name: String, icon: String, price: Double) async throws {
+        let drink = try await drinksApi.update(drink: id, with: CreateDrink(name: name, icon: icon, price: price))
         
-        drinks.insert(drink)
+        drinks.removeAll(where: { $0.id == drink.id })
+        drinks.append(drink)
     }
     
-    func loadTransactions(for person: Person) async throws -> [TransactionItem] {
+    func loadTransactions(for person: User) async throws -> [TransactionItem] {
         try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
         
         return [
-            TransactionItem(id: UUID(), date: Date(), item: Item(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.5),
-            TransactionItem(id: UUID(), date: Date(), item: Item(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.7),
+            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.5),
+            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.7),
         ]
     }
     
-    func buy(drink: Item, for: Person) async throws {
+    func buy(drink: Drink, for: User) async throws {
         try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
         
         // TODO

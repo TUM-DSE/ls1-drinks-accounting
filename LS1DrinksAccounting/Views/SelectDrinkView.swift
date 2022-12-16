@@ -21,7 +21,7 @@ struct SelectDrinkView: View {
     }()
     
     let onDismiss: () -> Void
-    let person: Person
+    let person: User
     
     let columns = [
         GridItem(.flexible()),
@@ -94,7 +94,7 @@ struct SelectDrinkView: View {
         
     }
     
-    init(_ person: Person, model: Model, onDismiss: @escaping () -> Void) {
+    init(_ person: User, model: Model, onDismiss: @escaping () -> Void) {
         self.viewModel = DrinksViewModel(model, person: person)
         self.person = person
         self.onDismiss = onDismiss
@@ -103,7 +103,7 @@ struct SelectDrinkView: View {
 
 struct SelectDrinkView_Previews: PreviewProvider {
     static var previews: some View {
-        SelectDrinkView(Person(name: "Test", email: "email@example.com", balance: 12.3), model: Model.shared, onDismiss: {})
+        SelectDrinkView(User(first_name: "Max", last_name: "Mustermann", email: "email@example.com", balance: 12.3), model: Model.shared, onDismiss: {})
             .environmentObject(Model.shared)
             .previewDevice("iPad (10th generation)")
             .previewInterfaceOrientation(.landscapeLeft)

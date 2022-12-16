@@ -13,11 +13,11 @@ struct ContentView: View {
     @ObservedObject
     private var viewModel: OverviewViewModel
     
-    @State private var selection: Person?
+    @State private var selection: User?
     @State private var searchText: String = ""
     @State private var showingSheet = false
     
-    var people: [Person] {
+    var people: [User] {
         if !searchText.isEmpty {
             return viewModel.people.filter { $0.name.contains(searchText) }
         } else {

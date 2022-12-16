@@ -7,12 +7,13 @@
 
 import Foundation
 
+@MainActor
 class DrinksViewModel: ObservableObject {
     
     private let model: Model
-    private let person: Person
+    private let person: User
     
-    init(_ model: Model, person: Person) {
+    init(_ model: Model, person: User) {
         self.model = model
         self.person = person
     }
@@ -22,7 +23,7 @@ class DrinksViewModel: ObservableObject {
     @Published var hasErrorBuyingDrink = false
     @Published var loadingDrink: UUID? = nil
     
-    var drinks: [Item] {
+    var drinks: [Drink] {
         model.drinks.sorted(by: { $0.name < $1.name })
     }
     
@@ -39,7 +40,7 @@ class DrinksViewModel: ObservableObject {
         isLoading = false
     }
     
-    func buy(drink: Item) async -> Bool {
+    func buy(drink: Drink) async -> Bool {
         await self.setBuyDrinkVars(false, drink.id)
         
         do {

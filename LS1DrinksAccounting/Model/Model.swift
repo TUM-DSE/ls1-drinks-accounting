@@ -11,11 +11,13 @@ import Foundation
 class Model: ObservableObject {
     private let usersApi: UsersApi
     private let drinksApi: DrinksApi
+    private let transactionsApi: TransactionsApi
     
     private init() {
         let config = NetworkConfig()
         self.usersApi = UsersApi(config)
         self.drinksApi = DrinksApi(config)
+        self.transactionsApi = TransactionsApi(config)
     }
     
     static let shared = Model()
@@ -64,9 +66,10 @@ class Model: ObservableObject {
         ]
     }
     
-    func buy(drink: Drink, for: User) async throws {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
+    func buy(drink: Drink, for user: User) async throws {
+        let updatedUser = try await transactionsApi.buyDrink(user: user.id, drink: drink.id)
         
-        // TODO
+        self.people.removeAll(where: { $0.id == user.id })
+        self.people.append(updatedUser)
     }
 }

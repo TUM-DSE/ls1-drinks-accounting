@@ -9,7 +9,9 @@ import SwiftUI
 
 struct SelectDrinkView: View {
     @EnvironmentObject var model: Model
-    private let viewModel: DrinksViewModel
+    
+    @ObservedObject
+    private var viewModel: DrinksViewModel
     
     var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -21,7 +23,6 @@ struct SelectDrinkView: View {
     }()
     
     let onDismiss: () -> Void
-    let person: User
     
     let columns = [
         GridItem(.flexible()),
@@ -51,16 +52,20 @@ struct SelectDrinkView: View {
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .overlay(ZStack {
                                     if viewModel.loadingDrink == item.id {
-                                        BlurView()
+                                        BlurView().opacity(0.7)
                                         ProgressView()
                                     }
                                 })
                                 .background(Color(UIColor.tertiarySystemFill))
                                 .cornerRadius(10)
                                 .onTapGesture {
+                                    if viewModel.isLoading || viewModel.loadingDrink != nil {
+                                        return
+                                    }
+
                                     Task {
                                         if await viewModel.buy(drink: item) {
-                                            onDismiss()
+//                                            onDismiss()
                                         }
                                     }
                                 }
@@ -69,17 +74,19 @@ struct SelectDrinkView: View {
                     }
                 }
                 
-                Section("Balance") {
-                    Text(viewModel.loadingDrink?.uuidString ?? "n/a")
-                    NavigationLink(destination: {
-                        TransactionsView(model: model, person: person)
-                    }, label: {
-                        HStack {
-                            Text("Current balance")
-                            Spacer()
-                            Text(formatter.string(from: NSNumber(value: person.balance)) ?? "")
-                        }
-                    })
+                if let user = viewModel.user {
+                    Section("Balance") {
+                        NavigationLink(destination: {
+                            TransactionsView(model: model, person: user)
+                        }, label: {
+                            HStack {
+                                Text("Current balance")
+                                Spacer()
+                                Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
+                                    
+                            }
+                        })
+                    }
                 }
             }
             .refreshable {
@@ -94,16 +101,15 @@ struct SelectDrinkView: View {
         
     }
     
-    init(_ person: User, model: Model, onDismiss: @escaping () -> Void) {
-        self.viewModel = DrinksViewModel(model, person: person)
-        self.person = person
+    init(_ userId: UUID, model: Model, onDismiss: @escaping () -> Void) {
+        self.viewModel = DrinksViewModel(model, userId: userId)
         self.onDismiss = onDismiss
     }
 }
 
 struct SelectDrinkView_Previews: PreviewProvider {
     static var previews: some View {
-        SelectDrinkView(User(first_name: "Max", last_name: "Mustermann", email: "email@example.com", balance: 12.3), model: Model.shared, onDismiss: {})
+        SelectDrinkView(UUID(), model: Model.shared, onDismiss: {})
             .environmentObject(Model.shared)
             .previewDevice("iPad (10th generation)")
             .previewInterfaceOrientation(.landscapeLeft)

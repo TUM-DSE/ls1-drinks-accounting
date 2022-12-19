@@ -44,7 +44,7 @@ struct ContentView: View {
         } detail: {
             if let selection {
                 NavigationStack {
-                    SelectDrinkView(selection, model: model, onDismiss: { self.selection = nil })
+                    SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
                         .navigationTitle(selection.name)
                 }
             } else {

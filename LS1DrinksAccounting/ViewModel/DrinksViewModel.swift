@@ -11,17 +11,21 @@ import Foundation
 class DrinksViewModel: ObservableObject {
     
     private let model: Model
-    private let person: User
+    private let userId: UUID
     
-    init(_ model: Model, person: User) {
+    init(_ model: Model, userId: UUID) {
         self.model = model
-        self.person = person
+        self.userId = userId
     }
     
     @Published var isLoading = false
     @Published var hasError = false
     @Published var hasErrorBuyingDrink = false
     @Published var loadingDrink: UUID? = nil
+    
+    var user: User? {
+        model.people.first(where: { $0.id == userId })
+    }
     
     var drinks: [Drink] {
         model.drinks.sorted(by: { $0.name < $1.name })
@@ -41,22 +45,22 @@ class DrinksViewModel: ObservableObject {
     }
     
     func buy(drink: Drink) async -> Bool {
-        await self.setBuyDrinkVars(false, drink.id)
-        
-        do {
-            try await model.buy(drink: drink, for: person)
-        } catch {
-            await self.setBuyDrinkVars(true, nil)
+        guard let user else {
+            self.hasErrorBuyingDrink = true
+            return false
         }
         
-        await self.setBuyDrinkVars(self.hasErrorBuyingDrink, nil)
-//        loadingDrink = nil
+        self.hasErrorBuyingDrink = false
+        self.loadingDrink = drink.id
+        
+        do {
+            try await model.buy(drink: drink, for: user)
+        } catch {
+            self.hasErrorBuyingDrink = true
+        }
+
+        self.loadingDrink = nil
+
         return !hasErrorBuyingDrink
-    }
-    
-    @MainActor
-    private func setBuyDrinkVars(_ hasErrorBuyingDrink: Bool, _ loadingDrink: UUID?) {
-        self.hasErrorBuyingDrink = hasErrorBuyingDrink
-        self.loadingDrink = loadingDrink
     }
 }

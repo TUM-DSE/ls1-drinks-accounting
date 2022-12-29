@@ -1,10 +1,11 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
-use axum::{Extension, Json, Router};
+use axum::{Json, Router};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -21,7 +22,7 @@ pub struct DepositMoneyRequest {
 }
 
 pub async fn buy_drink(
-    state: Extension<ApiContext>,
+    State(state): State<ApiContext>,
     Json(body): Json<BuyDrinkRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
     db::transactions::insert_transaction(&state.db, body.user, body.drink).await?;
@@ -32,7 +33,7 @@ pub async fn buy_drink(
 }
 
 pub async fn deposit_money(
-    state: Extension<ApiContext>,
+    State(state): State<ApiContext>,
     Json(body): Json<DepositMoneyRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
     db::transactions::insert_deposit(&state.db, body.user, body.amount).await?;
@@ -42,7 +43,7 @@ pub async fn deposit_money(
     Ok((StatusCode::OK, Json(user)))
 }
 
-pub fn router<T: Send + Clone + Sync + 'static>() -> Router<T> {
+pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/transactions/buy", post(buy_drink))
         .route("/api/transactions/deposit", post(deposit_money))

@@ -41,6 +41,16 @@ create table transactions
     constraint fk_drink foreign key (drink) references drinks (id)
 );
 
+create table auth_users
+(
+    id        UUID primary key not null default uuid_generate_v4(),
+    username  text             not null,
+    password  text             not null,
+    privilege text             not null default 'user',
+
+    constraint unique_username unique (username)
+);
+
 create view balances as
 select "user", sum(amount)
 from (select deposits.user as "user", deposits.amount as amount

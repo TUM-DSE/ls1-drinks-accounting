@@ -7,6 +7,7 @@ pub enum ApiError {
     DatabaseError(sqlx::Error),
     NotFound(String),
     BadRequest(String),
+    Unauthorized,
 }
 
 #[derive(Serialize)]
@@ -48,6 +49,11 @@ impl IntoResponse for ApiError {
             ApiError::NotFound(msg) => {
                 (StatusCode::NOT_FOUND, ErrorResponse::new(msg)).into_response()
             }
+            ApiError::Unauthorized => (
+                StatusCode::UNAUTHORIZED,
+                ErrorResponse::new("Unauthorized".to_string()),
+            )
+                .into_response(),
         }
     }
 }

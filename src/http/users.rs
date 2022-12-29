@@ -3,10 +3,11 @@ use crate::http::errors::ApiError;
 use crate::http::ApiContext;
 use crate::types::users::User;
 use anyhow::Result;
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Extension, Json, Router};
+use axum::{Json, Router};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -17,7 +18,7 @@ pub struct CreateUser {
 }
 
 pub async fn create_user(
-    state: Extension<ApiContext>,
+    State(state): State<ApiContext>,
     Json(body): Json<CreateUser>,
 ) -> Result<impl IntoResponse, ApiError> {
     let user_id =
@@ -34,13 +35,13 @@ pub async fn create_user(
     Ok((StatusCode::CREATED, Json(user)))
 }
 
-pub async fn get_users(state: Extension<ApiContext>) -> Result<impl IntoResponse, ApiError> {
+pub async fn get_users(State(state): State<ApiContext>) -> Result<impl IntoResponse, ApiError> {
     let users = db::users::get_all(&state.db).await?;
 
     Ok((StatusCode::OK, Json(users)))
 }
 
-pub fn router<T: Send + Clone + Sync + 'static>() -> Router<T> {
+pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/users", get(get_users))
         .route("/api/users", post(create_user))

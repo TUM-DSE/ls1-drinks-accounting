@@ -2,6 +2,7 @@ mod config;
 mod db;
 mod http;
 mod types;
+mod utils;
 
 use anyhow::Context;
 use clap::Parser;

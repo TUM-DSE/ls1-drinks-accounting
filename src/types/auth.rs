@@ -20,6 +20,7 @@ pub struct AuthUserData {
     pub password: String,
 }
 
+#[allow(dead_code)]
 pub enum Role {
     Admin,
     User,

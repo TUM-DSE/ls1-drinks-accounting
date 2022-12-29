@@ -12,13 +12,23 @@ create table users
     constraint unique_email unique (email)
 );
 
+create table drink_prices
+(
+    id         UUID primary key         not null default uuid_generate_v4(),
+    sale_price int                      not null,
+    buy_price  int                               default null,
+    date       timestamp with time zone not null default now()
+);
+
 create table drinks
 (
     id     UUID primary key not null default uuid_generate_v4(),
     icon   text             not null default '',
     name   text             not null,
-    price  int              not null,
-    hidden boolean          not null default false
+    price  UUID             not null,
+    amount int                       default null,
+
+    constraint fk_price foreign key (price) references drink_prices (id)
 );
 
 create table deposits
@@ -37,8 +47,10 @@ create table transactions
     "user" UUID             not null,
     date   timestamp        not null default now(),
     drink  UUID             not null,
+    price  UUID             not null,
 
-    constraint fk_drink foreign key (drink) references drinks (id)
+    constraint fk_drink foreign key (drink) references drinks (id),
+    constraint fk_price foreign key (price) references drink_prices (id)
 );
 
 create table auth_users
@@ -57,7 +69,7 @@ from (select deposits.user as "user", deposits.amount as amount
       from deposits
 
       union all
-      select transactions.user as "user", 0 - drinks.price as amount
+      select transactions.user as "user", 0 - drink_prices.sale_price as amount
       from transactions
-               inner join drinks on drinks.id = transactions.drink) as all_transactions
+               inner join drink_prices on drink_prices.id = transactions.price) as all_transactions
 group by "user";

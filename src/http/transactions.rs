@@ -25,7 +25,7 @@ pub async fn buy_drink(
     State(state): State<ApiContext>,
     Json(body): Json<BuyDrinkRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
-    db::transactions::insert_transaction(&state.db, body.user, body.drink).await?;
+    db::transactions::buy_drink(&state.db, body.user, body.drink).await?;
 
     let user = db::users::get(&state.db, body.user).await?;
 

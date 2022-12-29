@@ -19,3 +19,17 @@ pub struct AuthUserData {
     pub username: String,
     pub password: String,
 }
+
+pub enum Role {
+    Admin,
+    User,
+}
+
+impl ToString for Role {
+    fn to_string(&self) -> String {
+        match self {
+            Role::Admin => "admin",
+            Role::User => "user",
+        }.into()
+    }
+}

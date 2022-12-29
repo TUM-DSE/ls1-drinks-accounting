@@ -8,6 +8,7 @@ pub enum ApiError {
     NotFound(String),
     BadRequest(String),
     Unauthorized,
+    Internal(String),
 }
 
 #[derive(Serialize)]
@@ -35,6 +36,12 @@ impl From<sqlx::Error> for ApiError {
     }
 }
 
+impl From<argon2::Error> for ApiError {
+    fn from(e: argon2::Error) -> Self {
+        ApiError::Internal(e.to_string())
+    }
+}
+
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         match self {
@@ -54,6 +61,9 @@ impl IntoResponse for ApiError {
                 ErrorResponse::new("Unauthorized".to_string()),
             )
                 .into_response(),
+            ApiError::Internal(msg) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, ErrorResponse::new(msg)).into_response()
+            }
         }
     }
 }

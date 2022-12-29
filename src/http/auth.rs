@@ -1,13 +1,14 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
-use crate::types::auth::AdminUser;
+use crate::types::auth::{AdminUser, Role};
 use crate::utils::jwt;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
@@ -52,15 +53,24 @@ pub async fn login(
 
 #[axum_macros::debug_handler]
 pub async fn create_user(
-    user: AdminUser,
+    _user: AdminUser,
     State(state): State<ApiContext>,
     Json(body): Json<LoginRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
-    Ok((StatusCode::OK, user.username))
+    let salt: [u8; 32] = rand::thread_rng().gen();
+    let config = argon2::Config::default();
+    let hashed_password = argon2::hash_encoded(body.password.as_bytes(), &salt, &config)?;
+
+    let _uuid = db::auth::create_user(&state.db, body.username, hashed_password, Role::User);
+
+    return Ok((
+        StatusCode::OK,
+        Json("Success"),
+    ));
 }
 
 pub fn router() -> Router<ApiContext> {
     Router::new()
-        .route("/login", post(login))
-        .route("/create_user", post(create_user))
+        .route("/api/auth/login", post(login))
+        .route("/api/auth/users", post(create_user))
 }

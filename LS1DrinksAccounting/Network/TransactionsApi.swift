@@ -13,23 +13,16 @@ struct BuyDrinkTransaction: Encodable {
 }
 
 class TransactionsApi {
-    let config: NetworkConfig
+    let networking: Networking
     
-    init(_ config: NetworkConfig) {
-        self.config = config
+    init(_ networking: Networking) {
+        self.networking = networking
     }
-    
+
     func buyDrink(user: UUID, drink: UUID) async throws -> User {
-        guard let url = URL(string: "\(config.baseUrl)/api/transactions/buy") else {
+        guard let request = try await networking.post(path: "/api/transactions/buy", authorized: true) else {
             throw NetworkError.invalidUrl
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
         
         let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(BuyDrinkTransaction(user: user, drink: drink)))
         

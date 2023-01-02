@@ -31,6 +31,13 @@
 		5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC657294C9A1100D32DC7 /* Errors.swift */; };
 		5BEDC65A294C9F0700D32DC7 /* DrinksApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */; };
 		5BEDC65C294CA3D300D32DC7 /* AddPersonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC65B294CA3D300D32DC7 /* AddPersonViewModel.swift */; };
+		5BFEF806295F379E00D9E7CA /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF805295F379E00D9E7CA /* LoginView.swift */; };
+		5BFEF808295F38C400D9E7CA /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF807295F38C400D9E7CA /* LoginViewModel.swift */; };
+		5BFEF80A295F391500D9E7CA /* AuthApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF809295F391500D9E7CA /* AuthApi.swift */; };
+		5BFEF80D2962CB0500D9E7CA /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF80C2962CB0500D9E7CA /* KeychainHelper.swift */; };
+		5BFEF80F2962D00500D9E7CA /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF80E2962D00500D9E7CA /* AuthManager.swift */; };
+		5BFEF8112962D2E500D9E7CA /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF8102962D2E500D9E7CA /* Networking.swift */; };
+		5BFEF8132962DC4F00D9E7CA /* Overview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF8122962DC4F00D9E7CA /* Overview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +66,13 @@
 		5BEDC657294C9A1100D32DC7 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksApi.swift; sourceTree = "<group>"; };
 		5BEDC65B294CA3D300D32DC7 /* AddPersonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonViewModel.swift; sourceTree = "<group>"; };
+		5BFEF805295F379E00D9E7CA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		5BFEF807295F38C400D9E7CA /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		5BFEF809295F391500D9E7CA /* AuthApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthApi.swift; sourceTree = "<group>"; };
+		5BFEF80C2962CB0500D9E7CA /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		5BFEF80E2962D00500D9E7CA /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		5BFEF8102962D2E500D9E7CA /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
+		5BFEF8122962DC4F00D9E7CA /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +94,7 @@
 				5B6B3062294797E70053052B /* TransactionsViewModel.swift */,
 				5B6B306629479D880053052B /* DrinksViewModel.swift */,
 				5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */,
+				5BFEF807295F38C400D9E7CA /* LoginViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -103,6 +118,7 @@
 		5B6CA0032944A0D800A709F8 /* LS1DrinksAccounting */ = {
 			isa = PBXGroup;
 			children = (
+				5BFEF80B2962CAFD00D9E7CA /* Utils */,
 				5BEDC652294C786600D32DC7 /* Network */,
 				5B6B305D294772960053052B /* ViewModel */,
 				5B7230952945243800DFEBC9 /* Views */,
@@ -143,6 +159,8 @@
 				5B6B305B294767860053052B /* SelectDrinkView.swift */,
 				5B6B3060294797B30053052B /* TransactionsView.swift */,
 				5B6B30682947A0070053052B /* BlurView.swift */,
+				5BFEF805295F379E00D9E7CA /* LoginView.swift */,
+				5BFEF8122962DC4F00D9E7CA /* Overview.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -155,8 +173,19 @@
 				5BEDC653294C78B800D32DC7 /* UsersApi.swift */,
 				5BEDC659294C9F0700D32DC7 /* DrinksApi.swift */,
 				5BA34402294CB0CA005C0199 /* TransactionsApi.swift */,
+				5BFEF809295F391500D9E7CA /* AuthApi.swift */,
+				5BFEF80E2962D00500D9E7CA /* AuthManager.swift */,
+				5BFEF8102962D2E500D9E7CA /* Networking.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		5BFEF80B2962CAFD00D9E7CA /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				5BFEF80C2962CB0500D9E7CA /* KeychainHelper.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,24 +262,31 @@
 				5B6B305C294767860053052B /* SelectDrinkView.swift in Sources */,
 				5BA34401294CAC84005C0199 /* EditDrinksViewModel.swift in Sources */,
 				5BA34403294CB0CA005C0199 /* TransactionsApi.swift in Sources */,
+				5BFEF806295F379E00D9E7CA /* LoginView.swift in Sources */,
 				5B6B30692947A0070053052B /* BlurView.swift in Sources */,
 				5B6B3052294632770053052B /* EditView.swift in Sources */,
 				5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */,
 				5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */,
 				5BEDC654294C78B800D32DC7 /* UsersApi.swift in Sources */,
+				5BFEF80F2962D00500D9E7CA /* AuthManager.swift in Sources */,
 				5BEDC65C294CA3D300D32DC7 /* AddPersonViewModel.swift in Sources */,
 				5B6CA0072944A0D800A709F8 /* ContentView.swift in Sources */,
 				5B6B30652947986B0053052B /* TransactionItem.swift in Sources */,
 				5B6B3061294797B30053052B /* TransactionsView.swift in Sources */,
+				5BFEF8132962DC4F00D9E7CA /* Overview.swift in Sources */,
 				5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */,
 				5B6B3063294797E70053052B /* TransactionsViewModel.swift in Sources */,
 				5B6B306729479D880053052B /* DrinksViewModel.swift in Sources */,
 				5B6CA0162944A87F00A709F8 /* User.swift in Sources */,
 				5BEDC65A294C9F0700D32DC7 /* DrinksApi.swift in Sources */,
 				5B6B3054294634900053052B /* Drink.swift in Sources */,
+				5BFEF80A295F391500D9E7CA /* AuthApi.swift in Sources */,
+				5BFEF80D2962CB0500D9E7CA /* KeychainHelper.swift in Sources */,
+				5BFEF808295F38C400D9E7CA /* LoginViewModel.swift in Sources */,
 				5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */,
 				5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */,
 				5B6B3058294755A80053052B /* AddPersonView.swift in Sources */,
+				5BFEF8112962D2E500D9E7CA /* Networking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,18 +14,18 @@ struct CreateDrink: Encodable {
 }
 
 class DrinksApi {
-    let config: NetworkConfig
+    let networking: Networking
     
-    init(_ config: NetworkConfig) {
-        self.config = config
+    init(_ networking: Networking) {
+        self.networking = networking
     }
-    
+
     func getDrinks() async throws -> [Drink] {
-        guard let url = URL(string: "\(config.baseUrl)/api/drinks") else {
+        guard let request = try await networking.get(path: "/api/drinks", authorized: true) else {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.data(from: url)
+        let data = try await URLSession.shared.data(for: request)
         
         let result = try JSONDecoder().decode([Drink].self, from: data.0)
         
@@ -33,16 +33,9 @@ class DrinksApi {
     }
     
     func create(drink: CreateDrink) async throws -> Drink {
-        guard let url = URL(string: "\(config.baseUrl)/api/drinks") else {
+        guard let request = try await networking.post(path: "/api/drinks", authorized: true) else {
             throw NetworkError.invalidUrl
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
         
         let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(drink))
         
@@ -52,16 +45,9 @@ class DrinksApi {
     }
     
     func update(drink id: UUID, with drink: CreateDrink) async throws -> Drink {
-        guard let url = URL(string: "\(config.baseUrl)/api/drinks/\(id)") else {
+        guard let request = try await networking.post(path: "/api/drinks/\(id)", authorized: true) else {
             throw NetworkError.invalidUrl
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
 
         let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(drink))
         

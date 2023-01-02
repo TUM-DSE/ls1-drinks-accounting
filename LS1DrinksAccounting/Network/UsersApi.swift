@@ -14,18 +14,18 @@ struct CreateUser: Encodable {
 }
 
 class UsersApi {
-    let config: NetworkConfig
+    let networking: Networking
     
-    init(_ config: NetworkConfig) {
-        self.config = config
+    init(_ networking: Networking) {
+        self.networking = networking
     }
     
     func getUsers() async throws -> [User] {
-        guard let url = URL(string: "\(config.baseUrl)/api/users") else {
+        guard let request = try await networking.get(path: "/api/users", authorized: true) else {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.data(from: url)
+        let data = try await URLSession.shared.data(for: request)
         
         let result = try JSONDecoder().decode([User].self, from: data.0)
         
@@ -33,16 +33,9 @@ class UsersApi {
     }
 
     func addUser(user: CreateUser) async throws -> User {
-        guard let url = URL(string: "\(config.baseUrl)/api/users") else {
+        guard let request = try await networking.post(path: "/api/users", authorized: true) else {
             throw NetworkError.invalidUrl
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.allHTTPHeaderFields = [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
         
         let data = try await URLSession.shared.upload(for: request, from: try! JSONEncoder().encode(user))
         

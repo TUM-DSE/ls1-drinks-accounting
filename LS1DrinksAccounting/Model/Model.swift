@@ -12,12 +12,17 @@ class Model: ObservableObject {
     private let usersApi: UsersApi
     private let drinksApi: DrinksApi
     private let transactionsApi: TransactionsApi
+    private let authApi: AuthApi
+    private let authManager: AuthManager
     
     private init() {
         let config = NetworkConfig()
-        self.usersApi = UsersApi(config)
-        self.drinksApi = DrinksApi(config)
-        self.transactionsApi = TransactionsApi(config)
+        self.authManager = AuthManager(AuthApi(config))
+        let networking = Networking(config, authManager)
+        self.usersApi = UsersApi(networking)
+        self.drinksApi = DrinksApi(networking)
+        self.transactionsApi = TransactionsApi(networking)
+        self.authApi = AuthApi(config)
     }
     
     static let shared = Model()
@@ -27,6 +32,9 @@ class Model: ObservableObject {
     
     @Published
     var drinks: [Drink] = []
+    
+    @Published
+    var isLoggedIn: Bool? = nil
     
     func loadUsers() async throws {
         let users = try await usersApi.getUsers()
@@ -71,5 +79,39 @@ class Model: ObservableObject {
         
         self.people.removeAll(where: { $0.id == user.id })
         self.people.append(updatedUser)
+    }
+    
+    func login(username: String, password: String) async throws -> Bool {
+        KeychainHelper.shared.delete(service: "api-token", account: "ls1-drinks-api")
+        KeychainHelper.shared.delete(service: "username", account: "ls1-drinks-api")
+        KeychainHelper.shared.delete(service: "password", account: "ls1-drinks-api")
+        let token = try await authApi.login(username: username, password: password)
+        
+        if token == nil {
+            isLoggedIn = false
+            return false
+        }
+        
+        KeychainHelper.shared.save(token, service: "api-token", account: "ls1-drinks-api")
+        KeychainHelper.shared.save(username, service: "username", account: "ls1-drinks-api")
+        KeychainHelper.shared.save(password, service: "password", account: "ls1-drinks-api")
+        isLoggedIn = true
+        return true
+    }
+    
+    func logout() {
+        KeychainHelper.shared.delete(service: "api-token", account: "ls1-drinks-api")
+        KeychainHelper.shared.delete(service: "username", account: "ls1-drinks-api")
+        KeychainHelper.shared.delete(service: "password", account: "ls1-drinks-api")
+        
+        isLoggedIn = false
+    }
+    
+    func hasValidToken() async -> Bool {
+        let token = try? await authManager.validToken()
+        
+        isLoggedIn = token != nil
+        
+        return token != nil
     }
 }

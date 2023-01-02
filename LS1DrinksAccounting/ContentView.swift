@@ -11,58 +11,27 @@ struct ContentView: View {
     @EnvironmentObject var model: Model
     
     @ObservedObject
-    private var viewModel: OverviewViewModel
-    
-    @State private var selection: User?
-    @State private var searchText: String = ""
-    @State private var showingSheet = false
-    
-    var people: [User] {
-        if !searchText.isEmpty {
-            return viewModel.people.filter { $0.name.contains(searchText) }
-        } else {
-            return viewModel.people
-        }
-    }
+    private var viewModel: LoginViewModel
     
     var body: some View {
-        NavigationSplitView {
-            List(people, selection: $selection) { person in
-                NavigationLink(value: person) {
-                    Text(person.name)
-                }
-            }
-            .refreshable(action: {
-                await viewModel.loadUsers()
-            })
-            .searchable(text: $searchText)
-            .toolbar {
-                Button(action: { showingSheet = true }) {
-                    Image(systemName: "pencil")
-                }
-            }
-        } detail: {
-            if let selection {
-                NavigationStack {
-                    SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
-                        .navigationTitle(selection.name)
-                }
+        Group {
+            if viewModel.isLoggedIn == nil {
+                ProgressView()
+            } else if viewModel.isLoggedIn == true {
+                Overview(model)
             } else {
-                Text("Pick a person")
+                LoginView(viewModel: viewModel)
             }
         }
         .onAppear {
             Task {
-                await viewModel.loadUsers()
+                await viewModel.checkIsLoggedIn()
             }
-        }
-        .sheet(isPresented: $showingSheet) {
-            EditView()
         }
     }
     
     init(_ model: Model) {
-        self.viewModel = OverviewViewModel(model)
+        self.viewModel = LoginViewModel(model)
     }
 }
 

@@ -45,14 +45,14 @@ pub async fn login(
     let token = jwt::sign(user.id, duration, state.config.jwt_secret.as_bytes())
         .map_err(|_| ApiError::Unauthorized)?;
 
-    return Ok((
+    Ok((
         StatusCode::OK,
         Json(TokenPayload {
             access_token: token,
             token_type: "Bearer".to_string(),
             valid_until: Utc::now() + duration,
         }),
-    ));
+    ))
 }
 
 #[axum_macros::debug_handler]
@@ -67,10 +67,7 @@ pub async fn create_user(
 
     let _uuid = db::auth::create_user(&state.db, body.username, hashed_password, Role::User);
 
-    return Ok((
-        StatusCode::OK,
-        Json("Success"),
-    ));
+    Ok((StatusCode::OK, Json("Success")))
 }
 
 pub fn router() -> Router<ApiContext> {

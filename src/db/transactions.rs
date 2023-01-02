@@ -30,8 +30,8 @@ pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), ApiEr
         r#"update drinks set amount = amount - 1 where id = $1 and amount is not null"#,
         drink
     )
-        .execute(&mut tx)
-        .await?;
+    .execute(&mut tx)
+    .await?;
 
     tx.commit().await?;
 

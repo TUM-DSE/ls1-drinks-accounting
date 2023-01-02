@@ -31,6 +31,7 @@ impl ToString for Role {
         match self {
             Role::Admin => "admin",
             Role::User => "user",
-        }.into()
+        }
+        .into()
     }
 }

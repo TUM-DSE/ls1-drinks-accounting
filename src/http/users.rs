@@ -1,6 +1,7 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
+use crate::types::auth::AuthUser;
 use crate::types::users::User;
 use anyhow::Result;
 use axum::extract::State;
@@ -9,7 +10,6 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::Deserialize;
-use crate::types::auth::AuthUser;
 
 #[derive(Deserialize)]
 pub struct CreateUser {
@@ -37,7 +37,10 @@ pub async fn create_user(
     Ok((StatusCode::CREATED, Json(user)))
 }
 
-pub async fn get_users(_user: AuthUser, State(state): State<ApiContext>) -> Result<impl IntoResponse, ApiError> {
+pub async fn get_users(
+    _user: AuthUser,
+    State(state): State<ApiContext>,
+) -> Result<impl IntoResponse, ApiError> {
     let users = db::users::get_all(&state.db).await?;
 
     Ok((StatusCode::OK, Json(users)))

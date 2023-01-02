@@ -1,6 +1,7 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
+use crate::types::auth::{AdminUser, AuthUser};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -8,7 +9,6 @@ use axum::routing::post;
 use axum::{Json, Router};
 use serde::Deserialize;
 use uuid::Uuid;
-use crate::types::auth::{AdminUser, AuthUser};
 
 #[derive(Deserialize)]
 pub struct BuyDrinkRequest {

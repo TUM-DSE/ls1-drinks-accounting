@@ -17,13 +17,7 @@ async fn extract_auth_user_data(
         .get("Authorization")
         .and_then(|header| header.to_str().ok())
         .ok_or(ApiError::Unauthorized)
-        .map(|header| {
-            if header.starts_with("Bearer ") {
-                &header[7..]
-            } else {
-                header
-            }
-        })?;
+        .map(|header| header.strip_prefix("Bearer").unwrap_or(header))?;
 
     let claims = jwt::verify(auth_header, state.config.jwt_secret.as_bytes())
         .map_err(|_| ApiError::Unauthorized)?;

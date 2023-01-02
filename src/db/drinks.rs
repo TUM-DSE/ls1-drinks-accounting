@@ -12,8 +12,8 @@ pub async fn insert(db: &PgPool, name: &str, icon: &str, price: f64) -> Result<U
         icon,
         (price * 100.0) as i32,
     )
-        .fetch_one(db)
-        .await?;
+    .fetch_one(db)
+    .await?;
 
     Ok(id)
 }
@@ -40,8 +40,8 @@ pub async fn update(
             r#"insert into drink_prices (sale_price) values ($1) returning id"#,
             (price * 100.0) as i32
         )
-            .fetch_one(db)
-            .await?;
+        .fetch_one(db)
+        .await?;
     }
 
     sqlx::query_scalar!(
@@ -52,8 +52,8 @@ pub async fn update(
         icon,
         price_id,
     )
-        .fetch_one(db)
-        .await?;
+    .fetch_one(db)
+    .await?;
 
     Ok(id)
 }
@@ -75,11 +75,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, ApiError> {
     Ok(drinks)
 }
 
-pub async fn update_drinks_amount(
-    db: &PgPool,
-    id: Uuid,
-    amount: u32,
-) -> Result<(), ApiError> {
+pub async fn update_drinks_amount(db: &PgPool, id: Uuid, amount: u32) -> Result<(), ApiError> {
     let mut tx = db.begin().await?;
 
     let result = sqlx::query!(
@@ -88,8 +84,8 @@ pub async fn update_drinks_amount(
         amount as i32,
         id
     )
-        .execute(&mut tx)
-        .await?;
+    .execute(&mut tx)
+    .await?;
 
     if result.rows_affected() != 1 {
         tx.rollback().await?;
@@ -109,13 +105,13 @@ pub async fn update_price(
     let mut tx = db.begin().await?;
 
     let price_id = sqlx::query_scalar!(
-            // language=postgresql
-            r#"insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"#,
-            (sale_price * 100.0) as i32,
-            (buy_price * 100.0) as i32
-        )
-        .fetch_one(&mut tx)
-        .await?;
+        // language=postgresql
+        r#"insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"#,
+        (sale_price * 100.0) as i32,
+        (buy_price * 100.0) as i32
+    )
+    .fetch_one(&mut tx)
+    .await?;
 
     let result = sqlx::query!(
         // language=postgresql
@@ -123,8 +119,8 @@ pub async fn update_price(
         price_id,
         id
     )
-        .execute(&mut tx)
-        .await?;
+    .execute(&mut tx)
+    .await?;
 
     if result.rows_affected() != 1 {
         tx.rollback().await?;

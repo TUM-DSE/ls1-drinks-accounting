@@ -1,6 +1,7 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
+use crate::types::auth::{AdminUser, AuthUser};
 use crate::types::drinks::Drink;
 use anyhow::Result;
 use axum::extract::{Path, State};
@@ -10,7 +11,6 @@ use axum::routing::{get, post, put};
 use axum::{Json, Router};
 use serde::Deserialize;
 use uuid::Uuid;
-use crate::types::auth::{AdminUser, AuthUser};
 
 #[derive(Deserialize)]
 pub struct CreateDrink {
@@ -65,7 +65,10 @@ pub async fn update_drink(
     Ok((StatusCode::OK, Json(drink)))
 }
 
-pub async fn get_drinks(_user: AuthUser, State(state): State<ApiContext>) -> Result<impl IntoResponse, ApiError> {
+pub async fn get_drinks(
+    _user: AuthUser,
+    State(state): State<ApiContext>,
+) -> Result<impl IntoResponse, ApiError> {
     let drinks = db::drinks::get_all(&state.db).await?;
 
     Ok((StatusCode::OK, Json(drinks)))

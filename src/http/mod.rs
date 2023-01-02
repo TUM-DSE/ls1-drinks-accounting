@@ -4,7 +4,8 @@ use axum::Router;
 use sqlx::PgPool;
 use std::sync::Arc;
 use tower::ServiceBuilder;
-use tower_http::trace::TraceLayer;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, TraceLayer};
+use tracing::Level;
 
 pub mod auth;
 pub mod drinks;
@@ -25,7 +26,10 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
             config: Arc::new(config),
             db,
         })
-        .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
+        .layer(ServiceBuilder::new().layer(
+            TraceLayer::new_for_http()
+                .make_span_with(DefaultMakeSpan::new().include_headers(true))
+        ));
 
     axum::Server::bind(&"0.0.0.0:8080".parse()?)
         .serve(app.into_make_service())

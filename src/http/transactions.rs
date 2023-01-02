@@ -8,6 +8,7 @@ use axum::routing::post;
 use axum::{Json, Router};
 use serde::Deserialize;
 use uuid::Uuid;
+use crate::types::auth::{AdminUser, AuthUser};
 
 #[derive(Deserialize)]
 pub struct BuyDrinkRequest {
@@ -22,6 +23,7 @@ pub struct DepositMoneyRequest {
 }
 
 pub async fn buy_drink(
+    _user: AuthUser,
     State(state): State<ApiContext>,
     Json(body): Json<BuyDrinkRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
@@ -33,6 +35,7 @@ pub async fn buy_drink(
 }
 
 pub async fn deposit_money(
+    _user: AdminUser,
     State(state): State<ApiContext>,
     Json(body): Json<DepositMoneyRequest>,
 ) -> Result<impl IntoResponse, ApiError> {

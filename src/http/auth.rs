@@ -8,6 +8,7 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
+use chrono::{DateTime, Duration, Utc};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
@@ -21,6 +22,7 @@ pub struct LoginRequest {
 pub struct TokenPayload {
     pub access_token: String,
     pub token_type: String,
+    pub valid_until: DateTime<Utc>,
 }
 
 pub async fn login(
@@ -39,14 +41,16 @@ pub async fn login(
         return Err(ApiError::Unauthorized);
     }
 
-    let token = jwt::sign(user.id, state.config.jwt_secret.as_bytes())
+    let duration = Duration::hours(24);
+    let token = jwt::sign(user.id, duration, state.config.jwt_secret.as_bytes())
         .map_err(|_| ApiError::Unauthorized)?;
 
     return Ok((
         StatusCode::OK,
         Json(TokenPayload {
             access_token: token,
-            token_type: "BEARER".to_string(),
+            token_type: "Bearer".to_string(),
+            valid_until: Utc::now() + duration,
         }),
     ));
 }

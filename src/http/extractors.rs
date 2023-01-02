@@ -14,9 +14,16 @@ async fn extract_auth_user_data(
 ) -> Result<AuthUserData, ApiError> {
     let auth_header = parts
         .headers
-        .get("X-Auth-Token")
+        .get("Authorization")
         .and_then(|header| header.to_str().ok())
-        .ok_or(ApiError::Unauthorized)?;
+        .ok_or(ApiError::Unauthorized)
+        .map(|header| {
+            if header.starts_with("Bearer ") {
+                &header[7..]
+            } else {
+                header
+            }
+        })?;
 
     let claims = jwt::verify(auth_header, state.config.jwt_secret.as_bytes())
         .map_err(|_| ApiError::Unauthorized)?;

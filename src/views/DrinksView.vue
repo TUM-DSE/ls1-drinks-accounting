@@ -99,8 +99,7 @@ export default defineComponent({
                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
                 @click="editDrink(drink.id)"
               >
-                <PencilIcon class="block h-4 w-4 mr-2" />
-                <span>Edit</span>
+                <PencilIcon class="block h-4 w-4" />
               </button>
             </div>
           </div>

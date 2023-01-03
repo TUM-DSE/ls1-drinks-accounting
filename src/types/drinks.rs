@@ -7,7 +7,7 @@ pub struct Drink {
     pub name: String,
     pub icon: String,
     pub price: f64,
-    pub stock: Option<u32>,
+    pub stock: Option<i32>,
 }
 
 #[derive(Serialize)]
@@ -17,5 +17,5 @@ pub struct FullDrink {
     pub icon: String,
     pub sale_price: f64,
     pub buy_price: Option<f64>,
-    pub stock: Option<u32>,
+    pub stock: Option<i32>,
 }

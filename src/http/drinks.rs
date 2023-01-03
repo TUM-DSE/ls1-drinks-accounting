@@ -2,7 +2,7 @@ use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
 use crate::types::auth::{AdminUser, AuthUser};
-use crate::types::drinks::Drink;
+use crate::types::drinks::{Drink, FullDrink};
 use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
@@ -20,14 +20,12 @@ pub struct CreateDrink {
 }
 
 #[derive(Deserialize)]
-pub struct UpdateDrinkPrices {
+pub struct CreateDrinkAdmin {
+    name: String,
+    icon: String,
     sale_price: f64,
-    buy_price: f64,
-}
-
-#[derive(Deserialize)]
-pub struct UpdateDrinksAmount {
-    amount: u32,
+    buy_price: Option<f64>,
+    stock: Option<i32>,
 }
 
 pub async fn create_drink(
@@ -35,7 +33,7 @@ pub async fn create_drink(
     State(state): State<ApiContext>,
     Json(body): Json<CreateDrink>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let id = db::drinks::insert(&state.db, &body.name, &body.icon, body.price).await?;
+    let id = db::drinks::insert(&state.db, &body.name, &body.icon, body.price, None, None).await?;
 
     let drink = Drink {
         id,
@@ -71,7 +69,9 @@ pub async fn get_drinks(
     _user: AuthUser,
     State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let drinks = db::drinks::get_all(&state.db).await?;
+    let mut drinks = db::drinks::get_all(&state.db).await?;
+
+    drinks.sort_by_key(|drink| drink.name.to_lowercase());
 
     Ok((StatusCode::OK, Json(drinks)))
 }
@@ -80,31 +80,67 @@ pub async fn get_drinks_admin(
     _admin: AdminUser,
     State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let drinks = db::drinks::get_all_full(&state.db).await?;
+    let mut drinks = db::drinks::get_all_full(&state.db).await?;
+
+    drinks.sort_by_key(|drink| drink.name.to_lowercase());
 
     Ok((StatusCode::OK, Json(drinks)))
 }
 
-pub async fn update_drink_prices(
+pub async fn create_drink_admin(
     _admin: AdminUser,
     State(state): State<ApiContext>,
-    Path(drink_id): Path<Uuid>,
-    Json(body): Json<UpdateDrinkPrices>,
+    Json(body): Json<CreateDrinkAdmin>,
 ) -> Result<impl IntoResponse, ApiError> {
-    db::drinks::update_price(&state.db, drink_id, body.sale_price, body.buy_price).await?;
+    let id = db::drinks::insert(
+        &state.db,
+        &body.name,
+        &body.icon,
+        body.sale_price,
+        body.buy_price,
+        body.stock,
+    )
+    .await?;
 
-    Ok((StatusCode::OK, Json("ok")))
+    let drink = FullDrink {
+        id,
+        name: body.name,
+        icon: body.icon,
+        sale_price: body.sale_price,
+        buy_price: body.buy_price,
+        stock: None,
+    };
+
+    Ok((StatusCode::CREATED, Json(drink)))
 }
 
-pub async fn update_drink_amount(
+pub async fn update_drink_admin(
     _admin: AdminUser,
     State(state): State<ApiContext>,
     Path(drink_id): Path<Uuid>,
-    Json(body): Json<UpdateDrinksAmount>,
+    Json(body): Json<CreateDrinkAdmin>,
 ) -> Result<impl IntoResponse, ApiError> {
-    db::drinks::update_drinks_amount(&state.db, drink_id, body.amount).await?;
+    db::drinks::update_admin(
+        &state.db,
+        drink_id,
+        &body.name,
+        &body.icon,
+        body.sale_price,
+        body.buy_price,
+        body.stock,
+    )
+    .await?;
 
-    Ok((StatusCode::OK, Json("ok")))
+    let drink = FullDrink {
+        id: drink_id,
+        name: body.name,
+        icon: body.icon,
+        sale_price: body.sale_price,
+        buy_price: body.buy_price,
+        stock: None,
+    };
+
+    Ok((StatusCode::OK, Json(drink)))
 }
 
 pub fn router() -> Router<ApiContext> {
@@ -113,6 +149,6 @@ pub fn router() -> Router<ApiContext> {
         .route("/api/drinks", post(create_drink))
         .route("/api/drinks/:id", put(update_drink))
         .route("/api/admin/drinks", get(get_drinks_admin))
-        .route("/api/admin/drinks/:id/prices", put(update_drink_prices))
-        .route("/api/admin/drinks/:id/amount", put(update_drink_amount))
+        .route("/api/admin/drinks", post(create_drink_admin))
+        .route("/api/admin/drinks/:id", put(update_drink_admin))
 }

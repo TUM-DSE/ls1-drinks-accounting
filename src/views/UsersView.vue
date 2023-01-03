@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import HeaderView from "@/components/HeaderView.vue";
 import ProgressView from "@/components/ProgressView.vue";
+import { PencilIcon, PlusIcon, UserIcon, CurrencyEuroIcon } from "@heroicons/vue/20/solid";
 import CurrencyFormatter from "../format/CurrencyFormatter";
-import { PencilIcon, PlusIcon } from "@heroicons/vue/20/solid";
 </script>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { DrinksService } from "@/network/services/DrinksService";
-import type { Drink } from "@/network/types/Drink";
+import type { User } from "@/network/types/User";
+import { UsersService } from "@/network/services/UsersService";
 
 export default defineComponent({
   props: {},
   data() {
     return {
-      drinks: [] as Drink[],
+      users: [] as User[],
       error: null,
       loading: false,
     };
@@ -25,9 +25,9 @@ export default defineComponent({
   methods: {
     fetch() {
       this.loading = true;
-      DrinksService.loadDrinks()
-        .then((drinks) => {
-          this.drinks = drinks;
+      UsersService.loadAll()
+        .then((users) => {
+          this.users = users;
           this.loading = false;
         })
         .catch((e) => {
@@ -35,24 +35,24 @@ export default defineComponent({
           this.loading = false;
         });
     },
-    editDrink(id: string) {
-      this.$router.push({ name: "editDrink", params: { id } });
+    editUserBalance(id: string) {
+      this.$router.push({ name: "editUserBalance", params: { id } });
     },
-    newDrink() {
-      this.$router.push({ name: "addDrink" });
+    newUser() {
+      this.$router.push({ name: "addUser" });
     },
   },
 });
 </script>
 
 <template>
-  <HeaderView path="/drinks" />
+  <HeaderView path="/users" />
   <main>
     <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <h2
         class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900"
       >
-        Drinks
+        Users
       </h2>
       <div v-if="loading" class="flex items-center justify-center h-screen">
         <ProgressView />
@@ -60,47 +60,49 @@ export default defineComponent({
       <div class="flex items-end justify-end py-4">
         <button
           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
-          @click="newDrink()"
+          @click="newUser()"
         >
           <PlusIcon class="block h-4 w-4" />
         </button>
       </div>
       <ul v-if="!loading" class="my-6 divide-y divide-gray-200">
-        <li v-for="drink in drinks" v-bind:key="drink.id" class="py-2">
+        <li v-for="user in users" v-bind:key="user.id" class="py-2">
           <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">
-              <label
-                class="text-2xl icon-bg p-2 w-3 h-3 rounded-lg bg-cyan-800"
-                >{{ drink.icon }}</label
-              >
+              <div class="rounded-lg bg-cyan-800 p-2">
+                <UserIcon class="block h-6 w-6 text-white" />
+              </div>
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 truncate">
-                {{ drink.name }}
+                {{ user.last_name }}, {{ user.first_name }}
               </p>
               <p class="text-sm text-gray-500 truncate">
-                {{ CurrencyFormatter.format(drink.sale_price) }}
-                <span v-if="drink.buy_price">
-                  / Retail:
-                  {{ CurrencyFormatter.format(drink.buy_price) }}</span
-                >
+                {{ user.email }}
               </p>
             </div>
             <div
               class="inline-flex items-center text-sm text-gray-500 truncate"
             >
-              <span v-if="drink.stock">{{ drink.stock }} in stock</span>
-              <span v-else>Stock not tracked</span>
+              <span v-bind:class="{ 'text-red-400': user.balance < 0 }">{{
+                CurrencyFormatter.format(user.balance)
+              }}</span>
             </div>
             <div
               class="inline-flex items-center text-sm text-gray-500 truncate"
             >
               <button
                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
-                @click="editDrink(drink.id)"
+                @click="editUserBalance(user.id)"
               >
-                <PencilIcon class="block h-4 w-4" />
+                <CurrencyEuroIcon class="block h-4 w-4" />
               </button>
+<!--              <button-->
+<!--                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"-->
+<!--                @click="editUser(user.id)"-->
+<!--              >-->
+<!--                <PencilIcon class="block h-4 w-4" />-->
+<!--              </button>-->
             </div>
           </div>
         </li>

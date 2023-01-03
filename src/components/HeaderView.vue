@@ -20,7 +20,7 @@ import {
 
 const navigation = [
   { name: "Dashboard", href: "/" },
-  { name: "Balances", href: "/balances" },
+  { name: "Users", href: "/users" },
   { name: "Drinks", href: "/drinks" },
 ].map((item) => {
   return {
@@ -39,11 +39,11 @@ const userNavigation = [{ name: "Sign out", href: "/logout" }];
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img
-                class="h-8 w-8"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                alt="LS1 Drinks Accounting"
-              />
+<!--              <img-->
+<!--                class="h-8 w-8"-->
+<!--                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"-->
+<!--                alt="LS1 Drinks Accounting"-->
+<!--              />-->
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">

@@ -1,38 +1,38 @@
-<script lang="ts" setup>
-import AuthService from "@/network/services/AuthService";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
-
-const username = ref("");
-const password = ref("");
-const error = ref("");
-
-const router = useRouter();
-
-function login(e: Event) {
-  e.preventDefault();
-
-  error.value = "";
-  AuthService.login({
-    username: username.value,
-    password: password.value,
-  })
-    .then((success: boolean) => {
-      if (success) {
-        error.value = "";
-        router.push("/");
-      } else {
-        error.value = "Incorrect username/password";
-      }
-    })
-    .catch((e) => {
-      error.value = e;
-    });
-}
-</script>
-
 <script lang="ts">
+import { defineComponent } from "vue";
+import AuthService from "@/network/services/AuthService";
 
+export default defineComponent({
+  data: () => {
+    return {
+      username: "",
+      password: "",
+      error: "",
+    };
+  },
+  methods: {
+    login(e: Event) {
+      e.preventDefault();
+
+      this.error = "";
+      AuthService.login({
+        username: this.username,
+        password: this.password,
+      })
+        .then((success: boolean) => {
+          if (success) {
+            this.error = "";
+            this.$router.push("/");
+          } else {
+            this.error = "Incorrect username/password";
+          }
+        })
+        .catch((e) => {
+          this.error = e;
+        });
+    },
+  },
+});
 </script>
 
 <template>

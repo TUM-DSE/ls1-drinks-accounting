@@ -1,5 +1,5 @@
 use crate::http::errors::ApiError;
-use crate::types::drinks::Drink;
+use crate::types::drinks::{Drink, FullDrink};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
@@ -81,7 +81,26 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, ApiError> {
         name: row.name,
         icon: row.icon,
         price: (row.sale_price as f64) / 100.0,
-        stock: row.amount.map(|val| val.min(0) as u32)
+        stock: row.amount.map(|val| val.max(0) as u32)
+    })
+    .fetch_all(db)
+    .await?;
+
+    Ok(drinks)
+}
+
+pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, ApiError> {
+    let drinks = sqlx::query!(
+        // language=postgresql
+        r#"select drinks.*, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
+    )
+    .map(|row| FullDrink {
+        id: row.id,
+        name: row.name,
+        icon: row.icon,
+        sale_price: (row.sale_price as f64) / 100.0,
+        buy_price: row.buy_price.map(|cents| (cents as f64) / 100.0),
+        stock: row.amount.map(|val| val.max(0) as u32)
     })
     .fetch_all(db)
     .await?;

@@ -76,6 +76,15 @@ pub async fn get_drinks(
     Ok((StatusCode::OK, Json(drinks)))
 }
 
+pub async fn get_drinks_admin(
+    _admin: AdminUser,
+    State(state): State<ApiContext>,
+) -> Result<impl IntoResponse, ApiError> {
+    let drinks = db::drinks::get_all_full(&state.db).await?;
+
+    Ok((StatusCode::OK, Json(drinks)))
+}
+
 pub async fn update_drink_prices(
     _admin: AdminUser,
     State(state): State<ApiContext>,
@@ -103,6 +112,7 @@ pub fn router() -> Router<ApiContext> {
         .route("/api/drinks", get(get_drinks))
         .route("/api/drinks", post(create_drink))
         .route("/api/drinks/:id", put(update_drink))
-        .route("/api/drinks/:id/prices", put(update_drink_prices))
-        .route("/api/drinks/:id/amount", put(update_drink_amount))
+        .route("/api/admin/drinks", get(get_drinks_admin))
+        .route("/api/admin/drinks/:id/prices", put(update_drink_prices))
+        .route("/api/admin/drinks/:id/amount", put(update_drink_amount))
 }

@@ -9,3 +9,13 @@ pub struct Drink {
     pub price: f64,
     pub stock: Option<u32>,
 }
+
+#[derive(Serialize)]
+pub struct FullDrink {
+    pub id: Uuid,
+    pub name: String,
+    pub icon: String,
+    pub sale_price: f64,
+    pub buy_price: Option<f64>,
+    pub stock: Option<u32>,
+}

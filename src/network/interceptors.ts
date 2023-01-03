@@ -8,8 +8,9 @@ const setupInterceptor = () => {
     (config: AxiosRequestConfig) => {
       const token = TokenService.getToken();
       if (token) {
-        (config.headers as unknown as Record<string, any>)["Authorization"] =
-          token;
+        (config.headers as unknown as Record<string, any>)[
+          "Authorization"
+        ] = `Bearer ${token.access_token}`;
       }
       return config;
     },

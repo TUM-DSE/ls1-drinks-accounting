@@ -17,9 +17,9 @@ export default defineComponent({
       formData: {
         icon: "",
         name: "",
-        sale_price: 0,
-        buy_price: 0 as number | "",
-        stock: 0 as number | "",
+        sale_price: "" as number | "",
+        buy_price: "" as number | "",
+        stock: "" as number | "",
       },
     };
   },
@@ -58,6 +58,20 @@ export default defineComponent({
       if (this.submitting) {
         return;
       }
+      this.error = null;
+      if (!this.formData.icon) {
+        this.error = "Field 'icon' is required";
+        return;
+      }
+      if (!this.formData.name) {
+        this.error = "Field 'name' is required";
+        return;
+      }
+      if (this.formData.sale_price == "") {
+        this.error = "Field 'sale price' is required";
+        return;
+      }
+
       this.submitting = true;
 
       const payload = {
@@ -111,7 +125,7 @@ export default defineComponent({
               <span v-else>Edit</span>
               Drink
             </h2>
-            <form class="mt-8 space-y-6">
+            <form class="mt-8 space-y-3">
               <div class="-space-y-px rounded-md shadow-sm">
                 <div>
                   <label for="icon" class="sr-only">Icon</label>
@@ -165,6 +179,11 @@ export default defineComponent({
                     v-model="formData.stock"
                   />
                 </div>
+              </div>
+              <div>
+                <span class="text-sm font-light text-gray-500">
+                  To open the emoji picker, press ctrl + ⌘ + space
+                </span>
               </div>
 
               <div v-if="error">

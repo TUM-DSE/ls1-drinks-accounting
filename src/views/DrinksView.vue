@@ -2,7 +2,7 @@
 import HeaderView from "@/components/HeaderView.vue";
 import ProgressView from "@/components/ProgressView.vue";
 import CurrencyFormatter from "../format/CurrencyFormatter";
-import { PencilIcon } from "@heroicons/vue/20/solid";
+import { PencilIcon, PlusIcon } from "@heroicons/vue/20/solid";
 </script>
 
 <script lang="ts">
@@ -35,6 +35,12 @@ export default defineComponent({
           this.loading = false;
         });
     },
+    editDrink(id: string) {
+      this.$router.push({ name: "editDrink", params: { id } });
+    },
+    newDrink() {
+      this.$router.push({ name: "addDrink" });
+    },
   },
 });
 </script>
@@ -43,10 +49,23 @@ export default defineComponent({
   <HeaderView path="/drinks" />
   <main>
     <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2
+        class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900"
+      >
+        Drinks
+      </h2>
       <div v-if="loading" class="flex items-center justify-center h-screen">
         <ProgressView />
       </div>
       <ul v-if="!loading" class="my-6 divide-y divide-gray-200">
+        <div class="flex items-end justify-end py-4">
+          <button
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+            @click="newDrink()"
+          >
+            <PlusIcon class="block h-4 w-4" />
+          </button>
+        </div>
         <li v-for="drink in drinks" v-bind:key="drink.id" class="py-2">
           <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">
@@ -78,6 +97,7 @@ export default defineComponent({
             >
               <button
                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                @click="editDrink(drink.id)"
               >
                 <PencilIcon class="block h-4 w-4 mr-2" />
                 <span>Edit</span>

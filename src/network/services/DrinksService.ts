@@ -8,4 +8,12 @@ export class DrinksService {
       // return JSON.parse(response.data);
     });
   }
+
+  static createDrink(drink: Object): Promise<void> {
+    return client.post("/api/admin/drinks", drink);
+  }
+
+  static updateDrink(id: string, drink: Object): Promise<void> {
+    return client.put(`/api/admin/drinks/${id}`, drink);
+  }
 }

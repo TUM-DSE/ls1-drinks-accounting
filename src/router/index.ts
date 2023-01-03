@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import AuthService from "@/network/services/AuthService";
 import BalancesView from "@/views/BalancesView.vue";
 import DrinksView from "@/views/DrinksView.vue";
+import EditDrinksView from "@/views/EditDrinksView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,16 @@ const router = createRouter({
       path: "/drinks",
       name: "drinks",
       component: DrinksView,
+    },
+    {
+      path: "/drinks/:id",
+      name: "editDrink",
+      component: EditDrinksView,
+    },
+    {
+      path: "/drinks/new",
+      name: "addDrink",
+      component: EditDrinksView,
     },
     // {
     //   path: "/about",

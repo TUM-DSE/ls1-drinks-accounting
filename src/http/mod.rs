@@ -4,6 +4,7 @@ use axum::Router;
 use sqlx::PgPool;
 use std::sync::Arc;
 use tower::ServiceBuilder;
+use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
 pub mod auth;
@@ -25,6 +26,7 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
             config: Arc::new(config),
             db,
         })
+        .layer(CorsLayer::permissive())
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
     axum::Server::bind(&"0.0.0.0:8080".parse()?)

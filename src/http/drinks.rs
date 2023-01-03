@@ -42,6 +42,7 @@ pub async fn create_drink(
         name: body.name,
         icon: body.icon,
         price: body.price,
+        stock: None,
     };
 
     Ok((StatusCode::CREATED, Json(drink)))
@@ -60,6 +61,7 @@ pub async fn update_drink(
         name: body.name,
         icon: body.icon,
         price: body.price,
+        stock: None,
     };
 
     Ok((StatusCode::OK, Json(drink)))

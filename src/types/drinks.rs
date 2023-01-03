@@ -7,4 +7,5 @@ pub struct Drink {
     pub name: String,
     pub icon: String,
     pub price: f64,
+    pub stock: Option<u32>,
 }

@@ -5,16 +5,27 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 pub async fn insert(db: &PgPool, name: &str, icon: &str, price: f64) -> Result<Uuid, ApiError> {
+    let mut tx = db.begin().await?;
+
+    let price_id = sqlx::query_scalar!(
+        // language=postgresql
+        r#"insert into drink_prices (sale_price) values ($1) returning id"#,
+        (price * 100.0) as i32,
+    )
+    .fetch_one(&mut tx)
+    .await?;
+
     let id = sqlx::query_scalar!(
         // language=postgresql
         r#"insert into drinks (name, icon, price) values ($1, $2, $3) returning id"#,
         name,
         icon,
-        (price * 100.0) as i32,
+        price_id,
     )
-    .fetch_one(db)
+    .fetch_one(&mut tx)
     .await?;
 
+    tx.commit().await?;
     Ok(id)
 }
 
@@ -25,14 +36,15 @@ pub async fn update(
     icon: &str,
     price: f64,
 ) -> Result<Uuid, ApiError> {
+    let mut tx = db.begin().await?;
     let (mut price_id, old_price) = sqlx::query!(
         // language=postgresql
         r#"select dp.id, dp.sale_price from drinks inner join drink_prices dp on drinks.price = dp.id where drinks.id = $1"#,
         id
     )
-        .map(|row| (row.id, row.sale_price as f64 / 100.0))
-        .fetch_one(db)
-        .await?;
+    .map(|row| (row.id, row.sale_price as f64 / 100.0))
+    .fetch_one(&mut tx)
+    .await?;
 
     if old_price != price {
         price_id = sqlx::query_scalar!(
@@ -40,7 +52,7 @@ pub async fn update(
             r#"insert into drink_prices (sale_price) values ($1) returning id"#,
             (price * 100.0) as i32
         )
-        .fetch_one(db)
+        .fetch_one(&mut tx)
         .await?;
     }
 
@@ -52,9 +64,10 @@ pub async fn update(
         icon,
         price_id,
     )
-    .fetch_one(db)
+    .fetch_one(&mut tx)
     .await?;
 
+    tx.commit().await?;
     Ok(id)
 }
 
@@ -63,14 +76,15 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, ApiError> {
         // language=postgresql
         r#"select drinks.*, dp.sale_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
     )
-        .map(|row| Drink {
-            id: row.id,
-            name: row.name,
-            icon: row.icon,
-            price: (row.sale_price as f64) / 100.0,
-        })
-        .fetch_all(db)
-        .await?;
+    .map(|row| Drink {
+        id: row.id,
+        name: row.name,
+        icon: row.icon,
+        price: (row.sale_price as f64) / 100.0,
+        stock: row.amount.map(|val| val.min(0) as u32)
+    })
+    .fetch_all(db)
+    .await?;
 
     Ok(drinks)
 }

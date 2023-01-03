@@ -21,7 +21,7 @@ env_logger = "0.10.0"
 anyhow = "1.0.48"
 log = "0.4.17"
 clap = { version = "4.0.29", features = ["derive", "env"] }
-tower-http = { version = "0.3.5", features = ["trace"] }
+tower-http = { version = "0.3.5", features = ["trace", "cors"] }
 rand = "0.8.5"
 rust-argon2 = "1.0.0"
 jsonwebtoken = "8.2.0"

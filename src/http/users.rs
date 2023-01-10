@@ -48,7 +48,7 @@ pub async fn get_users(
 }
 
 pub async fn get_user_transactions(
-    _admin: AdminUser,
+    _user: AuthUser,
     Path(user_id): Path<Uuid>,
     State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {

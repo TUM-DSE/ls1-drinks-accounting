@@ -39,38 +39,7 @@ struct SelectDrinkView: View {
                         if viewModel.isLoading {
                             ProgressView()
                         }
-                        LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(viewModel.drinks) { item in
-                                VStack {
-                                    Image(systemName: item.icon).font(.title2)
-                                    Text(item.name)
-                                        .font(.title2)
-                                        .padding(.bottom)
-                                    Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
-                                }
-                                .padding(.vertical, 25)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .overlay(ZStack {
-                                    if viewModel.loadingDrink == item.id {
-                                        BlurView().opacity(0.7)
-                                        ProgressView()
-                                    }
-                                })
-                                .background(Color(UIColor.tertiarySystemFill))
-                                .cornerRadius(10)
-                                .onTapGesture {
-                                    if viewModel.isLoading || viewModel.loadingDrink != nil {
-                                        return
-                                    }
-
-                                    Task {
-                                        if await viewModel.buy(drink: item) {
-//                                            onDismiss()
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        grid
                     }
                 }
                 
@@ -99,6 +68,41 @@ struct SelectDrinkView: View {
             }
         }
         
+    }
+    
+    var grid: some View {
+        LazyVGrid(columns: columns, spacing: 20) {
+            ForEach(viewModel.drinks) { item in
+                VStack {
+                    Text(item.icon).font(.title2)
+                    Text(item.name)
+                        .font(.title2)
+                        .padding(.bottom)
+                    Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
+                }
+                .padding(.vertical, 25)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(ZStack {
+                    if viewModel.loadingDrink == item.id {
+                        BlurView().opacity(0.7)
+                        ProgressView()
+                    }
+                })
+                .background(Color(UIColor.tertiarySystemFill))
+                .cornerRadius(10)
+                .onTapGesture {
+                    if viewModel.isLoading || viewModel.loadingDrink != nil {
+                        return
+                    }
+
+                    Task {
+                        if await viewModel.buy(drink: item) {
+//                                            onDismiss()
+                        }
+                    }
+                }
+            }
+        }
     }
     
     init(_ userId: UUID, model: Model, onDismiss: @escaping () -> Void) {

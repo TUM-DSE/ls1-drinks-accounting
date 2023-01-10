@@ -56,7 +56,10 @@ struct EditView: View {
                                 EditDrinksView(drink, model: model)
                             }, label: {
                                 HStack {
-                                    Label(drink.name, systemImage: drink.icon)
+                                    VStack {
+                                        Text(drink.icon)
+                                        Text(drink.name)
+                                    }
                                     Spacer()
                                     Text(formatter.string(from: NSNumber(value: drink.price)) ?? "n/a")
                                 }

@@ -27,7 +27,8 @@ struct TransactionsView: View {
             } else {
                 List(viewModel.transactions) { transaction in
                     HStack {
-                        Label(transaction.item.name, systemImage: transaction.item.icon)
+                        Text(transaction.item.icon)
+                        Text(transaction.item.name)
                         Spacer()
                         Text(transaction.date, style: .date)
                         Text(formatter.string(from: NSNumber(value: transaction.price)) ?? "")

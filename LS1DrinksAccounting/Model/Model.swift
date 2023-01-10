@@ -69,8 +69,8 @@ class Model: ObservableObject {
         try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
         
         return [
-            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.5),
-            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "cup.and.saucer"), price: 0.7),
+            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "☕️"), price: 0.5),
+            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "☕️"), price: 0.7),
         ]
     }
     

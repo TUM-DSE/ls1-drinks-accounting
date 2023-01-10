@@ -65,13 +65,8 @@ class Model: ObservableObject {
         drinks.append(drink)
     }
     
-    func loadTransactions(for person: User) async throws -> [TransactionItem] {
-        try await Task.sleep(for: Duration(secondsComponent: 1, attosecondsComponent: 0))
-        
-        return [
-            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "☕️"), price: 0.5),
-            TransactionItem(id: UUID(), date: Date(), item: Drink(name: "Coffee", price: 0.5, icon: "☕️"), price: 0.7),
-        ]
+    func loadTransactions(for user: User) async throws -> [Transaction] {
+        return try await usersApi.getTransactions(for: user.id)
     }
     
     func buy(drink: Drink, for user: User) async throws {

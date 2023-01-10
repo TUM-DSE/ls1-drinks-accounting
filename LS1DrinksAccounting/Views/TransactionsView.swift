@@ -16,7 +16,7 @@ struct TransactionsView: View {
         formatter.locale = Locale.current
         formatter.numberStyle = .currency
         formatter.currencyCode = "EUR"
-
+        
         return formatter
     }()
     
@@ -27,11 +27,15 @@ struct TransactionsView: View {
             } else {
                 List(viewModel.transactions) { transaction in
                     HStack {
-                        Text(transaction.item.icon)
-                        Text(transaction.item.name)
+                        if case .moneyDeposit = transaction.transactionType {
+                            Label("Deposit", systemImage: "eurosign.circle")
+                        }
+                        if case let .transactionTypeClass(transactionData) = transaction.transactionType {
+                            Label(title: { Text(transactionData.purchase.name) }, icon: { Text(transactionData.purchase.icon) })
+                        }
                         Spacer()
-                        Text(transaction.date, style: .date)
-                        Text(formatter.string(from: NSNumber(value: transaction.price)) ?? "")
+                        Text(transaction.timestamp, style: .date)
+                        Text(formatter.string(from: NSNumber(value: transaction.amount)) ?? "")
                     }
                 }
             }

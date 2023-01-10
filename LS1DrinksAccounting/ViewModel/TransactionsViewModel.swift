@@ -19,14 +19,14 @@ class TransactionsViewModel: ObservableObject {
     
     @Published var isLoading = false
     @Published var hasError = false
-    @Published var transactions: [TransactionItem] = []
+    @Published var transactions: [Transaction] = []
     
     func loadTransactions() async {
         isLoading = true
         hasError = false
         
         do {
-            self.transactions = try await model.loadTransactions(for: person).sorted(by: { $0.date < $1.date })
+            self.transactions = try await model.loadTransactions(for: person).sorted(by: { $0.timestamp < $1.timestamp })
         } catch {
             hasError = true
         }

@@ -33,21 +33,21 @@ create table drinks
 
 create table deposits
 (
-    id     UUID primary key not null default uuid_generate_v4(),
-    "user" UUID             not null,
-    date   timestamp        not null default now(),
-    amount int              not null,
+    id     UUID primary key         not null default uuid_generate_v4(),
+    "user" UUID                     not null,
+    date   timestamp with time zone not null default now(),
+    amount int                      not null,
 
     constraint fk_user foreign key ("user") references users (id)
 );
 
 create table transactions
 (
-    id     UUID primary key not null default uuid_generate_v4(),
-    "user" UUID             not null,
-    date   timestamp        not null default now(),
-    drink  UUID             not null,
-    price  UUID             not null,
+    id     UUID primary key         not null default uuid_generate_v4(),
+    "user" UUID                     not null,
+    date   timestamp with time zone not null default now(),
+    drink  UUID                     not null,
+    price  UUID                     not null,
 
     constraint fk_drink foreign key (drink) references drinks (id),
     constraint fk_price foreign key (price) references drink_prices (id)

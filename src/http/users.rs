@@ -1,15 +1,16 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
-use crate::types::auth::AuthUser;
+use crate::types::auth::{AdminUser, AuthUser};
 use crate::types::users::User;
 use anyhow::Result;
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::Deserialize;
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 pub struct CreateUser {
@@ -46,8 +47,19 @@ pub async fn get_users(
     Ok((StatusCode::OK, Json(users)))
 }
 
+pub async fn get_user_transactions(
+    _admin: AdminUser,
+    Path(user_id): Path<Uuid>,
+    State(state): State<ApiContext>,
+) -> Result<impl IntoResponse, ApiError> {
+    let transactions = db::transactions::get_transactions(&state.db, user_id).await?;
+
+    Ok((StatusCode::OK, Json(transactions)))
+}
+
 pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/users", get(get_users))
         .route("/api/users", post(create_user))
+        .route("/api/users/:id/transactions", get(get_user_transactions))
 }

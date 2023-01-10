@@ -2,6 +2,7 @@ use crate::http::errors::ApiError;
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
+use crate::types::users::{Purchase, Transaction, TransactionType};
 
 pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), ApiError> {
     let mut tx = db.begin().await?;
@@ -49,4 +50,57 @@ pub async fn insert_deposit(db: &PgPool, user: Uuid, amount: f64) -> Result<(), 
     .await?;
 
     Ok(())
+}
+
+pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction>, ApiError> {
+    let count = sqlx::query_scalar!(
+        // language=postgresql
+        r#"select count(*) from users where id = $1"#,
+        user
+    )
+    .fetch_one(db)
+    .await?;
+
+    let Some(1) = count else {
+        return Err(ApiError::NotFound("User not found".to_string()));
+    };
+
+    let mut deposits = sqlx::query!(
+        // language=postgresql
+        r#"select * from deposits where "user" = $1"#,
+        user
+    )
+    .map(|row| {
+        Transaction {
+            id: row.id,
+            timestamp: row.date,
+            amount: (row.amount as f64) / 100.0,
+            transaction_type: TransactionType::MoneyDeposit
+        }
+    })
+    .fetch_all(db)
+    .await?;
+
+    let transactions = sqlx::query!(
+        // language=postgresql
+        r#"select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = d.price where t."user" = $1"#,
+        user
+    )
+    .map(|row| {
+       Transaction {
+           id: row.id,
+           timestamp: row.date,
+           amount: (row.sale_price as f64) / -100.0,
+           transaction_type: TransactionType::Purchase(Purchase {
+               icon: row.icon,
+               name: row.name,
+           })
+       }
+    })
+    .fetch_all(db)
+    .await?;
+
+    deposits.extend(transactions);
+
+    Ok(deposits)
 }

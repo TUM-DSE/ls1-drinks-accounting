@@ -30,12 +30,12 @@ struct TransactionsView: View {
                         if case .moneyDeposit = transaction.transactionType {
                             Label("Deposit", systemImage: "eurosign.circle")
                         }
-                        if case let .transactionTypeClass(transactionData) = transaction.transactionType {
+                        if case let .purchase(transactionData) = transaction.transactionType {
                             Label(title: { Text(transactionData.purchase.name) }, icon: { Text(transactionData.purchase.icon) })
                         }
+                        Text(formatter.string(from: NSNumber(value: transaction.amount)) ?? "")
                         Spacer()
                         Text(transaction.timestamp, style: .date)
-                        Text(formatter.string(from: NSNumber(value: transaction.amount)) ?? "")
                     }
                 }
             }

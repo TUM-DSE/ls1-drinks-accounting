@@ -22,7 +22,7 @@ struct Transaction: Codable, Identifiable {
 
 enum TransactionTypeUnion: Codable {
     case moneyDeposit
-    case transactionTypeClass(TransactionTypeClass)
+    case purchase(TransactionTypeClass)
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -31,7 +31,7 @@ enum TransactionTypeUnion: Codable {
             return
         }
         if let x = try? container.decode(TransactionTypeClass.self) {
-            self = .transactionTypeClass(x)
+            self = .purchase(x)
             return
         }
         throw DecodingError.typeMismatch(TransactionTypeUnion.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for TransactionTypeUnion"))
@@ -42,7 +42,7 @@ enum TransactionTypeUnion: Codable {
         switch self {
         case .moneyDeposit:
             break
-        case .transactionTypeClass(let x):
+        case .purchase(let x):
             try container.encode(x)
         }
     }

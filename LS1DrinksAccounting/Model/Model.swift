@@ -36,6 +36,13 @@ class Model: ObservableObject {
     @Published
     var isLoggedIn: Bool? = nil
     
+    @Published
+    var currentPin: String? = nil
+    
+    func selectUser() {
+        currentPin = nil
+    }
+    
     func loadUsers() async throws {
         let users = try await usersApi.getUsers()
         
@@ -70,10 +77,27 @@ class Model: ObservableObject {
     }
     
     func buy(drink: Drink, for user: User) async throws {
-        let updatedUser = try await transactionsApi.buyDrink(user: user.id, drink: drink.id)
+        let updatedUser = try await transactionsApi.buyDrink(user: user.id, drink: drink.id, userPin: currentPin)
         
         self.people.removeAll(where: { $0.id == user.id })
         self.people.append(updatedUser)
+    }
+    
+    func checkPin(for user: User, pin: String) async throws -> Bool {
+        let result = try await usersApi.checkPin(user: user.id, pin: pin)
+        if result {
+            self.currentPin = pin
+        }
+        return result
+    }
+    
+    func updatePin(for user: User, pin: String) async throws -> Bool {
+        let result = try await usersApi.updatePin(user: user.id, oldPin: self.currentPin, newPin: pin)
+        if result {
+            self.currentPin = pin
+            try await loadUsers()
+        }
+        return result
     }
     
     func login(username: String, password: String) async throws -> Bool {

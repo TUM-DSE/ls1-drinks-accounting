@@ -13,6 +13,9 @@ struct SelectDrinkView: View {
     @ObservedObject
     private var viewModel: DrinksViewModel
     
+    @State
+    private var showingChangePasswordDialog = false
+    
     var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.locale = Locale.current
@@ -32,34 +35,76 @@ struct SelectDrinkView: View {
     ]
     
     var body: some View {
-        ZStack {
-            List {
-                Section("Drinks") {
-                    ZStack {
-                        if viewModel.isLoading {
-                            ProgressView()
-                        }
-                        grid
-                    }
-                }
-                
-                if let user = viewModel.user {
-                    Section("Balance") {
-                        NavigationLink(destination: {
-                            TransactionsView(model: model, person: user)
-                        }, label: {
-                            HStack {
-                                Text("Current balance")
-                                Spacer()
-                                Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
-                                    
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if let user = viewModel.user {
+                if viewModel.shouldShowEnterPin {
+                    VStack {
+                        Text("Enter pin")
+                            .font(.title)
+                        PasscodeField(handler: { pin, _ in
+                            Task {
+                                await viewModel.checkPin(pin: pin)
                             }
                         })
+                        .frame(maxWidth: 400)
                     }
+                } else {
+                    List {
+                        Section("Drinks") {
+                            ZStack {
+                                grid
+                            }
+                        }
+                        
+                        Section("Balance") {
+                            NavigationLink(destination: {
+                                TransactionsView(model: model, person: user)
+                            }, label: {
+                                HStack {
+                                    Text("Current balance")
+                                    Spacer()
+                                    Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
+                                    
+                                }
+                            })
+                        }
+                    }
+                    .refreshable {
+                        await viewModel.loadDrinks()
+                    }
+                    .toolbar {
+                        if viewModel.shouldShowEnterPin {
+                            Group {}
+                        } else {
+                            HStack {
+                                if viewModel.user?.has_pin == true {
+                                    Button(action: { model.logout() }) {
+                                        Image(systemName: "lock.fill")
+                                    }
+                                }
+                                Button(action: { showingChangePasswordDialog = true }) {
+                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                }
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showingChangePasswordDialog, content: {
+                        NavigationStack {
+                            PasscodeField(showPin: true, handler: { pin, _ in
+                                Task {
+                                    await viewModel.setPin(pin: pin)
+                                    showingChangePasswordDialog = false
+                                }
+                            })
+                            .navigationTitle("Set user pin")
+                            .frame(maxWidth: 400)
+                        }
+                    })
                 }
-            }
-            .refreshable {
-                await viewModel.loadDrinks()
+            } else {
+                Text("Error")
             }
         }
         .onAppear {
@@ -94,10 +139,10 @@ struct SelectDrinkView: View {
                     if viewModel.isLoading || viewModel.loadingDrink != nil {
                         return
                     }
-
+                    
                     Task {
                         if await viewModel.buy(drink: item) {
-//                                            onDismiss()
+                            //                                            onDismiss()
                         }
                     }
                 }

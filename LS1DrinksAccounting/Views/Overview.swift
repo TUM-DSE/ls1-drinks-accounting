@@ -49,10 +49,6 @@ struct Overview: View {
                 } else {
                     Text("Pick a person")
                 }
-            }.toolbar {
-                Button(action: { model.logout() }) {
-                    Image(systemName: "lock.fill")
-                }
             }
         }
         .onAppear {
@@ -63,6 +59,9 @@ struct Overview: View {
         .sheet(isPresented: $showingSheet) {
             EditView()
         }
+        .onChange(of: selection, perform: { _ in
+            model.selectUser()
+        })
     }
     
     init(_ model: Model) {

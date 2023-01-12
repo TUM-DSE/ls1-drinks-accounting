@@ -26,6 +26,7 @@
 		5B6CA0162944A87F00A709F8 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CA0152944A87F00A709F8 /* User.swift */; };
 		5BA34401294CAC84005C0199 /* EditDrinksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */; };
 		5BA34403294CB0CA005C0199 /* TransactionsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA34402294CB0CA005C0199 /* TransactionsApi.swift */; };
+		5BB364DE29706DA200860681 /* PasscodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB364DD29706DA200860681 /* PasscodeField.swift */; };
 		5BEDC654294C78B800D32DC7 /* UsersApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC653294C78B800D32DC7 /* UsersApi.swift */; };
 		5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC655294C798900D32DC7 /* NetworkConfig.swift */; };
 		5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEDC657294C9A1100D32DC7 /* Errors.swift */; };
@@ -61,6 +62,7 @@
 		5B6CA0152944A87F00A709F8 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5BA34400294CAC84005C0199 /* EditDrinksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDrinksViewModel.swift; sourceTree = "<group>"; };
 		5BA34402294CB0CA005C0199 /* TransactionsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsApi.swift; sourceTree = "<group>"; };
+		5BB364DD29706DA200860681 /* PasscodeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeField.swift; sourceTree = "<group>"; };
 		5BEDC653294C78B800D32DC7 /* UsersApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersApi.swift; sourceTree = "<group>"; };
 		5BEDC655294C798900D32DC7 /* NetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfig.swift; sourceTree = "<group>"; };
 		5BEDC657294C9A1100D32DC7 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				5B6B30682947A0070053052B /* BlurView.swift */,
 				5BFEF805295F379E00D9E7CA /* LoginView.swift */,
 				5BFEF8122962DC4F00D9E7CA /* Overview.swift */,
+				5BB364DD29706DA200860681 /* PasscodeField.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				5B6B3054294634900053052B /* Drink.swift in Sources */,
 				5BFEF80A295F391500D9E7CA /* AuthApi.swift in Sources */,
 				5BFEF80D2962CB0500D9E7CA /* KeychainHelper.swift in Sources */,
+				5BB364DE29706DA200860681 /* PasscodeField.swift in Sources */,
 				5BFEF808295F38C400D9E7CA /* LoginViewModel.swift in Sources */,
 				5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */,
 				5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */,

@@ -13,6 +13,15 @@ struct CreateUser: Encodable {
     let email: String
 }
 
+struct CheckPin: Encodable {
+    let user_pin: String
+}
+
+struct UpdatePin: Encodable {
+    let old_pin: String?
+    let new_pin: String?
+}
+
 class UsersApi {
     let networking: Networking
     
@@ -73,6 +82,30 @@ class UsersApi {
         })
 
         let result = try decoder.decode([Transaction].self, from: data.0)
+        
+        return result
+    }
+    
+    func checkPin(user: UUID, pin: String) async throws -> Bool {
+        guard let request = try await networking.post(path: "/api/users/\(user)/check_pin", authorized: true) else {
+            throw NetworkError.invalidUrl
+        }
+        
+        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(CheckPin(user_pin: pin)))
+        
+        let result = try JSONDecoder().decode(Bool.self, from: data.0)
+        
+        return result
+    }
+    
+    func updatePin(user: UUID, oldPin: String?, newPin: String?) async throws -> Bool {
+        guard let request = try await networking.put(path: "/api/users/\(user)/pin", authorized: true) else {
+            throw NetworkError.invalidUrl
+        }
+        
+        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(UpdatePin(old_pin: oldPin, new_pin: newPin)))
+        
+        let result = try JSONDecoder().decode(Bool.self, from: data.0)
         
         return result
     }

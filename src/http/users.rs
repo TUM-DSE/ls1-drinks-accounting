@@ -25,6 +25,10 @@ pub struct UpdatePin {
     old_pin: Option<String>,
     new_pin: Option<String>,
 }
+#[derive(Deserialize)]
+pub struct CheckPin {
+    user_pin: Option<String>,
+}
 
 pub async fn create_user(
     _user: AuthUser,
@@ -96,7 +100,29 @@ pub async fn update_user_pin(
 
     db::users::update_pin(&state.db, user_id, new_pin).await?;
 
-    Ok((StatusCode::OK, Json("ok")))
+    Ok((StatusCode::OK, Json(true)))
+}
+
+pub async fn check_user_pin(
+    _user: AuthUser,
+    Path(user_id): Path<Uuid>,
+    State(state): State<ApiContext>,
+    Json(body): Json<CheckPin>,
+) -> Result<impl IntoResponse, ApiError> {
+    let user = db::users::get(&state.db, user_id).await?;
+
+    let result = user
+        .pin
+        .map(|pin| {
+            matches!(
+                body.user_pin
+                    .and_then(|input| argon2::verify_encoded(&pin, input.as_bytes()).ok()),
+                Some(true)
+            )
+        })
+        .unwrap_or(true);
+
+    Ok((StatusCode::OK, Json(result)))
 }
 
 pub fn router() -> Router<ApiContext> {
@@ -105,4 +131,5 @@ pub fn router() -> Router<ApiContext> {
         .route("/api/users", post(create_user))
         .route("/api/users/:id/transactions", get(get_user_transactions))
         .route("/api/users/:id/pin", put(update_user_pin))
+        .route("/api/users/:id/check_pin", post(check_user_pin))
 }

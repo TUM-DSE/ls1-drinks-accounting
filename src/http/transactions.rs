@@ -43,6 +43,8 @@ pub async fn buy_drink(
 
     db::transactions::buy_drink(&state.db, body.user, body.drink).await?;
 
+    let user = db::users::get(&state.db, body.user).await?;
+
     Ok((StatusCode::OK, Json(UserResponse::from(user))))
 }
 

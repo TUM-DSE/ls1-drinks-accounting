@@ -60,7 +60,7 @@ struct Overview: View {
             EditView()
         }
         .onChange(of: selection, perform: { _ in
-            model.selectUser()
+            model.logoutUser()
         })
     }
     

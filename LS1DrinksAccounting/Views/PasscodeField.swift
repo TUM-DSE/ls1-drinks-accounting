@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 public struct PasscodeField: View {
     
@@ -44,6 +45,12 @@ public struct PasscodeField: View {
         })
         
         return TextField("", text: boundPin, onCommit: submitPin)
+            .onReceive(Just(pin)) { newValue in
+                            let filtered = newValue.filter { "0123456789".contains($0) }
+                            if filtered != newValue {
+                                self.pin = filtered
+                            }
+                        }
             .accentColor(.clear)
             .foregroundColor(.clear)
             .keyboardType(.numberPad)
@@ -106,6 +113,8 @@ extension String {
         for char in self {
             if let number = Int(String(char)) {
                 result.append(number)
+            } else {
+                result.append(0)
             }
         }
         

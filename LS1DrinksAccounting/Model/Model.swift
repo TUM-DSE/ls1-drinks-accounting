@@ -39,7 +39,7 @@ class Model: ObservableObject {
     @Published
     var currentPin: String? = nil
     
-    func selectUser() {
+    func logoutUser() {
         currentPin = nil
     }
     

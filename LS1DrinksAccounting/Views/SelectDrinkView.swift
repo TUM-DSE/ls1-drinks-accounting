@@ -80,7 +80,7 @@ struct SelectDrinkView: View {
                         } else {
                             HStack {
                                 if viewModel.user?.has_pin == true {
-                                    Button(action: { model.logout() }) {
+                                    Button(action: { model.logoutUser() }) {
                                         Image(systemName: "lock.fill")
                                     }
                                 }
@@ -94,7 +94,7 @@ struct SelectDrinkView: View {
                         NavigationStack {
                             PasscodeField(showPin: true, handler: { pin, _ in
                                 Task {
-                                    await viewModel.setPin(pin: pin)
+                                    let _ = await viewModel.setPin(pin: pin)
                                     showingChangePasswordDialog = false
                                 }
                             })

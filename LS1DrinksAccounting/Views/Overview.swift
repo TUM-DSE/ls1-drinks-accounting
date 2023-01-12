@@ -44,10 +44,8 @@ struct Overview: View {
         } detail: {
             Group {
                 if let selection {
-                    NavigationStack {
-                        SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
-                            .navigationTitle(selection.name)
-                    }
+                    SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
+                        .navigationTitle(selection.name)
                 } else {
                     Text("Pick a person")
                 }

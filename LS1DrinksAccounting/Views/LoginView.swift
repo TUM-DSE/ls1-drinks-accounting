@@ -15,27 +15,30 @@ struct LoginView: View {
     @State private var password: String = ""
     
     var body: some View {
-        Form {
-            TextField("Username", text: $username)
-                .autocorrectionDisabled()
-            SecureField("Password", text: $password)
-            if let error = viewModel.error {
+        NavigationStack {
+            Form {
+                TextField("Username", text: $username)
+                    .autocorrectionDisabled()
+                SecureField("Password", text: $password)
+                if let error = viewModel.error {
                     Text("Error logging in: \(error)")
                         .foregroundColor(Color(UIColor.secondaryLabel))
-            }
-            HStack {
-                Button("Login") {
-                    Task {
-                        await viewModel.login(username: username, password: password)
+                }
+                HStack {
+                    Button("Login") {
+                        Task {
+                            await viewModel.login(username: username, password: password)
+                        }
+                    }
+                    if viewModel.loading {
+                        ProgressView().padding(.leading, 16)
                     }
                 }
-                if viewModel.loading {
-                    ProgressView().padding(.leading, 16)
-                }
+                .disabled(viewModel.loading)
             }
-            .disabled(viewModel.loading)
+            .navigationTitle("Login")
+            
         }
-        .navigationTitle("Login")
     }
     
     init(viewModel: LoginViewModel) {
@@ -45,11 +48,9 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            LoginView(viewModel: LoginViewModel(Model.shared))
-        }
-        .environmentObject(Model.shared)
-        .previewDevice("iPad (10th generation)")
-        .previewInterfaceOrientation(.landscapeLeft)
+        LoginView(viewModel: LoginViewModel(Model.shared))
+            .environmentObject(Model.shared)
+            .previewDevice("iPad (10th generation)")
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

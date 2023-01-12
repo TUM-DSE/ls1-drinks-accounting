@@ -23,10 +23,34 @@ pub async fn insert(
     Ok(user_id)
 }
 
+pub async fn update_pin(
+    db: &PgPool,
+    id: Uuid,
+    pin: Option<String>
+) -> Result<(), ApiError> {
+    let mut tx = db.begin().await?;
+    let result = sqlx::query!(
+        // language=postgresql
+        r#"update users set pin = $1 where id = $2"#,
+        pin,
+        id
+    )
+    .execute(&mut tx)
+    .await?;
+
+    if result.rows_affected() != 1 {
+        return Err(ApiError::NotFound("user not found".to_string()));
+    }
+
+    tx.commit().await?;
+
+    Ok(())
+}
+
 pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
     let users = sqlx::query!(
         // language=postgresql
-        r#"select id, first_name, last_name, email, balances.sum from users left outer join balances on balances."user" = users.id"#
+        r#"select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances."user" = users.id"#
     )
         .map(|row| {
             User {
@@ -35,6 +59,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
                 last_name: row.last_name,
                 email: row.email,
                 balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+                pin: row.pin,
             }
         })
         .fetch_all(db)
@@ -46,7 +71,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
 pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
     let user = sqlx::query!(
         // language=postgresql
-        r#"select id, first_name, last_name, email, balances.sum from users left outer join balances on balances."user" = users.id where users.id = $1"#,
+        r#"select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances."user" = users.id where users.id = $1"#,
         id,
     )
         .map(|row| {
@@ -56,6 +81,7 @@ pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
                 last_name: row.last_name,
                 email: row.email,
                 balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+                pin: row.pin,
             }
         })
         .fetch_one(db)

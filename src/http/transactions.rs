@@ -14,6 +14,7 @@ use uuid::Uuid;
 pub struct BuyDrinkRequest {
     user: Uuid,
     drink: Uuid,
+    user_pin: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -27,9 +28,15 @@ pub async fn buy_drink(
     State(state): State<ApiContext>,
     Json(body): Json<BuyDrinkRequest>,
 ) -> Result<impl IntoResponse, ApiError> {
-    db::transactions::buy_drink(&state.db, body.user, body.drink).await?;
-
     let user = db::users::get(&state.db, body.user).await?;
+
+    if let Some(pin) = &user.pin {
+        if let Some(true) = body.user_pin.and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok()) {} else {
+            return Err(ApiError::BadRequest("User pin incorrect!".to_string()));
+        }
+    }
+
+    db::transactions::buy_drink(&state.db, body.user, body.drink).await?;
 
     Ok((StatusCode::OK, Json(user)))
 }
@@ -48,6 +55,6 @@ pub async fn deposit_money(
 
 pub fn router() -> Router<ApiContext> {
     Router::new()
-        .route("/api/transactions/buy", post(buy_drink))
-        .route("/api/transactions/deposit", post(deposit_money))
+    .route("/api/transactions/buy", post(buy_drink))
+    .route("/api/transactions/deposit", post(deposit_money))
 }

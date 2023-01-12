@@ -9,6 +9,8 @@ pub struct User {
     pub last_name: String,
     pub email: String,
     pub balance: f64,
+    #[serde(skip)]
+    pub pin: Option<String>,
 }
 
 #[derive(Serialize)]

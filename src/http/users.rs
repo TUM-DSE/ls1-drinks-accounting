@@ -1,14 +1,15 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
-use crate::types::auth::{AdminUser, AuthUser};
+use crate::types::auth::AuthUser;
 use crate::types::users::User;
 use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::{get, post};
+use axum::routing::{get, post, put};
 use axum::{Json, Router};
+use rand::Rng;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -17,6 +18,12 @@ pub struct CreateUser {
     first_name: String,
     last_name: String,
     email: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdatePin {
+    old_pin: Option<String>,
+    new_pin: Option<String>,
 }
 
 pub async fn create_user(
@@ -33,6 +40,7 @@ pub async fn create_user(
         last_name: body.last_name,
         email: body.email,
         balance: 0.0,
+        pin: None,
     };
 
     Ok((StatusCode::CREATED, Json(user)))
@@ -57,9 +65,37 @@ pub async fn get_user_transactions(
     Ok((StatusCode::OK, Json(transactions)))
 }
 
+pub async fn update_user_pin(
+    _user: AuthUser,
+    Path(user_id): Path<Uuid>,
+    State(state): State<ApiContext>,
+    Json(body): Json<UpdatePin>,
+) -> Result<impl IntoResponse, ApiError> {
+    let user = db::users::get(&state.db, user_id).await?;
+
+    if let Some(pin) = &user.pin {
+        if let Some(true) = body.old_pin.and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok()) {
+        } else {
+            return Err(ApiError::BadRequest("User pin incorrect!".to_string()));
+        }
+    }
+
+    let new_pin = body.new_pin.and_then(|pin| {
+        let salt: [u8; 32] = rand::thread_rng().gen();
+        let config = argon2::Config::default();
+
+        argon2::hash_encoded(pin.as_bytes(), &salt, &config).ok()
+    });
+
+    db::users::update_pin(&state.db, user_id, new_pin).await?;
+
+    Ok((StatusCode::OK, Json("ok")))
+}
+
 pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/users", get(get_users))
         .route("/api/users", post(create_user))
         .route("/api/users/:id/transactions", get(get_user_transactions))
+        .route("/api/users/:id/pin", put(update_user_pin))
 }

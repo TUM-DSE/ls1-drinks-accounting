@@ -1,8 +1,8 @@
 use crate::http::errors::ApiError;
+use crate::types::users::{Purchase, Transaction, TransactionType};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::types::users::{Purchase, Transaction, TransactionType};
 
 pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), ApiError> {
     let mut tx = db.begin().await?;
@@ -70,13 +70,11 @@ pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction
         r#"select * from deposits where "user" = $1"#,
         user
     )
-    .map(|row| {
-        Transaction {
-            id: row.id,
-            timestamp: row.date,
-            amount: (row.amount as f64) / 100.0,
-            transaction_type: TransactionType::MoneyDeposit
-        }
+    .map(|row| Transaction {
+        id: row.id,
+        timestamp: row.date,
+        amount: (row.amount as f64) / 100.0,
+        transaction_type: TransactionType::MoneyDeposit,
     })
     .fetch_all(db)
     .await?;

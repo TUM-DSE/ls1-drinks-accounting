@@ -2,6 +2,7 @@ use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
 use crate::types::auth::{AdminUser, AuthUser};
+use crate::types::users::UserResponse;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -31,14 +32,18 @@ pub async fn buy_drink(
     let user = db::users::get(&state.db, body.user).await?;
 
     if let Some(pin) = &user.pin {
-        if let Some(true) = body.user_pin.and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok()) {} else {
+        if let Some(true) = body
+            .user_pin
+            .and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok())
+        {
+        } else {
             return Err(ApiError::BadRequest("User pin incorrect!".to_string()));
         }
     }
 
     db::transactions::buy_drink(&state.db, body.user, body.drink).await?;
 
-    Ok((StatusCode::OK, Json(user)))
+    Ok((StatusCode::OK, Json(UserResponse::from(user))))
 }
 
 pub async fn deposit_money(
@@ -50,11 +55,11 @@ pub async fn deposit_money(
 
     let user = db::users::get(&state.db, body.user).await?;
 
-    Ok((StatusCode::OK, Json(user)))
+    Ok((StatusCode::OK, Json(UserResponse::from(user))))
 }
 
 pub fn router() -> Router<ApiContext> {
     Router::new()
-    .route("/api/transactions/buy", post(buy_drink))
-    .route("/api/transactions/deposit", post(deposit_money))
+        .route("/api/transactions/buy", post(buy_drink))
+        .route("/api/transactions/deposit", post(deposit_money))
 }

@@ -2,7 +2,7 @@ use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
 use crate::types::auth::AuthUser;
-use crate::types::users::User;
+use crate::types::users::UserResponse;
 use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
@@ -34,13 +34,13 @@ pub async fn create_user(
     let user_id =
         db::users::insert(&state.db, &body.first_name, &body.last_name, &body.email).await?;
 
-    let user = User {
+    let user = UserResponse {
         id: user_id,
         first_name: body.first_name,
         last_name: body.last_name,
         email: body.email,
         balance: 0.0,
-        pin: None,
+        has_pin: false,
     };
 
     Ok((StatusCode::CREATED, Json(user)))
@@ -50,7 +50,11 @@ pub async fn get_users(
     _user: AuthUser,
     State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let users = db::users::get_all(&state.db).await?;
+    let users = db::users::get_all(&state.db)
+        .await?
+        .into_iter()
+        .map(UserResponse::from)
+        .collect::<Vec<_>>();
 
     Ok((StatusCode::OK, Json(users)))
 }
@@ -74,7 +78,10 @@ pub async fn update_user_pin(
     let user = db::users::get(&state.db, user_id).await?;
 
     if let Some(pin) = &user.pin {
-        if let Some(true) = body.old_pin.and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok()) {
+        if let Some(true) = body
+            .old_pin
+            .and_then(|input| argon2::verify_encoded(pin, input.as_bytes()).ok())
+        {
         } else {
             return Err(ApiError::BadRequest("User pin incorrect!".to_string()));
         }

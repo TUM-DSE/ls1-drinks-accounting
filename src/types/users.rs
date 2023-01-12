@@ -1,16 +1,29 @@
+use crate::db;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use uuid::Uuid;
 
 #[derive(Serialize)]
-pub struct User {
+pub struct UserResponse {
     pub id: Uuid,
     pub first_name: String,
     pub last_name: String,
     pub email: String,
     pub balance: f64,
-    #[serde(skip)]
-    pub pin: Option<String>,
+    pub has_pin: bool,
+}
+
+impl From<db::users::User> for UserResponse {
+    fn from(value: db::users::User) -> Self {
+        Self {
+            id: value.id,
+            first_name: value.first_name,
+            last_name: value.last_name,
+            email: value.email,
+            balance: value.balance,
+            has_pin: value.pin.is_some(),
+        }
+    }
 }
 
 #[derive(Serialize)]

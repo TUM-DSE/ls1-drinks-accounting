@@ -1,8 +1,16 @@
 use crate::http::errors::ApiError;
-use crate::types::users::User;
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
+
+pub struct User {
+    pub id: Uuid,
+    pub first_name: String,
+    pub last_name: String,
+    pub email: String,
+    pub balance: f64,
+    pub pin: Option<String>,
+}
 
 pub async fn insert(
     db: &PgPool,
@@ -23,11 +31,7 @@ pub async fn insert(
     Ok(user_id)
 }
 
-pub async fn update_pin(
-    db: &PgPool,
-    id: Uuid,
-    pin: Option<String>
-) -> Result<(), ApiError> {
+pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<(), ApiError> {
     let mut tx = db.begin().await?;
     let result = sqlx::query!(
         // language=postgresql

@@ -26,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: mfink99/ls1-drinks-accounting:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ls1-drinks-accounting:latest, ${{ secrets.DOCKERHUB_USERNAME }}/ls1-drinks-accounting:${{  github.ref_name }}

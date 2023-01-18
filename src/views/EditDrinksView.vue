@@ -140,7 +140,7 @@ export default defineComponent({
                   <input
                     id="name"
                     name="name"
-                    required=""
+                    required
                     class="relative inline-block w-5/6 appearance-none rounded-none rounded-tr-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="Name"
                     v-model="formData.name"
@@ -153,7 +153,7 @@ export default defineComponent({
                     name="sale-price"
                     type="number"
                     step="0.01"
-                    required=""
+                    required
                     class="relative inline-block w-2/5 appearance-none rounded-none rounded-bl-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="Sale price"
                     v-model="formData.sale_price"
@@ -173,7 +173,7 @@ export default defineComponent({
                     id="Stock"
                     name="Stock"
                     type="number"
-                    required=""
+                    required
                     class="relative inline-block w-1/5 appearance-none rounded-none rounded-br-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="Stock"
                     v-model="formData.stock"

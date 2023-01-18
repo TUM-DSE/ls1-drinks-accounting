@@ -1,8 +1,4 @@
-<script setup lang="ts">
-const props = defineProps<{
-  path: string;
-}>();
-
+<script lang="ts">
 import {
   Disclosure,
   DisclosureButton,
@@ -17,19 +13,42 @@ import {
   UserCircleIcon,
   XMarkIcon,
 } from "@heroicons/vue/24/outline";
+import { defineComponent } from "vue";
 
-const navigation = [
-  { name: "Dashboard", href: "/" },
-  { name: "Users", href: "/users" },
-  { name: "Drinks", href: "/drinks" },
-].map((item) => {
-  return {
-    name: item.name,
-    href: item.href,
-    current: item.href == props.path,
-  };
+export default defineComponent({
+  components: {
+    DisclosureButton,
+    DisclosurePanel,
+    // eslint-disable-next-line vue/no-reserved-component-names
+    Menu,
+    MenuItem,
+    MenuItems,
+    MenuButton,
+    Disclosure,
+    Bars3Icon,
+    UserCircleIcon,
+    XMarkIcon,
+  },
+  props: {
+    path: String,
+  },
+  data() {
+    return {
+      navigation: [
+        { name: "Dashboard", href: "/" },
+        { name: "Users", href: "/users" },
+        { name: "Drinks", href: "/drinks" },
+      ].map((item) => {
+        return {
+          name: item.name,
+          href: item.href,
+          current: item.href == this.$props.path,
+        };
+      }),
+      userNavigation: [{ name: "Sign out", href: "/logout" }],
+    };
+  },
 });
-const userNavigation = [{ name: "Sign out", href: "/logout" }];
 </script>
 
 <template>
@@ -39,11 +58,11 @@ const userNavigation = [{ name: "Sign out", href: "/logout" }];
         <div class="flex h-16 items-center justify-between">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-<!--              <img-->
-<!--                class="h-8 w-8"-->
-<!--                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"-->
-<!--                alt="LS1 Drinks Accounting"-->
-<!--              />-->
+              <!--              <img-->
+              <!--                class="h-8 w-8"-->
+              <!--                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"-->
+              <!--                alt="LS1 Drinks Accounting"-->
+              <!--              />-->
             </div>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">

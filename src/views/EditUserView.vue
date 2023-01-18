@@ -125,7 +125,7 @@ export default defineComponent({
                   <input
                     id="first_name"
                     name="first_name"
-                    required=""
+                    required
                     class="relative inline-block w-1/2 appearance-none rounded-none rounded-tl-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="First name"
                     v-model="formData.first_name"
@@ -134,7 +134,7 @@ export default defineComponent({
                   <input
                     id="last_name"
                     name="last_name"
-                    required=""
+                    required
                     class="relative inline-block w-1/2 appearance-none rounded-none rounded-tr-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="Last name"
                     v-model="formData.last_name"
@@ -146,7 +146,7 @@ export default defineComponent({
                     id="email"
                     name="email"
                     type="email"
-                    required=""
+                    required
                     class="relative inline-block w-full appearance-none rounded-none rounded-bl-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     placeholder="E-Mail"
                     v-model="formData.email"

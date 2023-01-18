@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  api:
+    image: mfink99/ls1-drinks-accounting
+    restart: on-failure
+    ports:
+      - "127.0.0.1:8001:8080"
+  dashboard:
+    image: mfink99/ls1-drinks-accounting-dashboard
+    restart: on-failure
+    ports:
+      - "127.0.0.1:8002:80"
+  db:
+    image: "postgres:14-alpine"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=drinks-accounting
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=qwertyuiop

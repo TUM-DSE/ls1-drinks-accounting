@@ -45,7 +45,7 @@ export default defineComponent({
           href: item.href,
           current: item.href == this.$props.path,
         };
-      }),
+      }) as { name: string; href: string; current: boolean }[],
       userNavigation: [
         {
           name: "Sign out",
@@ -53,7 +53,7 @@ export default defineComponent({
             AuthService.logout();
           },
         },
-      ],
+      ] as { name: string; onClick: () => void }[],
     };
   },
 });
@@ -176,8 +176,8 @@ export default defineComponent({
             <DisclosureButton
               v-for="item in userNavigation"
               :key="item.name"
+              @click="item.onClick"
               as="a"
-              :href="item.href"
               class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
             >
               {{ item.name }}

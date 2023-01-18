@@ -14,6 +14,7 @@ import {
   XMarkIcon,
 } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
+import AuthService from "@/network/services/AuthService";
 
 export default defineComponent({
   components: {
@@ -45,7 +46,14 @@ export default defineComponent({
           current: item.href == this.$props.path,
         };
       }),
-      userNavigation: [{ name: "Sign out", href: "/logout" }],
+      userNavigation: [
+        {
+          name: "Sign out",
+          onClick: () => {
+            AuthService.logout();
+          },
+        },
+      ],
     };
   },
 });
@@ -111,7 +119,7 @@ export default defineComponent({
                       v-slot="{ active }"
                     >
                       <a
-                        :href="item.href"
+                        @click="item.onClick"
                         :class="[
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm text-gray-700',

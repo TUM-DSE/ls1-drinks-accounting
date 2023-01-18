@@ -7,6 +7,7 @@ use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
+pub mod app_configuration;
 pub mod auth;
 pub mod drinks;
 pub mod errors;
@@ -40,4 +41,5 @@ fn api_router() -> Router<ApiContext> {
         .merge(drinks::router())
         .merge(transactions::router())
         .merge(auth::router())
+        .merge(app_configuration::router())
 }

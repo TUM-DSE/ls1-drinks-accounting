@@ -169,6 +169,30 @@
     },
     "query": "update drinks set name = $2, icon = $3, price = $4, amount = $5 where id = $1"
   },
+  "45c0a9c7598eea902d3e0c28cd91d7340e064ced5e6ce6f092839af50aca2215": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "value",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "select * from app_configuration where id = 'app_version'"
+  },
   "62dfb18106be3b4fe4783e241c003fb80fe9b2371db55e0fd6cfef82d03b2216": {
     "describe": {
       "columns": [],

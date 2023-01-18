@@ -57,7 +57,10 @@ export default defineComponent({
       <div v-if="loading" class="flex items-center justify-center h-screen">
         <ProgressView />
       </div>
-      <div class="flex items-end justify-end py-4">
+      <div v-if="error" class="my-6">
+        <p class="text-red-400">Could not load drinks: {{ error }}</p>
+      </div>
+      <div v-if="!loading && !error" class="flex items-end justify-end py-4">
         <button
           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
           @click="newDrink()"
@@ -65,7 +68,7 @@ export default defineComponent({
           <PlusIcon class="block h-4 w-4" />
         </button>
       </div>
-      <ul v-if="!loading" class="my-6 divide-y divide-gray-200">
+      <ul v-if="!loading && !error" class="my-6 divide-y divide-gray-200">
         <li v-for="drink in drinks" v-bind:key="drink.id" class="py-2">
           <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">

@@ -19,8 +19,8 @@ class DrinksViewModel: ObservableObject {
     }
     
     @Published var isLoading = false
-    @Published var hasError = false
-    @Published var hasErrorBuyingDrink = false
+    @Published var error: String? = nil
+    @Published var errorBuyingDrink: String? = nil
     @Published var loadingDrink: UUID? = nil
 
     var user: User? {
@@ -37,12 +37,12 @@ class DrinksViewModel: ObservableObject {
     
     func loadDrinks() async {
         isLoading = true
-        hasError = false
+        error = nil
         
         do {
             try await model.loadDrinks()
         } catch {
-            hasError = true
+            self.error = error.localizedDescription
         }
         
         isLoading = false
@@ -50,22 +50,22 @@ class DrinksViewModel: ObservableObject {
     
     func buy(drink: Drink) async -> Bool {
         guard let user else {
-            self.hasErrorBuyingDrink = true
+            self.errorBuyingDrink = "user not found"
             return false
         }
         
-        self.hasErrorBuyingDrink = false
+        self.errorBuyingDrink = nil
         self.loadingDrink = drink.id
         
         do {
             try await model.buy(drink: drink, for: user)
         } catch {
-            self.hasErrorBuyingDrink = true
+            self.errorBuyingDrink = error.localizedDescription
         }
 
         self.loadingDrink = nil
 
-        return !hasErrorBuyingDrink
+        return errorBuyingDrink == nil
     }
     
     func checkPin(pin: String) async -> Bool {
@@ -79,7 +79,7 @@ class DrinksViewModel: ObservableObject {
         do {
             return try await model.checkPin(for: user, pin: pin)
         } catch {
-            self.hasError = true
+            self.error = error.localizedDescription
             return false
         }
     }

@@ -44,6 +44,11 @@ class LoginViewModel: ObservableObject {
     }
     
     func checkIsLoggedIn() async {
-        await model.hasValidToken()
+        error = nil
+        do {
+            let _ = try await model.hasValidToken()
+        } catch {
+            self.error = error.localizedDescription
+        }
     }
 }

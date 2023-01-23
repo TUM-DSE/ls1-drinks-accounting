@@ -126,11 +126,19 @@ class Model: ObservableObject {
         isLoggedIn = false
     }
     
-    func hasValidToken() async -> Bool {
-        let token = try? await authManager.validToken()
-        
-        isLoggedIn = token != nil
-        
-        return token != nil
+    func hasValidToken() async throws -> Bool {
+        do {
+            let _token = try await authManager.validToken()
+            isLoggedIn = true
+            return true
+        } catch {
+            if let error = error as? AuthError {
+                isLoggedIn = false
+                return false
+            }
+
+            isLoggedIn = nil
+            throw error
+        }
     }
 }

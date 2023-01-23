@@ -16,7 +16,11 @@ struct ContentView: View {
     var body: some View {
         Group {
             if viewModel.isLoggedIn == nil {
-                ProgressView()
+                if let error = viewModel.error {
+                    Text("Error loading the app: \(error)")
+                } else {
+                    ProgressView()
+                }
             } else if viewModel.isLoggedIn == true {
                 Overview(model)
             } else {

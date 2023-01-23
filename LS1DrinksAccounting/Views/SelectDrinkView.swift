@@ -38,6 +38,8 @@ struct SelectDrinkView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView()
+            } else if let error = viewModel.error {
+                Text("Error loading items: \(error)")
             } else if let user = viewModel.user {
                 if viewModel.shouldShowEnterPin {
                     VStack {
@@ -53,6 +55,9 @@ struct SelectDrinkView: View {
                 } else {
                     List {
                         Section("Drinks") {
+                            if let error = viewModel.errorBuyingDrink {
+                                Text("Error selecting drink: \(error)")
+                            }
                             ZStack {
                                 grid
                             }

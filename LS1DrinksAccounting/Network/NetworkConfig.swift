@@ -8,5 +8,5 @@
 import Foundation
 
 struct NetworkConfig {
-    let baseUrl = "http://localhost:8080"
+    let baseUrl: String
 }

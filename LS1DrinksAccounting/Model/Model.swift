@@ -15,8 +15,7 @@ class Model: ObservableObject {
     private let authApi: AuthApi
     private let authManager: AuthManager
     
-    private init() {
-        let config = NetworkConfig()
+    private init(networkConfig config: NetworkConfig) {
         self.authManager = AuthManager(AuthApi(config))
         let networking = Networking(config, authManager)
         self.usersApi = UsersApi(networking)
@@ -25,7 +24,12 @@ class Model: ObservableObject {
         self.authApi = AuthApi(config)
     }
     
-    static let shared = Model()
+    static let shared = {
+        let path = Bundle.main.path(forResource: "Info", ofType: "plist")!
+        let dict = NSDictionary(contentsOfFile: path)!
+        let baseUrl = dict["API_BASE_URL"] as? String ?? "http://localhost:8080"
+        return Model(networkConfig: NetworkConfig(baseUrl: baseUrl))
+    }()
     
     @Published
     var people: [User] = []

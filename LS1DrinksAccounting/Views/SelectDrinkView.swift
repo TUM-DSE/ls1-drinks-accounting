@@ -15,7 +15,9 @@ struct SelectDrinkView: View {
     
     @State
     private var showingChangePasswordDialog = false
-    
+
+    let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+
     var formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.locale = Locale.current
@@ -117,7 +119,11 @@ struct SelectDrinkView: View {
                 await viewModel.loadDrinks()
             }
         }
-        
+        .onReceive(timer) { _ in
+            Task {
+                await viewModel.loadDrinks()
+            }
+        }
     }
     
     var grid: some View {

@@ -41,6 +41,7 @@ class DrinksViewModel: ObservableObject {
         
         do {
             try await model.loadDrinks()
+            try await model.loadUsers()
         } catch {
             self.error = error.localizedDescription
         }

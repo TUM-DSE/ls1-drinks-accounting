@@ -17,6 +17,8 @@ struct Overview: View {
     @State private var searchText: String = ""
     @State private var showingSheet = false
     
+    let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+    
     var people: [User] {
         if !searchText.isEmpty {
             return viewModel.people.filter { $0.name.contains(searchText) }
@@ -62,6 +64,11 @@ struct Overview: View {
         .onChange(of: selection, perform: { _ in
             model.logoutUser()
         })
+        .onReceive(timer) { _ in
+            Task {
+                await viewModel.loadUsers()
+            }
+        }
     }
     
     init(_ model: Model) {

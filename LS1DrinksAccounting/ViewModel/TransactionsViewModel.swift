@@ -26,7 +26,7 @@ class TransactionsViewModel: ObservableObject {
         hasError = false
         
         do {
-            self.transactions = try await model.loadTransactions(for: person).sorted(by: { $0.timestamp < $1.timestamp })
+            self.transactions = try await model.loadTransactions(for: person).sorted(by: { $0.timestamp > $1.timestamp })
         } catch {
             hasError = true
         }

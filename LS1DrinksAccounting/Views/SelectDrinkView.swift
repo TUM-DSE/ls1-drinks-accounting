@@ -66,16 +66,13 @@ struct SelectDrinkView: View {
                         }
                         
                         Section("Balance") {
-                            NavigationLink(destination: {
-                                TransactionsView(model: model, person: user)
-                            }, label: {
+                            NavigationLink(value: user) {
                                 HStack {
                                     Text("Current balance")
                                     Spacer()
                                     Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
-                                    
                                 }
-                            })
+                            }
                         }
                     }
                     .refreshable {
@@ -124,6 +121,10 @@ struct SelectDrinkView: View {
                 await viewModel.loadDrinks()
             }
         }
+        // a bit hacky way to ensure the stack is popped from the overview when another person is selected
+        .navigationDestination(for: User.self, destination: { user in
+            TransactionsView(model: model, person: user)
+        })
     }
     
     var grid: some View {

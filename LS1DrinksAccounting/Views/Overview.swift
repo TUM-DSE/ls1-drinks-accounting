@@ -16,6 +16,7 @@ struct Overview: View {
     @State private var selection: User?
     @State private var searchText: String = ""
     @State private var showingSheet = false
+    @State private var path: [User] = []
     
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
     
@@ -44,7 +45,7 @@ struct Overview: View {
                 }
             }
         } detail: {
-            Group {
+            NavigationStack(path: $path) {
                 if let selection {
                     SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
                         .navigationTitle(selection.name)
@@ -63,6 +64,7 @@ struct Overview: View {
         }
         .onChange(of: selection, perform: { _ in
             model.logoutUser()
+            path = []
         })
         .onReceive(timer) { _ in
             Task {

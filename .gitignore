@@ -53,6 +53,7 @@ xcuserdata/
 
 # End of https://www.toptal.com/developers/gitignore/api/xcode,macos
 
-LS1DrinksAccounting.app.dSYM.zip
-LS1DrinksAccounting.ipa
+*.app.dSYM.zip
+*.ipa
+fastlane/report.xml
 

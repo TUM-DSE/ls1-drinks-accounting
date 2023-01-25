@@ -13,8 +13,21 @@ struct ContentView: View {
     @ObservedObject
     private var viewModel: LoginViewModel
     
+    let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+    
     var body: some View {
-        Group {
+        VStack {
+            if !model.isLatestAppVersion {
+                VStack {
+                    Text("New update available. Please click to update")
+                        .padding(.bottom)
+                }
+                .onTapGesture {
+                    UIApplication.shared.open(URL(string: "itms-services://?action=download-manifest&url=\(model.apiBaseUrl)/app/manifest.plist")!, options: [:], completionHandler: nil)
+                }
+                .frame(maxWidth: .infinity)
+                .background(.blue.opacity(0.7))
+            }
             if viewModel.isLoggedIn == nil {
                 if let error = viewModel.error {
                     Text("Error loading the app: \(error)")
@@ -30,6 +43,11 @@ struct ContentView: View {
         .onAppear {
             Task {
                 await viewModel.checkIsLoggedIn()
+            }
+        }
+        .onReceive(timer) { _ in
+            Task {
+                await model.checkIsLatestAppVersion()
             }
         }
     }

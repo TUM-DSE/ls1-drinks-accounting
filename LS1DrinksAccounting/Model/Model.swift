@@ -14,21 +14,34 @@ class Model: ObservableObject {
     private let transactionsApi: TransactionsApi
     private let authApi: AuthApi
     private let authManager: AuthManager
+    private let appConfigApi: AppConfigApi
+    let apiBaseUrl: String
     
-    private init(networkConfig config: NetworkConfig) {
+    private init(baseUrl: String) {
+        self.apiBaseUrl = baseUrl
+        
+        let config = NetworkConfig(baseUrl: baseUrl, decoder: EncodingUtils.decoder, encoder: EncodingUtils.encoder)
         self.authManager = AuthManager(AuthApi(config))
+
         let networking = Networking(config, authManager)
         self.usersApi = UsersApi(networking)
         self.drinksApi = DrinksApi(networking)
         self.transactionsApi = TransactionsApi(networking)
         self.authApi = AuthApi(config)
+        self.appConfigApi = AppConfigApi(networking)
     }
     
     static let shared = {
         let path = Bundle.main.path(forResource: "Info", ofType: "plist")!
         let dict = NSDictionary(contentsOfFile: path)!
         let baseUrl = dict["API_BASE_URL"] as? String ?? "http://localhost:8080"
-        return Model(networkConfig: NetworkConfig(baseUrl: baseUrl))
+        return Model(baseUrl: baseUrl)
+    }()
+    
+    private let appVersion = {
+        let path = Bundle.main.path(forResource: "Info", ofType: "plist")!
+        let dict = NSDictionary(contentsOfFile: path)!
+        return dict["APP_VERSION"] as? String
     }()
     
     @Published
@@ -42,6 +55,9 @@ class Model: ObservableObject {
     
     @Published
     var currentPin: String? = nil
+    
+    @Published
+    var isLatestAppVersion = true
     
     func logoutUser() {
         currentPin = nil
@@ -132,17 +148,27 @@ class Model: ObservableObject {
     
     func hasValidToken() async throws -> Bool {
         do {
-            let _token = try await authManager.validToken()
+            _ = try await authManager.validToken()
             isLoggedIn = true
             return true
         } catch {
-            if let error = error as? AuthError {
+            if error is AuthError {
                 isLoggedIn = false
                 return false
             }
 
             isLoggedIn = nil
             throw error
+        }
+    }
+    
+    func checkIsLatestAppVersion() async {
+        guard let appVersion else {
+            return
+        }
+        
+        if let isLatestAppVersion = try? await appConfigApi.isLatestAppVersion(version: appVersion) {
+            self.isLatestAppVersion = isLatestAppVersion
         }
     }
 }

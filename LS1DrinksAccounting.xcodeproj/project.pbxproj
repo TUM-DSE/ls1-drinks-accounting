@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B6180762981C7B60066284E /* AppConfigApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6180752981C7B50066284E /* AppConfigApi.swift */; };
+		5B61807A2981C8400066284E /* EncodingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6180792981C8400066284E /* EncodingUtils.swift */; };
 		5B6B3052294632770053052B /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3051294632770053052B /* EditView.swift */; };
 		5B6B3054294634900053052B /* Drink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3053294634900053052B /* Drink.swift */; };
 		5B6B3058294755A80053052B /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3057294755A80053052B /* AddPersonView.swift */; };
@@ -45,6 +47,8 @@
 		5B61806D298135130066284E /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		5B61806E298135200066284E /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		5B6180732981386B0066284E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5B6180752981C7B50066284E /* AppConfigApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigApi.swift; sourceTree = "<group>"; };
+		5B6180792981C8400066284E /* EncodingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodingUtils.swift; sourceTree = "<group>"; };
 		5B6B3051294632770053052B /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		5B6B3053294634900053052B /* Drink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drink.swift; sourceTree = "<group>"; };
 		5B6B3057294755A80053052B /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
@@ -56,7 +60,7 @@
 		5B6B30642947986B0053052B /* TransactionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionItem.swift; sourceTree = "<group>"; };
 		5B6B306629479D880053052B /* DrinksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksViewModel.swift; sourceTree = "<group>"; };
 		5B6B30682947A0070053052B /* BlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
-		5B6CA0012944A0D800A709F8 /* LS1DrinksAccounting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LS1DrinksAccounting.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B6CA0012944A0D800A709F8 /* Coffee App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Coffee App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6CA0042944A0D800A709F8 /* LS1DrinksAccountingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LS1DrinksAccountingApp.swift; sourceTree = "<group>"; };
 		5B6CA0062944A0D800A709F8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5B6CA0082944A0D900A709F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,7 +128,7 @@
 		5B6CA0022944A0D800A709F8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5B6CA0012944A0D800A709F8 /* LS1DrinksAccounting.app */,
+				5B6CA0012944A0D800A709F8 /* Coffee App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,6 +197,8 @@
 				5BFEF809295F391500D9E7CA /* AuthApi.swift */,
 				5BFEF80E2962D00500D9E7CA /* AuthManager.swift */,
 				5BFEF8102962D2E500D9E7CA /* Networking.swift */,
+				5B6180752981C7B50066284E /* AppConfigApi.swift */,
+				5B6180792981C8400066284E /* EncodingUtils.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -222,7 +228,7 @@
 			);
 			name = LS1DrinksAccounting;
 			productName = LS1DrinksAccounting;
-			productReference = 5B6CA0012944A0D800A709F8 /* LS1DrinksAccounting.app */;
+			productReference = 5B6CA0012944A0D800A709F8 /* Coffee App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -281,6 +287,7 @@
 				5BA34403294CB0CA005C0199 /* TransactionsApi.swift in Sources */,
 				5BFEF806295F379E00D9E7CA /* LoginView.swift in Sources */,
 				5B6B30692947A0070053052B /* BlurView.swift in Sources */,
+				5B61807A2981C8400066284E /* EncodingUtils.swift in Sources */,
 				5B6B3052294632770053052B /* EditView.swift in Sources */,
 				5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */,
 				5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */,
@@ -289,6 +296,7 @@
 				5BEDC65C294CA3D300D32DC7 /* AddPersonViewModel.swift in Sources */,
 				5B6CA0072944A0D800A709F8 /* ContentView.swift in Sources */,
 				5B6B30652947986B0053052B /* TransactionItem.swift in Sources */,
+				5B6180762981C7B60066284E /* AppConfigApi.swift in Sources */,
 				5B6B3061294797B30053052B /* TransactionsView.swift in Sources */,
 				5BFEF8132962DC4F00D9E7CA /* Overview.swift in Sources */,
 				5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */,
@@ -449,7 +457,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.cit.dse.coffee-tracker";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Coffee App";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -480,7 +488,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.tum.cit.dse.coffee-tracker";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Coffee App";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

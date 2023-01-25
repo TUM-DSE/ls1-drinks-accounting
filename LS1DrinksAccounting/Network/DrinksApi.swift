@@ -27,7 +27,7 @@ class DrinksApi {
         
         let data = try await URLSession.shared.data(for: request)
         
-        let result = try JSONDecoder().decode([Drink].self, from: data.0)
+        let result = try networking.config.decoder.decode([Drink].self, from: data.0)
         
         return result
     }
@@ -37,9 +37,9 @@ class DrinksApi {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(drink))
+        let data = try await URLSession.shared.upload(for: request, from: networking.config.encoder.encode(drink))
         
-        let result = try JSONDecoder().decode(Drink.self, from: data.0)
+        let result = try networking.config.decoder.decode(Drink.self, from: data.0)
         
         return result
     }
@@ -49,9 +49,9 @@ class DrinksApi {
             throw NetworkError.invalidUrl
         }
 
-        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(drink))
+        let data = try await URLSession.shared.upload(for: request, from: networking.config.encoder.encode(drink))
         
-        let result = try JSONDecoder().decode(Drink.self, from: data.0)
+        let result = try networking.config.decoder.decode(Drink.self, from: data.0)
         
         return result
     }

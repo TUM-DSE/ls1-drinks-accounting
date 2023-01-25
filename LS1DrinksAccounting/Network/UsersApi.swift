@@ -36,7 +36,7 @@ class UsersApi {
         
         let data = try await URLSession.shared.data(for: request)
         
-        let result = try JSONDecoder().decode([User].self, from: data.0)
+        let result = try networking.config.decoder.decode([User].self, from: data.0)
         
         return result
     }
@@ -46,9 +46,9 @@ class UsersApi {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.upload(for: request, from: try! JSONEncoder().encode(user))
+        let data = try await URLSession.shared.upload(for: request, from: try! networking.config.encoder.encode(user))
         
-        let result = try JSONDecoder().decode(User.self, from: data.0)
+        let result = try networking.config.decoder.decode(User.self, from: data.0)
         
         return result
     }
@@ -60,28 +60,7 @@ class UsersApi {
 
         let data = try await URLSession.shared.data(for: request)
         
-        let decoder = JSONDecoder()
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .iso8601)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-
-        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
-            let container = try decoder.singleValueContainer()
-            let dateStr = try container.decode(String.self)
-
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
-            if let date = formatter.date(from: dateStr) {
-                return date
-            }
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssXXXXX"
-            if let date = formatter.date(from: dateStr) {
-                return date
-            }
-            return Date()
-        })
-
-        let result = try decoder.decode([Transaction].self, from: data.0)
+        let result = try networking.config.decoder.decode([Transaction].self, from: data.0)
         
         return result
     }
@@ -91,9 +70,9 @@ class UsersApi {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(CheckPin(user_pin: pin)))
+        let data = try await URLSession.shared.upload(for: request, from: networking.config.encoder.encode(CheckPin(user_pin: pin)))
         
-        let result = try JSONDecoder().decode(Bool.self, from: data.0)
+        let result = try networking.config.decoder.decode(Bool.self, from: data.0)
         
         return result
     }
@@ -103,9 +82,9 @@ class UsersApi {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(UpdatePin(old_pin: oldPin, new_pin: newPin)))
+        let data = try await URLSession.shared.upload(for: request, from: networking.config.encoder.encode(UpdatePin(old_pin: oldPin, new_pin: newPin)))
         
-        let result = try JSONDecoder().decode(Bool.self, from: data.0)
+        let result = try networking.config.decoder.decode(Bool.self, from: data.0)
         
         return result
     }

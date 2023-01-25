@@ -14,7 +14,7 @@ final class KeychainHelper {
     
     func save<T>(_ item: T, service: String, account: String) where T : Encodable {
         do {
-            let data = try JSONEncoder().encode(item)
+            let data = try EncodingUtils.encoder.encode(item)
             save(data, service: service, account: account)
         } catch {
             assertionFailure("Fail to encode item for keychain: \(error)")
@@ -27,9 +27,10 @@ final class KeychainHelper {
         }
 
         do {
-            let item = try JSONDecoder().decode(type, from: data)
+            let item = try EncodingUtils.decoder.decode(type, from: data)
             return item
         } catch {
+            print(error)
 //            assertionFailure("Failed to decode item for keychain: \(error)")
             return nil
         }

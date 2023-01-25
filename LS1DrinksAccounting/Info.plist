@@ -4,5 +4,7 @@
 <dict>
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
+	<key>APP_VERSION</key>
+	<string>1.0.0</string>
 </dict>
 </plist>

@@ -25,9 +25,9 @@ class TransactionsApi {
             throw NetworkError.invalidUrl
         }
         
-        let data = try await URLSession.shared.upload(for: request, from: JSONEncoder().encode(BuyDrinkTransaction(user: user, drink: drink, user_pin: userPin)))
+        let data = try await URLSession.shared.upload(for: request, from: networking.config.encoder.encode(BuyDrinkTransaction(user: user, drink: drink, user_pin: userPin)))
         
-        let result = try JSONDecoder().decode(User.self, from: data.0)
+        let result = try networking.config.decoder.decode(User.self, from: data.0)
         
         return result
     }

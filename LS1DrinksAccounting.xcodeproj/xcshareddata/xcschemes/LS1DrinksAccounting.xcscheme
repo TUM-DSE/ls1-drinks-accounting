@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B6CA0002944A0D800A709F8"
-               BuildableName = "LS1DrinksAccounting.app"
+               BuildableName = "Coffee App.app"
                BlueprintName = "LS1DrinksAccounting"
                ReferencedContainer = "container:LS1DrinksAccounting.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B6CA0002944A0D800A709F8"
-            BuildableName = "LS1DrinksAccounting.app"
+            BuildableName = "Coffee App.app"
             BlueprintName = "LS1DrinksAccounting"
             ReferencedContainer = "container:LS1DrinksAccounting.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B6CA0002944A0D800A709F8"
-            BuildableName = "LS1DrinksAccounting.app"
+            BuildableName = "Coffee App.app"
             BlueprintName = "LS1DrinksAccounting"
             ReferencedContainer = "container:LS1DrinksAccounting.xcodeproj">
          </BuildableReference>

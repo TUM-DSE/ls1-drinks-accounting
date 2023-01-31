@@ -128,34 +128,7 @@ struct SelectDrinkView: View {
     var grid: some View {
         LazyVGrid(columns: columns, spacing: 20) {
             ForEach(viewModel.drinks) { item in
-                VStack {
-                    Text(item.icon).font(.title2)
-                    Text(item.name)
-                        .font(.title2)
-                        .padding(.bottom)
-                    Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
-                }
-                .padding(.vertical, 25)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .overlay(ZStack {
-                    if viewModel.loadingDrink == item.id {
-                        BlurView().opacity(0.7)
-                        ProgressView()
-                    }
-                })
-                .background(Color(UIColor.tertiarySystemFill))
-                .cornerRadius(10)
-                .onTapGesture {
-                    if viewModel.isLoading || viewModel.loadingDrink != nil {
-                        return
-                    }
-                    
-                    Task {
-                        if await viewModel.buy(drink: item) {
-                            //                                            onDismiss()
-                        }
-                    }
-                }
+                DrinkItemView(item: item, viewModel: viewModel, formatter: formatter)
             }
         }
     }
@@ -163,6 +136,49 @@ struct SelectDrinkView: View {
     init(_ userId: UUID, model: Model, onDismiss: @escaping () -> Void) {
         self.viewModel = DrinksViewModel(model, userId: userId)
         self.onDismiss = onDismiss
+    }
+}
+
+struct DrinkItemView: View {
+    let item: Drink
+    let viewModel: DrinksViewModel
+    let formatter: NumberFormatter
+    
+    @State
+    private var showingBuyConfirmation = false
+    
+    var body: some View {
+        VStack {
+            Text(item.icon).font(.title2)
+            Text(item.name)
+                .font(.title2)
+                .padding(.bottom)
+            Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
+        }
+        .confirmationDialog("Buy item", isPresented: $showingBuyConfirmation, actions: {
+            Button("Buy \(item.name)", action: {
+                Task {
+                    await viewModel.buy(drink: item)
+                }
+            })
+        })
+        .padding(.vertical, 25)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(ZStack {
+            if viewModel.loadingDrink == item.id {
+                BlurView().opacity(0.7)
+                ProgressView()
+            }
+        })
+        .background(Color(UIColor.tertiarySystemFill))
+        .cornerRadius(10)
+        .onTapGesture {
+            if viewModel.isLoading || viewModel.loadingDrink != nil {
+                return
+            }
+            
+            showingBuyConfirmation = true
+        }
     }
 }
 

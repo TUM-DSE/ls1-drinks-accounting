@@ -572,6 +572,24 @@
     },
     "query": "insert into auth_users (username, password, privilege) values ($1, $2, $3) returning id"
   },
+  "dd9745e2339e018277ffff2986b1ca9a0d5780ecdfa830708802d34f42a20259": {
+    "describe": {
+      "columns": [
+        {
+          "name": "bool",
+          "ordinal": 0,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        null
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "select true"
+  },
   "e3bcc374af09e4c0bdb1e65827e0f8b06eb5787123ea4534290fdfba52f9b984": {
     "describe": {
       "columns": [],

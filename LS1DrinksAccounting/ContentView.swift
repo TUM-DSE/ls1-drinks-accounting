@@ -43,6 +43,7 @@ struct ContentView: View {
         .onAppear {
             Task {
                 await viewModel.checkIsLoggedIn()
+                await model.checkIsLatestAppVersion()
             }
         }
         .onReceive(timer) { _ in

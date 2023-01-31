@@ -73,6 +73,10 @@ struct SelectDrinkView: View {
                                     Text("Current balance")
                                     Spacer()
                                     Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
+                                        .animation(nil)
+                                        .modifier(AnimatableCurrencyModifier(number: user.balance))
+                                        .foregroundColor(user.balance < 0 ? Color.red : nil)
+                                        .animation(.linear, value: user.balance)
                                 }
                             })
                         }

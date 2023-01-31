@@ -37,7 +37,7 @@ struct SelectDrinkView: View {
     ]
     
     var body: some View {
-        Group {
+        ZStack {
             if viewModel.isLoading {
                 ProgressView()
             } else if let error = viewModel.error {
@@ -146,19 +146,32 @@ struct DrinkItemView: View {
     
     @State
     private var showingBuyConfirmation = false
+    @State
+    private var animateSuccess = false
     
     var body: some View {
-        VStack {
-            Text(item.icon).font(.title2)
-            Text(item.name)
-                .font(.title2)
-                .padding(.bottom)
-            Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
+        ZStack {
+            VStack {
+                Text(item.icon).font(.title2)
+                Text(item.name)
+                    .font(.title2)
+                    .padding(.bottom)
+                Text(formatter.string(from: NSNumber(value: item.price)) ?? "n/a")
+            }
         }
         .confirmationDialog("Buy item", isPresented: $showingBuyConfirmation, actions: {
             Button("Buy \(item.name)", action: {
                 Task {
-                    await viewModel.buy(drink: item)
+                    animateSuccess = false
+                    if await viewModel.buy(drink: item) {
+                        withAnimation {
+                            animateSuccess = true
+                        }
+                        try? await Task.sleep(for: Duration(secondsComponent: 3, attosecondsComponent: 0))
+                        withAnimation {
+                            animateSuccess = false
+                        }
+                    }
                 }
             })
         })
@@ -168,6 +181,17 @@ struct DrinkItemView: View {
             if viewModel.loadingDrink == item.id {
                 BlurView().opacity(0.7)
                 ProgressView()
+            }
+            if animateSuccess {
+                ZStack {
+                    BlurView()
+                        .background(.green.opacity(0.6))
+
+                    Image(systemName: "checkmark.circle")
+                        .foregroundColor(.white)
+                        .font(.system(size: 80))
+                }
+                .transition(.slide)
             }
         })
         .background(Color(UIColor.tertiarySystemFill))

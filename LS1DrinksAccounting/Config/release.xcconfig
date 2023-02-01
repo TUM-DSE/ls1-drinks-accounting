@@ -1,0 +1,12 @@
+//
+//  release.xcconfig
+//  LS1DrinksAccounting
+//
+//  Created by Martin Fink on 25.01.23.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// the $() is a workaround since we can't have double // here
+API_BASE_URL=https:/$()/ls1-coffee.dse.cit.tum.de

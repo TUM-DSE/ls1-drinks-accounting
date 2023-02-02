@@ -338,50 +338,6 @@
     },
     "query": "select dp.id, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on drinks.price = dp.id where drinks.id = $1"
   },
-  "8b0a4ac1625e6f29a61e8b28de8e45370d2eac51cfb785104c1f0ab74b0021c9": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Uuid"
-        },
-        {
-          "name": "date",
-          "ordinal": 1,
-          "type_info": "Timestamptz"
-        },
-        {
-          "name": "sale_price",
-          "ordinal": 2,
-          "type_info": "Int4"
-        },
-        {
-          "name": "name",
-          "ordinal": 3,
-          "type_info": "Text"
-        },
-        {
-          "name": "icon",
-          "ordinal": 4,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      }
-    },
-    "query": "select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = d.price where t.\"user\" = $1"
-  },
   "ac905f52f9a44dfd4aabcf14880998005e85438048a824538fdc16727a2e129d": {
     "describe": {
       "columns": [
@@ -604,6 +560,50 @@
       }
     },
     "query": "update drinks set name = $2, icon = $3, price = $4 where id = $1"
+  },
+  "e54d956b911c7c9760e566e744592efc3f2d1a8a50a8b8ef9ff98113805810b2": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "date",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "sale_price",
+          "ordinal": 2,
+          "type_info": "Int4"
+        },
+        {
+          "name": "name",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "icon",
+          "ordinal": 4,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = t.price where t.\"user\" = $1"
   },
   "ebb90bbcd0d0df7f7e040e9376a552eaf27fd455f89a0ec11abc8111845f69db": {
     "describe": {

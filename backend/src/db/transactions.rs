@@ -81,7 +81,7 @@ pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction
 
     let transactions = sqlx::query!(
         // language=postgresql
-        r#"select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = d.price where t."user" = $1"#,
+        r#"select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = t.price where t."user" = $1"#,
         user
     )
     .map(|row| {

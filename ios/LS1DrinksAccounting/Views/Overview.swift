@@ -28,13 +28,28 @@ struct Overview: View {
         }
     }
     
+    var peopleByLastNamePrefix: [String: [User]] {
+        Dictionary(grouping: people, by: { String($0.last_name.prefix(1)) })
+    }
+    
+    var sections: [String] {
+        peopleByLastNamePrefix.map { $0.key }.sorted()
+    }
+    
     var body: some View {
         NavigationSplitView {
-            List(people, selection: $selection) { person in
-                NavigationLink(value: person) {
-                    Text(person.name)
+            List(selection: $selection) {
+                ForEach(sections, id: \.self) { section in
+                    Section(section) {
+                        ForEach(peopleByLastNamePrefix[section]!) { person in
+                            NavigationLink(value: person) {
+                                Text(person.name)
+                            }
+                        }
+                    }
                 }
             }
+            .listStyle(.grouped)
             .refreshable(action: {
                 await viewModel.loadUsers()
             })

@@ -81,6 +81,7 @@ struct SelectDrinkView: View {
                             })
                         }
                     }
+                    .listStyle(.insetGrouped)
                     .refreshable {
                         await viewModel.loadDrinks()
                     }

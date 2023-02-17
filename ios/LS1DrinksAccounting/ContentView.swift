@@ -30,7 +30,9 @@ struct ContentView: View {
             }
             if viewModel.isLoggedIn == nil {
                 if let error = viewModel.error {
-                    Text("Error loading the app: \(error)")
+                    Text(error)
+                        .padding(.bottom)
+                    Button("Reload", action: { load() })
                 } else {
                     ProgressView()
                 }
@@ -40,16 +42,18 @@ struct ContentView: View {
                 LoginView(viewModel: viewModel)
             }
         }
-        .onAppear {
-            Task {
-                await viewModel.checkIsLoggedIn()
-                await model.checkIsLatestAppVersion()
-            }
-        }
+        .onAppear { load() }
         .onReceive(timer) { _ in
             Task {
                 await model.checkIsLatestAppVersion()
             }
+        }
+    }
+    
+    private func load() {
+        Task {
+            await viewModel.checkIsLoggedIn()
+            await model.checkIsLatestAppVersion()
         }
     }
     

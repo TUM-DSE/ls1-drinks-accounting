@@ -47,6 +47,7 @@ struct TransactionsView: View {
                 await viewModel.loadTransactions()
             }
         }
+        .navigationTitle("History")
     }
     
     func sectionHeader(for date: Date) -> some View {

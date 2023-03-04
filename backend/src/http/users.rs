@@ -135,6 +135,16 @@ pub async fn delete_user(
     Ok(())
 }
 
+pub async fn reset_user_pin(
+    _admin: AdminUser,
+    Path(user_id): Path<Uuid>,
+    State(state): State<ApiContext>
+) -> Result<impl IntoResponse, ApiError> {
+    db::users::update_pin(&state.db, user_id, None).await?;
+
+    Ok(())
+}
+
 pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/users", get(get_users))
@@ -143,4 +153,5 @@ pub fn router() -> Router<ApiContext> {
         .route("/api/users/:id/transactions", get(get_user_transactions))
         .route("/api/users/:id/pin", put(update_user_pin))
         .route("/api/users/:id/check_pin", post(check_user_pin))
+        .route("/api/users/:id/reset_pin", put(reset_user_pin))
 }

@@ -4,4 +4,5 @@ export interface User {
   last_name: string;
   email: string;
   balance: number;
+  has_pin: boolean;
 }

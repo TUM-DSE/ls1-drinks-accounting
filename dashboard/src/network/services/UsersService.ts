@@ -64,4 +64,8 @@ export class UsersService {
   static deleteUser(id: string): Promise<void> {
     return client.delete(`/api/users/${id}`);
   }
+
+  static resetUserPin(id: string): Promise<void> {
+    return client.put(`/api/users/${id}/reset_pin`);
+  }
 }

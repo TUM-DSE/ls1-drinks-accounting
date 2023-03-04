@@ -2,10 +2,13 @@
 import HeaderView from "@/components/HeaderView.vue";
 import ProgressView from "@/components/ProgressView.vue";
 import {
+  PencilIcon,
   PlusIcon,
   UserIcon,
   CurrencyEuroIcon,
   TrashIcon,
+  LockClosedIcon,
+  LockOpenIcon,
 } from "@heroicons/vue/20/solid";
 import CurrencyFormatter from "../format/CurrencyFormatter";
 </script>
@@ -23,6 +26,7 @@ export default defineComponent({
       error: null,
       loading: false,
       deleting: null as User | null,
+      editing: null as User | null,
     };
   },
   created() {
@@ -32,6 +36,7 @@ export default defineComponent({
     fetch() {
       this.loading = true;
       this.deleting = null;
+      this.editing = null;
       UsersService.loadAll()
         .then((users) => {
           this.users = users;
@@ -48,9 +53,6 @@ export default defineComponent({
     newUser() {
       this.$router.push({ name: "addUser" });
     },
-    askDeleteUser(user: User) {
-      this.deleting = user;
-    },
     deleteUser() {
       const deleting = this.deleting;
       if (!deleting) {
@@ -58,6 +60,14 @@ export default defineComponent({
       }
 
       UsersService.deleteUser(deleting.id).then(() => this.fetch());
+    },
+    resetPassword() {
+      const editing = this.editing;
+      if (!editing) {
+        return;
+      }
+
+      UsersService.resetUserPin(editing.id).then(() => this.fetch());
     },
   },
 });
@@ -97,6 +107,16 @@ export default defineComponent({
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 truncate">
                 {{ user.last_name }}, {{ user.first_name }}
+                <LockClosedIcon
+                  title="User has set a pin"
+                  class="inline-block align-middle h-4 w-4"
+                  v-if="user.has_pin"
+                ></LockClosedIcon>
+                <LockOpenIcon
+                  title="User has not set a pin"
+                  class="inline-block align-middle h-4 w-4"
+                  v-else
+                ></LockOpenIcon>
               </p>
               <p class="text-sm text-gray-500 truncate">
                 {{ user.email }}
@@ -119,10 +139,22 @@ export default defineComponent({
                 <CurrencyEuroIcon class="block h-4 w-4" />
               </button>
               <button
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
-                @click="askDeleteUser(user)"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mr-2"
+                @click="
+                  deleting = user;
+                  editing = null;
+                "
               >
                 <TrashIcon class="block h-4 w-4" />
+              </button>
+              <button
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                @click="
+                  deleting = null;
+                  editing = user;
+                "
+              >
+                <PencilIcon class="block h-4 w-4" />
               </button>
             </div>
           </div>
@@ -155,6 +187,35 @@ export default defineComponent({
         <button
           class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
           @click="deleting = null"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <div
+      v-if="!!editing"
+      class="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative"
+    >
+      <div class="md:flex items-center">
+        <div class="mt-4 md:mt-0 text-center md:text-left">
+          <p class="font-bold mb-4">
+            Edit {{ editing.last_name }}, {{ editing.first_name }}
+          </p>
+          <p class="text-sm text-gray-700 mt-1">
+            The following actions cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-blue-200 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
+          @click="resetPassword()"
+        >
+          Reset password
+        </button>
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
+          @click="editing = null"
         >
           Cancel
         </button>

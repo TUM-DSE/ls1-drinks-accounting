@@ -54,7 +54,9 @@ pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<()
 pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
     let users = sqlx::query!(
         // language=postgresql
-        r#"select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances."user" = users.id"#
+        r#"select id, first_name, last_name, email, balances.sum, pin from users
+            left outer join balances on balances."user" = users.id
+            where users.deleted = false"#
     )
         .map(|row| {
             User {
@@ -75,7 +77,9 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
 pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
     let user = sqlx::query!(
         // language=postgresql
-        r#"select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances."user" = users.id where users.id = $1"#,
+        r#"select id, first_name, last_name, email, balances.sum, pin from users
+            left outer join balances on balances."user" = users.id
+            where users.id = $1 and users.deleted = false"#,
         id,
     )
         .map(|row| {
@@ -92,4 +96,23 @@ pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
         .await?;
 
     Ok(user)
+}
+
+pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), ApiError> {
+    let mut tx = db.begin().await?;
+
+    let result = sqlx::query!(
+        // language=postgresql
+        r#"update users set deleted = true where id = $1"#,
+        id
+    )
+    .execute(&mut tx)
+    .await?;
+
+    if result.rows_affected() != 1 {
+        Err(ApiError::NotFound("user not found".to_string()))
+    } else {
+        tx.commit().await?;
+        Ok(())
+    }
 }

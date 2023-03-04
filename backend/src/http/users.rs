@@ -1,13 +1,13 @@
 use crate::db;
 use crate::http::errors::ApiError;
 use crate::http::ApiContext;
-use crate::types::auth::AuthUser;
+use crate::types::auth::{AdminUser, AuthUser};
 use crate::types::users::UserResponse;
 use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::{get, post, put};
+use axum::routing::{get, post, put, delete};
 use axum::{Json, Router};
 use rand::Rng;
 use serde::Deserialize;
@@ -125,10 +125,21 @@ pub async fn check_user_pin(
     Ok((StatusCode::OK, Json(result)))
 }
 
+pub async fn delete_user(
+    _admin: AdminUser,
+    Path(user_id): Path<Uuid>,
+    State(state): State<ApiContext>
+) -> Result<impl IntoResponse, ApiError> {
+    db::users::delete_user(&state.db, user_id).await?;
+
+    Ok(())
+}
+
 pub fn router() -> Router<ApiContext> {
     Router::new()
         .route("/api/users", get(get_users))
         .route("/api/users", post(create_user))
+        .route("/api/users/:id", delete(delete_user))
         .route("/api/users/:id/transactions", get(get_user_transactions))
         .route("/api/users/:id/pin", put(update_user_pin))
         .route("/api/users/:id/check_pin", post(check_user_pin))

@@ -60,4 +60,8 @@ export class UsersService {
   }): Promise<void> {
     return client.post("/api/transactions/deposit", payload);
   }
+
+  static deleteUser(id: string): Promise<void> {
+    return client.delete(`/api/users/${id}`);
+  }
 }

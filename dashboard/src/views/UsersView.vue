@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import HeaderView from "@/components/HeaderView.vue";
 import ProgressView from "@/components/ProgressView.vue";
-import { PencilIcon, PlusIcon, UserIcon, CurrencyEuroIcon } from "@heroicons/vue/20/solid";
+import {
+  PlusIcon,
+  UserIcon,
+  CurrencyEuroIcon,
+  TrashIcon,
+} from "@heroicons/vue/20/solid";
 import CurrencyFormatter from "../format/CurrencyFormatter";
 </script>
 
@@ -17,6 +22,7 @@ export default defineComponent({
       users: [] as User[],
       error: null,
       loading: false,
+      deleting: null as User | null,
     };
   },
   created() {
@@ -25,6 +31,7 @@ export default defineComponent({
   methods: {
     fetch() {
       this.loading = true;
+      this.deleting = null;
       UsersService.loadAll()
         .then((users) => {
           this.users = users;
@@ -40,6 +47,17 @@ export default defineComponent({
     },
     newUser() {
       this.$router.push({ name: "addUser" });
+    },
+    askDeleteUser(user: User) {
+      this.deleting = user;
+    },
+    deleteUser() {
+      const deleting = this.deleting;
+      if (!deleting) {
+        return;
+      }
+
+      UsersService.deleteUser(deleting.id).then(() => this.fetch());
     },
   },
 });
@@ -95,21 +113,52 @@ export default defineComponent({
               class="inline-flex items-center text-sm text-gray-500 truncate"
             >
               <button
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mr-2"
                 @click="editUserBalance(user.id)"
               >
                 <CurrencyEuroIcon class="block h-4 w-4" />
               </button>
-<!--              <button-->
-<!--                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center ml-2"-->
-<!--                @click="editUser(user.id)"-->
-<!--              >-->
-<!--                <PencilIcon class="block h-4 w-4" />-->
-<!--              </button>-->
+              <button
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                @click="askDeleteUser(user)"
+              >
+                <TrashIcon class="block h-4 w-4" />
+              </button>
             </div>
           </div>
         </li>
       </ul>
+    </div>
+    <div
+      v-if="!!deleting"
+      class="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative"
+    >
+      <div class="md:flex items-center">
+        <div class="mt-4 md:mt-0 text-center md:text-left">
+          <p class="font-bold">
+            Delete {{ deleting.last_name }}, {{ deleting.first_name }}
+          </p>
+          <p class="text-sm text-gray-700 mt-1">
+            {{ deleting.last_name }}, {{ deleting.first_name }} will be deleted.
+            Past transactions will not be deleted, but the user will not be
+            visible anymore.
+          </p>
+        </div>
+      </div>
+      <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
+          @click="deleteUser()"
+        >
+          Delete
+        </button>
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
+          @click="deleting = null"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   </main>
 </template>

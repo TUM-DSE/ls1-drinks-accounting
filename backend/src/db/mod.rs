@@ -4,3 +4,4 @@ pub mod drinks;
 pub mod health;
 pub mod transactions;
 pub mod users;
+pub mod errors;

@@ -1,9 +1,9 @@
-use crate::http::errors::ApiError;
 use crate::types::app_configuration::AppConfiguration;
 use anyhow::Result;
 use sqlx::PgPool;
+use crate::db::errors::DbError;
 
-pub async fn get_app_version(db: &PgPool) -> Result<Option<AppConfiguration>, ApiError> {
+pub async fn get_app_version(db: &PgPool) -> Result<Option<AppConfiguration>, DbError> {
     let price_id = sqlx::query!(
         // language=postgresql
         r#"select * from app_configuration where id = 'app_version'"#,

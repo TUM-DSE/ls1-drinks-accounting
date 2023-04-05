@@ -3,8 +3,8 @@ use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Serialize;
 use std::fmt::{Display, Formatter};
+use crate::db::errors::DbError;
 
-/// TODO: only use ApiError in http, don't return ApiError from db
 #[derive(Debug)]
 pub enum ApiError {
     DatabaseError(sqlx::Error),
@@ -39,15 +39,13 @@ impl ErrorResponse {
     }
 }
 
-impl From<sqlx::Error> for ApiError {
-    fn from(e: sqlx::Error) -> Self {
-        if let sqlx::Error::Database(e) = &e {
-            if let Some(constraint) = e.constraint() {
-                return ApiError::BadRequest(format!("Constraint {constraint} not satisfied"));
-            }
+impl From<DbError> for ApiError {
+    fn from(value: DbError) -> Self {
+        match value {
+            DbError::NotFound(msg) => Self::NotFound(msg),
+            DbError::ConstraintUnsatisfied(constraint) => Self::BadRequest(format!("Constraint {constraint} not satisfied")),
+            DbError::DatabaseError(e) => Self::DatabaseError(e),
         }
-
-        ApiError::DatabaseError(e)
     }
 }
 
@@ -64,7 +62,7 @@ impl IntoResponse for ApiError {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 ErrorResponse::new("An unexpected exception has occured"),
             )
-                .into_response(),
+            .into_response(),
             ApiError::BadRequest(msg) => {
                 (StatusCode::BAD_REQUEST, ErrorResponse::new(msg)).into_response()
             }
@@ -75,7 +73,7 @@ impl IntoResponse for ApiError {
                 StatusCode::UNAUTHORIZED,
                 ErrorResponse::new("Unauthorized".to_string()),
             )
-                .into_response(),
+            .into_response(),
             ApiError::Internal(msg) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, ErrorResponse::new(msg)).into_response()
             }

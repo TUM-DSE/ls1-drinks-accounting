@@ -1,10 +1,10 @@
-use crate::http::errors::ApiError;
 use crate::types::users::{Purchase, Transaction, TransactionType};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
+use crate::db::errors::DbError;
 
-pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), ApiError> {
+pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), DbError> {
     let mut tx = db.begin().await?;
 
     let price = sqlx::query!(
@@ -39,7 +39,7 @@ pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), ApiEr
     Ok(())
 }
 
-pub async fn insert_deposit(db: &PgPool, user: Uuid, amount: f64) -> Result<(), ApiError> {
+pub async fn insert_deposit(db: &PgPool, user: Uuid, amount: f64) -> Result<(), DbError> {
     sqlx::query_scalar!(
         // language=postgresql
         r#"insert into deposits("user", amount) values ($1, $2)"#,
@@ -52,7 +52,7 @@ pub async fn insert_deposit(db: &PgPool, user: Uuid, amount: f64) -> Result<(), 
     Ok(())
 }
 
-pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction>, ApiError> {
+pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction>, DbError> {
     let count = sqlx::query_scalar!(
         // language=postgresql
         r#"select count(*) from users where id = $1"#,
@@ -62,7 +62,7 @@ pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction
     .await?;
 
     let Some(1) = count else {
-        return Err(ApiError::NotFound("User not found".to_string()));
+        return Err(DbError::NotFound("User not found".to_string()).into());
     };
 
     let mut deposits = sqlx::query!(

@@ -1,7 +1,7 @@
-use crate::http::errors::ApiError;
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
+use crate::db::errors::DbError;
 
 pub struct User {
     pub id: Uuid,
@@ -17,7 +17,7 @@ pub async fn insert(
     first_name: &str,
     last_name: &str,
     email: &str,
-) -> Result<Uuid, ApiError> {
+) -> Result<Uuid, DbError> {
     let user_id = sqlx::query_scalar!(
         // language=postgresql
         r#"insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"#,
@@ -31,7 +31,7 @@ pub async fn insert(
     Ok(user_id)
 }
 
-pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<(), ApiError> {
+pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<(), DbError> {
     let mut tx = db.begin().await?;
     let result = sqlx::query!(
         // language=postgresql
@@ -43,7 +43,7 @@ pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<()
     .await?;
 
     if result.rows_affected() != 1 {
-        return Err(ApiError::NotFound("user not found".to_string()));
+        return Err(DbError::NotFound("user not found".to_string()).into());
     }
 
     tx.commit().await?;
@@ -51,7 +51,7 @@ pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<()
     Ok(())
 }
 
-pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
+pub async fn get_all(db: &PgPool) -> Result<Vec<User>, DbError> {
     let users = sqlx::query!(
         // language=postgresql
         r#"select id, first_name, last_name, email, balances.sum, pin from users
@@ -72,7 +72,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
     Ok(users)
 }
 
-pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
+pub async fn get(db: &PgPool, id: Uuid) -> Result<User, DbError> {
     let user = sqlx::query!(
         // language=postgresql
         r#"select id, first_name, last_name, email, balances.sum, pin from users
@@ -94,7 +94,7 @@ pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
     Ok(user)
 }
 
-pub async fn get_all_with_negative_balance(db: &PgPool) -> Result<Vec<User>, ApiError> {
+pub async fn get_all_with_negative_balance(db: &PgPool) -> Result<Vec<User>, DbError> {
     let users = sqlx::query!(
         // language=postgresql
         r#"select id, first_name, last_name, email, balances.sum, pin from users
@@ -115,7 +115,7 @@ pub async fn get_all_with_negative_balance(db: &PgPool) -> Result<Vec<User>, Api
     Ok(users)
 }
 
-pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), ApiError> {
+pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), DbError> {
     let mut tx = db.begin().await?;
 
     let result = sqlx::query!(
@@ -127,7 +127,7 @@ pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), ApiError> {
     .await?;
 
     if result.rows_affected() != 1 {
-        Err(ApiError::NotFound("user not found".to_string()))
+        Err(DbError::NotFound("user not found".to_string()).into())
     } else {
         tx.commit().await?;
         Ok(())

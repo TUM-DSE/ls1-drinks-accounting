@@ -1,8 +1,8 @@
-use crate::http::errors::ApiError;
 use crate::types::drinks::{Drink, FullDrink};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
+use crate::db::errors::DbError;
 
 fn to_cents(euros: f64) -> i32 {
     (euros * 100.0) as i32
@@ -19,7 +19,7 @@ pub async fn insert(
     sale_price: f64,
     buy_price: Option<f64>,
     count: Option<i32>,
-) -> Result<Uuid, ApiError> {
+) -> Result<Uuid, DbError> {
     let mut tx = db.begin().await?;
 
     let price_id = sqlx::query_scalar!(
@@ -52,7 +52,7 @@ pub async fn update(
     name: &str,
     icon: &str,
     price: f64,
-) -> Result<Uuid, ApiError> {
+) -> Result<Uuid, DbError> {
     let mut tx = db.begin().await?;
     let (mut price_id, old_price) = sqlx::query!(
         // language=postgresql
@@ -96,7 +96,7 @@ pub async fn update_admin(
     sale_price: f64,
     buy_price: Option<f64>,
     amount: Option<i32>,
-) -> Result<Uuid, ApiError> {
+) -> Result<Uuid, DbError> {
     let mut tx = db.begin().await?;
     let (mut price_id, old_sale_price, old_buy_price) = sqlx::query!(
         // language=postgresql
@@ -134,7 +134,7 @@ pub async fn update_admin(
     Ok(id)
 }
 
-pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, ApiError> {
+pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, DbError> {
     let drinks = sqlx::query!(
         // language=postgresql
         r#"select drinks.*, dp.sale_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
@@ -152,7 +152,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, ApiError> {
     Ok(drinks)
 }
 
-pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, ApiError> {
+pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, DbError> {
     let drinks = sqlx::query!(
         // language=postgresql
         r#"select drinks.*, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
@@ -170,60 +170,3 @@ pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, ApiError> {
 
     Ok(drinks)
 }
-
-// pub async fn update_drinks_amount(db: &PgPool, id: Uuid, amount: u32) -> Result<(), ApiError> {
-//     let mut tx = db.begin().await?;
-//
-//     let result = sqlx::query!(
-//         // language=postgresql
-//         r#"update drinks set amount = $1 where id = $2"#,
-//         amount as i32,
-//         id
-//     )
-//     .execute(&mut tx)
-//     .await?;
-//
-//     if result.rows_affected() != 1 {
-//         tx.rollback().await?;
-//         return Err(ApiError::NotFound("drink not found".to_string()));
-//     }
-//
-//     tx.commit().await?;
-//     Ok(())
-// }
-//
-// pub async fn update_price(
-//     db: &PgPool,
-//     id: Uuid,
-//     sale_price: f64,
-//     buy_price: f64,
-// ) -> Result<(), ApiError> {
-//     let mut tx = db.begin().await?;
-//
-//     let price_id = sqlx::query_scalar!(
-//         // language=postgresql
-//         r#"insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"#,
-//         (sale_price * 100.0) as i32,
-//         (buy_price * 100.0) as i32
-//     )
-//     .fetch_one(&mut tx)
-//     .await?;
-//
-//     let result = sqlx::query!(
-//         // language=postgresql
-//         r#"update drinks set price = $1 where id = $2"#,
-//         price_id,
-//         id
-//     )
-//     .execute(&mut tx)
-//     .await?;
-//
-//     if result.rows_affected() != 1 {
-//         tx.rollback().await?;
-//         // TODO: properly separate api errors from db errors
-//         return Err(ApiError::NotFound("drink not found".to_string()));
-//     }
-//
-//     tx.commit().await?;
-//     Ok(())
-// }

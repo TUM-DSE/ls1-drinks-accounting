@@ -103,6 +103,54 @@
     },
     "query": "insert into deposits(\"user\", amount) values ($1, $2)"
   },
+  "2a41082136af456a3e202828ef0fd9f33dd3449556c66b291c9f85fc8b77bd5e": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "first_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "last_name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "sum",
+          "ordinal": 4,
+          "type_info": "Int8"
+        },
+        {
+          "name": "pin",
+          "ordinal": 5,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "select id, first_name, last_name, email, balances.sum, pin from users\n            left outer join balances on balances.\"user\" = users.id\n            where users.deleted = false and balances.sum < 0"
+  },
   "37fa3b5306f954b757b940bf057a37b22de0bb581945888baad711e5a15f78f6": {
     "describe": {
       "columns": [],

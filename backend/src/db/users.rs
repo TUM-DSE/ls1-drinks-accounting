@@ -58,18 +58,16 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<User>, ApiError> {
             left outer join balances on balances."user" = users.id
             where users.deleted = false"#
     )
-        .map(|row| {
-            User {
-                id: row.id,
-                first_name: row.first_name,
-                last_name: row.last_name,
-                email: row.email,
-                balance: (row.sum.unwrap_or(0) as f64) / 100.0,
-                pin: row.pin,
-            }
-        })
-        .fetch_all(db)
-        .await?;
+    .map(|row| User {
+        id: row.id,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        email: row.email,
+        balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+        pin: row.pin,
+    })
+    .fetch_all(db)
+    .await?;
 
     Ok(users)
 }
@@ -82,20 +80,39 @@ pub async fn get(db: &PgPool, id: Uuid) -> Result<User, ApiError> {
             where users.id = $1 and users.deleted = false"#,
         id,
     )
-        .map(|row| {
-            User {
-                id: row.id,
-                first_name: row.first_name,
-                last_name: row.last_name,
-                email: row.email,
-                balance: (row.sum.unwrap_or(0) as f64) / 100.0,
-                pin: row.pin,
-            }
-        })
-        .fetch_one(db)
-        .await?;
+    .map(|row| User {
+        id: row.id,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        email: row.email,
+        balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+        pin: row.pin,
+    })
+    .fetch_one(db)
+    .await?;
 
     Ok(user)
+}
+
+pub async fn get_all_with_negative_balance(db: &PgPool) -> Result<Vec<User>, ApiError> {
+    let users = sqlx::query!(
+        // language=postgresql
+        r#"select id, first_name, last_name, email, balances.sum, pin from users
+            left outer join balances on balances."user" = users.id
+            where users.deleted = false and balances.sum < 0"#
+    )
+    .map(|row| User {
+        id: row.id,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        email: row.email,
+        balance: (row.sum.unwrap_or(0) as f64) / 100.0,
+        pin: row.pin,
+    })
+    .fetch_all(db)
+    .await?;
+
+    Ok(users)
 }
 
 pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), ApiError> {

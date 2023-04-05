@@ -2,13 +2,28 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde::Serialize;
+use std::fmt::{Display, Formatter};
 
+/// TODO: only use ApiError in http, don't return ApiError from db
+#[derive(Debug)]
 pub enum ApiError {
     DatabaseError(sqlx::Error),
     NotFound(String),
     BadRequest(String),
     Unauthorized,
     Internal(String),
+}
+
+impl Display for ApiError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ApiError::DatabaseError(e) => write!(f, "DatabaseError: {e}"),
+            ApiError::NotFound(e) => write!(f, "NotFound: {e}"),
+            ApiError::BadRequest(e) => write!(f, "BadRequest: {e}"),
+            ApiError::Unauthorized => write!(f, "Unauthorized"),
+            ApiError::Internal(e) => write!(f, "Internal: {e}"),
+        }
+    }
 }
 
 #[derive(Serialize)]

@@ -28,6 +28,9 @@ jsonwebtoken = "8.2.0"
 chrono = { version = "0.4.23", features = ["serde"] }
 axum-macros = "0.3.0"
 semver = { version = "1.0.16", features = ["serde"] }
+cronjob = "0.4.17"
+lettre = "0.10.4"
+futures = "0.3.28"
 
 [build-dependencies]
 sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }

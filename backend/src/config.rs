@@ -12,4 +12,25 @@ pub struct Config {
     /// In practice, it should be a long, random string that would be infeasible to brute-force.
     #[clap(long, env)]
     pub jwt_secret: String,
+
+    /// Enable email notifications if users have negative balance
+    #[clap(long, env, default_value_t = false)]
+    pub enable_email: bool,
+
+    /// Sender address which is used in the "From" field
+    /// Can be an email address only, or in the format "Name <email address>" (without quotes)
+    #[clap(env)]
+    pub mail_sender: Option<String>,
+
+    /// The smtp username from which emails are sent
+    #[clap(env)]
+    pub smtp_user: Option<String>,
+
+    /// The smtp password for the user specified in smtp_user
+    #[clap(env)]
+    pub smtp_password: Option<String>,
+
+    /// Host from which the emails are sent
+    #[clap(env)]
+    pub smtp_host: Option<String>,
 }

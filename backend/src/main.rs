@@ -1,6 +1,7 @@
 mod config;
 mod db;
 mod http;
+mod mail;
 mod types;
 mod utils;
 
@@ -25,11 +26,31 @@ async fn main() -> anyhow::Result<()> {
 
     sqlx::migrate!().run(&db).await?;
 
+    if config.enable_email {
+        mail::setup_cron(
+            mail::SmtpConfig {
+                from: config
+                    .mail_sender
+                    .clone()
+                    .context("Config option 'MAIL_SENDER' is missing")?,
+                user: config
+                    .smtp_user
+                    .clone()
+                    .context("Config option 'SMTP_USER' is missing")?,
+                password: config
+                    .smtp_password
+                    .clone()
+                    .context("Config option 'SMTP_PASSWORD' is missing")?,
+                host: config
+                    .smtp_host
+                    .clone()
+                    .context("Config option 'SMTP_HOST' is missing")?,
+            },
+            db.clone(),
+        );
+    }
+
     http::serve(config, db).await?;
 
     Ok(())
 }
-
-// async fn root() -> impl IntoResponse {
-//     (StatusCode::OK, Json("Hello, World!"))
-// }

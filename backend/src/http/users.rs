@@ -7,7 +7,7 @@ use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::{get, post, put, delete};
+use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
 use rand::Rng;
 use serde::Deserialize;
@@ -128,7 +128,7 @@ pub async fn check_user_pin(
 pub async fn delete_user(
     _admin: AdminUser,
     Path(user_id): Path<Uuid>,
-    State(state): State<ApiContext>
+    State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
     db::users::delete_user(&state.db, user_id).await?;
 
@@ -138,7 +138,7 @@ pub async fn delete_user(
 pub async fn reset_user_pin(
     _admin: AdminUser,
     Path(user_id): Path<Uuid>,
-    State(state): State<ApiContext>
+    State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
     db::users::update_pin(&state.db, user_id, None).await?;
 

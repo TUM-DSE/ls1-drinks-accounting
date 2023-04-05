@@ -14,56 +14,6 @@
     },
     "query": "insert into transactions(\"user\", drink, price) values ($1, $2, $3)"
   },
-  "0537e19005e27116f0f5abab31efcc13fbd015efabdcd6d3ace8088c6343c753": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Uuid"
-        },
-        {
-          "name": "first_name",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "last_name",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "email",
-          "ordinal": 3,
-          "type_info": "Text"
-        },
-        {
-          "name": "sum",
-          "ordinal": 4,
-          "type_info": "Int8"
-        },
-        {
-          "name": "pin",
-          "ordinal": 5,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        true,
-        true
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      }
-    },
-    "query": "select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances.\"user\" = users.id where users.id = $1"
-  },
   "165e0c5fdd23c8cccee20c023f65dd4939c15a878fb06df4bfe68ece4b11007d": {
     "describe": {
       "columns": [
@@ -286,6 +236,18 @@
     },
     "query": "select count(*) from users where id = $1"
   },
+  "6f7de21bc86be96773d14d18d6d4ff73b60e10a49e526131eca743ce1773d318": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "update users set deleted = true where id = $1"
+  },
   "7ab715c59780e31f4aecfa75f716e5ceb6e234919bd9e3f34fdf9ec64da909a7": {
     "describe": {
       "columns": [
@@ -337,6 +299,54 @@
       }
     },
     "query": "select dp.id, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on drinks.price = dp.id where drinks.id = $1"
+  },
+  "8891e6cbe5657f8b630271369c18004962a2de7260ed38e4dceac42387e29eb6": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "first_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "last_name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "sum",
+          "ordinal": 4,
+          "type_info": "Int8"
+        },
+        {
+          "name": "pin",
+          "ordinal": 5,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "select id, first_name, last_name, email, balances.sum, pin from users\n            left outer join balances on balances.\"user\" = users.id\n            where users.deleted = false"
   },
   "ac905f52f9a44dfd4aabcf14880998005e85438048a824538fdc16727a2e129d": {
     "describe": {
@@ -457,54 +467,6 @@
       }
     },
     "query": "insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"
-  },
-  "c7930148cdf2b2dfa8b8a4b3ccdecb00c9622fb79cf90ef7a8aef5016cb5dce4": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Uuid"
-        },
-        {
-          "name": "first_name",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "last_name",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "email",
-          "ordinal": 3,
-          "type_info": "Text"
-        },
-        {
-          "name": "sum",
-          "ordinal": 4,
-          "type_info": "Int8"
-        },
-        {
-          "name": "pin",
-          "ordinal": 5,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        true,
-        true
-      ],
-      "parameters": {
-        "Left": []
-      }
-    },
-    "query": "select id, first_name, last_name, email, balances.sum, pin from users left outer join balances on balances.\"user\" = users.id"
   },
   "d915699be6ecbfb13aa1f8ab65e18d37f8ea9323c6c84cfcad950b9e683973ed": {
     "describe": {
@@ -642,6 +604,56 @@
       }
     },
     "query": "select * from deposits where \"user\" = $1"
+  },
+  "f00e81533c9c46e5adaeaae76881c6df9bf787a477c2476c7d50e47bd072eba0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "first_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "last_name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "sum",
+          "ordinal": 4,
+          "type_info": "Int8"
+        },
+        {
+          "name": "pin",
+          "ordinal": 5,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "select id, first_name, last_name, email, balances.sum, pin from users\n            left outer join balances on balances.\"user\" = users.id\n            where users.id = $1 and users.deleted = false"
   },
   "f5cab6ec7c4b0986f95f0b0e93eea787d2ada600583ba8dd6b2ac239b71df4a4": {
     "describe": {

@@ -1,7 +1,7 @@
+use crate::db::errors::DbError;
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::db::errors::DbError;
 
 pub struct User {
     pub id: Uuid,
@@ -43,7 +43,7 @@ pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<()
     .await?;
 
     if result.rows_affected() != 1 {
-        return Err(DbError::NotFound("user not found".to_string()).into());
+        return Err(DbError::NotFound("user not found".to_string()));
     }
 
     tx.commit().await?;
@@ -127,7 +127,7 @@ pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), DbError> {
     .await?;
 
     if result.rows_affected() != 1 {
-        Err(DbError::NotFound("user not found".to_string()).into())
+        Err(DbError::NotFound("user not found".to_string()))
     } else {
         tx.commit().await?;
         Ok(())

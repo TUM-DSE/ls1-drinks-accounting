@@ -1,7 +1,7 @@
+use crate::db::errors::DbError;
 use crate::types::app_configuration::AppConfiguration;
 use anyhow::Result;
 use sqlx::PgPool;
-use crate::db::errors::DbError;
 
 pub async fn get_app_version(db: &PgPool) -> Result<Option<AppConfiguration>, DbError> {
     let price_id = sqlx::query!(

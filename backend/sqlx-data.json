@@ -191,6 +191,19 @@
     },
     "query": "select * from app_configuration where id = 'app_version'"
   },
+  "5d861d0ae1203afd870d1bde036cc1c1c6f337681b0f3e90a673e44e2618df01": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Int4"
+        ]
+      }
+    },
+    "query": "insert into drink_restocks (drink, amount) values ($1, $2)"
+  },
   "62dfb18106be3b4fe4783e241c003fb80fe9b2371db55e0fd6cfef82d03b2216": {
     "describe": {
       "columns": [],
@@ -418,6 +431,45 @@
     },
     "query": "insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"
   },
+  "af1558744bc4f4c1fcbf50c722c431d2ab9884a80396275237fe9d45be444014": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "date",
+          "ordinal": 2,
+          "type_info": "Date"
+        },
+        {
+          "name": "amount",
+          "ordinal": 3,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Date",
+          "Date"
+        ]
+      }
+    },
+    "query": "(select d.id, d.name, dr.date::date as \"date\", SUM(dr.amount) as \"amount\" from drink_restocks dr\ninner join drinks d on d.id = dr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date\nunion\nselect d.id, d.name, tr.date::date as \"date\", -1 as \"amount\" from transactions tr\ninner join drinks d on d.id = tr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date)\norder by id, date"
+  },
   "b8517c0d3e43e063cb3846aeb16ecaaffb67ec85f2d0d0083a3ae06e15ef471a": {
     "describe": {
       "columns": [
@@ -515,6 +567,26 @@
       }
     },
     "query": "insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"
+  },
+  "c27d817fbd0335f904e05bb645079ad453bf4db3acc04b39e042dff1a65140a1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "amount",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      }
+    },
+    "query": "select d.amount from drinks d where d.id = $1"
   },
   "d915699be6ecbfb13aa1f8ab65e18d37f8ea9323c6c84cfcad950b9e683973ed": {
     "describe": {

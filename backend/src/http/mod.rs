@@ -13,6 +13,7 @@ pub mod drinks;
 pub mod errors;
 pub mod extractors;
 pub mod health;
+pub mod stats;
 pub mod transactions;
 pub mod users;
 
@@ -44,4 +45,5 @@ fn api_router() -> Router<ApiContext> {
         .merge(auth::router())
         .merge(app_configuration::router())
         .merge(health::router())
+        .merge(stats::router())
 }

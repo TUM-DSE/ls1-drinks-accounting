@@ -1,8 +1,8 @@
+use crate::db::errors::DbError;
 use crate::types::auth::{AuthUserData, Role};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::db::errors::DbError;
 
 pub async fn get_user_by_username(db: &PgPool, username: &str) -> Result<AuthUserData, DbError> {
     let user = sqlx::query!(

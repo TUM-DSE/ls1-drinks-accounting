@@ -36,7 +36,7 @@ export default defineComponent({
   data() {
     return {
       navigation: [
-        // { name: "Dashboard", href: "/" },
+        { name: "Statistics", href: "/stats" },
         { name: "Users", href: "/users" },
         { name: "Drinks", href: "/drinks" },
       ].map((item) => {

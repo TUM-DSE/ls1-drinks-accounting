@@ -1,8 +1,8 @@
+use crate::db::errors::DbError;
 use crate::types::users::{Purchase, Transaction, TransactionType};
 use anyhow::Result;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::db::errors::DbError;
 
 pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), DbError> {
     let mut tx = db.begin().await?;
@@ -62,7 +62,7 @@ pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction
     .await?;
 
     let Some(1) = count else {
-        return Err(DbError::NotFound("User not found".to_string()).into());
+        return Err(DbError::NotFound("User not found".to_string()));
     };
 
     let mut deposits = sqlx::query!(

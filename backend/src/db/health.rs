@@ -1,6 +1,6 @@
+use crate::db::errors::DbError;
 use anyhow::Result;
 use sqlx::PgPool;
-use crate::db::errors::DbError;
 
 pub async fn get_all(db: &PgPool) -> Result<bool, DbError> {
     let result = sqlx::query_scalar!(

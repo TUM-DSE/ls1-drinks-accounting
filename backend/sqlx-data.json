@@ -103,6 +103,45 @@
     },
     "query": "insert into deposits(\"user\", amount) values ($1, $2)"
   },
+  "27aef00b68a52f4ec0314cb4f28da237b88a6c1e103ca3cff3f80d8bc0451452": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Uuid"
+        },
+        {
+          "name": "name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "date",
+          "ordinal": 2,
+          "type_info": "Date"
+        },
+        {
+          "name": "amount",
+          "ordinal": 3,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Date",
+          "Date"
+        ]
+      }
+    },
+    "query": "(select d.id, d.name, dr.date::date as \"date\", SUM(dr.amount) as \"amount\" from drink_restocks dr\ninner join drinks d on d.id = dr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date\nunion\nselect d.id, d.name, tr.date::date as \"date\", -count(*) as \"amount\" from transactions tr\ninner join drinks d on d.id = tr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date)\norder by id, date"
+  },
   "2a41082136af456a3e202828ef0fd9f33dd3449556c66b291c9f85fc8b77bd5e": {
     "describe": {
       "columns": [
@@ -430,45 +469,6 @@
       }
     },
     "query": "insert into users (first_name, last_name, email) values ($1, $2, $3) returning id"
-  },
-  "af1558744bc4f4c1fcbf50c722c431d2ab9884a80396275237fe9d45be444014": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Uuid"
-        },
-        {
-          "name": "name",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "date",
-          "ordinal": 2,
-          "type_info": "Date"
-        },
-        {
-          "name": "amount",
-          "ordinal": 3,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        null,
-        null,
-        null,
-        null
-      ],
-      "parameters": {
-        "Left": [
-          "Date",
-          "Date"
-        ]
-      }
-    },
-    "query": "(select d.id, d.name, dr.date::date as \"date\", SUM(dr.amount) as \"amount\" from drink_restocks dr\ninner join drinks d on d.id = dr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date\nunion\nselect d.id, d.name, tr.date::date as \"date\", -1 as \"amount\" from transactions tr\ninner join drinks d on d.id = tr.drink\nwhere date::date >= $1::date and date::date <= $2::date\ngroup by d.id, d.name, date::date)\norder by id, date"
   },
   "b8517c0d3e43e063cb3846aeb16ecaaffb67ec85f2d0d0083a3ae06e15ef471a": {
     "describe": {

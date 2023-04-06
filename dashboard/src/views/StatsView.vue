@@ -80,11 +80,9 @@ export default defineComponent({
         for (const label of labels) {
           if (groupedByDate[label]) {
             const count = groupedByDate[label][0].count;
-            data.push(count);
-            lastVal = count;
-          } else {
-            data.push(lastVal);
+            lastVal += count;
           }
+          data.push(lastVal);
         }
 
         datasets.push({

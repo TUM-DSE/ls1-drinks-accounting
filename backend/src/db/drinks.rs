@@ -207,7 +207,7 @@ inner join drinks d on d.id = dr.drink
 where date::date >= $1::date and date::date <= $2::date
 group by d.id, d.name, date::date
 union
-select d.id, d.name, tr.date::date as "date", -1 as "amount" from transactions tr
+select d.id, d.name, tr.date::date as "date", -count(*) as "amount" from transactions tr
 inner join drinks d on d.id = tr.drink
 where date::date >= $1::date and date::date <= $2::date
 group by d.id, d.name, date::date)

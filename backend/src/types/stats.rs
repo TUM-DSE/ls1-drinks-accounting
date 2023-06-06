@@ -21,3 +21,18 @@ pub struct DrinkStatsResponse {
     pub to: NaiveDate,
     pub drinks: Vec<DrinkStats>,
 }
+
+#[derive(Serialize)]
+pub struct UserStats {
+    pub id: Uuid,
+    pub first_name: String,
+    pub last_name: String,
+    pub data: Vec<StatsDataPoint>,
+}
+
+#[derive(Serialize)]
+pub struct UserStatsResponse {
+    pub from: NaiveDate,
+    pub to: NaiveDate,
+    pub users: Vec<UserStats>,
+}

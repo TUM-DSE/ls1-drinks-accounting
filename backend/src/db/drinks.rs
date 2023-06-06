@@ -1,6 +1,6 @@
 use crate::db::errors::DbError;
 use crate::types::drinks::{Drink, FullDrink};
-use crate::types::stats::{DrinkStats, StatsDataPoint};
+use crate::types::stats::{DrinkStats, StatsDataPoint, UserStats};
 use anyhow::Result;
 use chrono::NaiveDate;
 use itertools::Itertools;
@@ -222,19 +222,52 @@ order by id, date"#,
     .iter()
     .group_by(|row| (&row.0, &row.1))
     .into_iter()
-    .map(|((id, name), values)| {
-            DrinkStats {
-                id: *id,
-                name: name.clone(),
-                data: values
-                .map(|(_, _, date, amount)| StatsDataPoint {
-                    date: *date,
-                    count: *amount,
-                })
-                .collect(),
-            }
+    .map(|((id, name), values)| DrinkStats {
+        id: *id,
+        name: name.clone(),
+        data: values
+        .map(|(_, _, date, amount)| StatsDataPoint {
+            date: *date,
+            count: *amount,
+        })
+        .collect(),
     })
     .collect::<Vec<_>>();
+
+    Ok(result)
+}
+
+pub async fn get_user_stats_between(
+    db: &PgPool,
+    drink: Uuid,
+    from: NaiveDate,
+    to: NaiveDate,
+) -> Result<Vec<UserStats>, DbError> {
+    let result = sqlx::query!(
+        // language=postgresql
+        r#"select u.id, u.first_name, u.last_name, tr.date::date as "date", count(*) as count from transactions tr
+inner join users u on u.id = tr."user"
+inner join drinks d on d.id = tr.drink
+where d.id = $1 and date::date >= $2::date and date::date <= $3::date
+group by u.id, tr.date::date;
+"#,
+        drink, from, to
+    )
+    .fetch_all(db)
+    .await?
+    .iter()
+    .group_by(|row| (row.id, &row.first_name, &row.last_name))
+    .into_iter()
+    .map(|((id, first_name, last_name), values)| UserStats {
+        id,
+        first_name: first_name.clone(),
+        last_name: last_name.clone(),
+        data: values.map(|val| StatsDataPoint {
+            date: val.date.unwrap(),
+            count: val.count.unwrap() as i32,
+        }).collect(),
+    }
+    ).collect();
 
     Ok(result)
 }

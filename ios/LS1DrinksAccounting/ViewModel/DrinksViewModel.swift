@@ -19,6 +19,8 @@ class DrinksViewModel: ObservableObject {
     }
     
     @Published var isLoading = false
+    @Published var showPinLoading = false
+    private var isCheckingPin = false
     @Published var error: String? = nil
     @Published var errorBuyingDrink: String? = nil
     @Published var loadingDrink: UUID? = nil
@@ -73,9 +75,17 @@ class DrinksViewModel: ObservableObject {
         guard let user else {
             return false
         }
-        defer { self.isLoading = false }
+        let x = DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if self.isCheckingPin {
+                self.showPinLoading = true
+            }
+        }
+        defer {
+            self.isCheckingPin = false
+            self.showPinLoading = false
+        }
         
-        self.isLoading = true
+        self.isCheckingPin = true
         
         do {
             return try await model.checkPin(for: user, pin: pin)

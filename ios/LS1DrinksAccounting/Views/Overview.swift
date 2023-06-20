@@ -66,6 +66,8 @@ struct Overview: View {
                         .navigationTitle(selection.name)
                 } else {
                     Text("Pick a person")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color(UIColor.secondarySystemBackground))
                 }
             }
         }

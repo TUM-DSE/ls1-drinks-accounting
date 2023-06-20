@@ -44,14 +44,22 @@ struct SelectDrinkView: View {
                 Text("Error loading items: \(error)")
             } else if let user = viewModel.user {
                 if viewModel.shouldShowEnterPin {
-                    VStack {
-                        Text("Enter pin")
+                    VStack(spacing: 40) {
+                        Text("Enter passcode")
                             .font(.title)
-                        PasscodeField(handler: { pin, _ in
-                            Task {
-                                await viewModel.checkPin(pin: pin)
+                        ZStack {
+                            PasscodeField(handler: { pin, handler in
+                                Task {
+                                    let result = await viewModel.checkPin(pin: pin)
+                                    handler(result)
+                                }
+                            })
+                            if viewModel.showPinLoading {
+                                ProgressView()
+                                    .frame(width: 120, height: 120)
+                                    .background(BlurView().cornerRadius(16))
                             }
-                        })
+                        }
                         .frame(maxWidth: 400)
                     }
                 } else {
@@ -92,11 +100,13 @@ struct SelectDrinkView: View {
                             HStack {
                                 if viewModel.user?.has_pin == true {
                                     Button(action: { model.logoutUser() }) {
-                                        Image(systemName: "lock.fill")
+                                        Label("Lock", systemImage: "lock.fill")
+                                            .labelStyle(.titleAndIcon)
                                     }
                                 }
                                 Button(action: { showingChangePasswordDialog = true }) {
-                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                    Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")
+                                        .labelStyle(.titleAndIcon)
                                 }
                             }
                         }
@@ -109,7 +119,7 @@ struct SelectDrinkView: View {
                                     showingChangePasswordDialog = false
                                 }
                             })
-                            .navigationTitle("Set user pin")
+                            .navigationTitle("Set passcode for user")
                             .frame(maxWidth: 400)
                         }
                     })
@@ -118,6 +128,8 @@ struct SelectDrinkView: View {
                 Text("Error")
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(UIColor.secondarySystemBackground))
         .onAppear {
             Task {
                 await viewModel.loadDrinks()

@@ -25,7 +25,9 @@ ENV SQLX_OFFLINE true
 RUN cargo build --release
 
 # our final base
-FROM debian:latest
+FROM debian:bullseye-slim
+
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # copy the build artifact from the build stage
 COPY --from=build /drinks-accounting/target/release/drinks-accounting /

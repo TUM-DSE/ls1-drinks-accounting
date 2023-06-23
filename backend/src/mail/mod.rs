@@ -8,9 +8,8 @@ use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use log::{error, info};
 use sqlx::PgPool;
-use std::thread;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SmtpConfig {
     pub from: String,
     pub user: String,
@@ -19,18 +18,21 @@ pub struct SmtpConfig {
 }
 
 pub fn setup_cron(config: SmtpConfig, pool: PgPool) {
-    thread::spawn(|| {
-        let mut cron = CronJob::new("", move |_: &str| {
-            futures::executor::block_on(process_users(&config, &pool))
+    let mut cron = CronJob::new("", move |_: &str| {
+        let config = config.clone();
+        let pool = pool.clone();
+        tokio::spawn(async move {
+            process_users(&config, &pool)
+                .await
                 .context("Failed to send emails to users")
                 .unwrap();
         });
-        cron.day_of_month("1");
-        cron.seconds("0");
-        cron.hours("0");
-        cron.minutes("0");
-        cron.start_job();
     });
+    cron.day_of_month("1");
+    cron.seconds("0");
+    cron.hours("0");
+    cron.minutes("0");
+    cron.start_job();
 }
 
 async fn process_users(config: &SmtpConfig, pool: &PgPool) -> Result<()> {
@@ -86,7 +88,8 @@ fn send_balance_email(
                 }
             };
             format!(
-                "| {} | {: >7.2} € | {transaction_type}",
+                // language=html
+                r#"<tr><td>{}</td><td style="text-align: right !important;">{: >7.2} €</td><td>{transaction_type}</td></tr>"#,
                 t.timestamp.format("%d.%m.%Y %T"),
                 t.amount
             )
@@ -106,15 +109,39 @@ fn send_balance_email(
             .parse()
             .context("Invalid email address for user")?)
         .subject("LS1 Coffee Balance")
-        .header(ContentType::TEXT_PLAIN)
+        .header(ContentType::TEXT_HTML)
         .body(format!(
-            r#"Hi {}!
+            // language=html
+            r#"
+<head>
+<style>
+table {{
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}}
 
-Your balance has fallen to {:.2} €. Please come by Sophia's Office and to up your account.
-Find a list of your transactions below:
+td, th {{
+  border: 1px solid #000000;
+  text-align: left;
+  padding: 4px;
+}}
+</style>
+</head>
+<body>
+<p>Hi {},</p>
 
+<p>your balance has fallen to <b>{:.2} €</b>. Please come by Sophia's Office to top up your account.
+Find a list of your transactions below:</p>
+
+<table>
+<tr>
+<th>Date</th>
+<th>Amount</th>
+<th>Transaction</th>
+</tr>
 {}
-
+</table>
+</body>
 "#,
             user.first_name, user.balance, formatted_transactions
         ))

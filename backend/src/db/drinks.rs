@@ -219,22 +219,20 @@ order by id, date"#,
     .await?;
 
     let result = result
-    .iter()
-    .group_by(|row| (&row.0, &row.1))
-    .into_iter()
-    .map(|((id, name), values)| {
-            DrinkStats {
-                id: *id,
-                name: name.clone(),
-                data: values
+        .iter()
+        .group_by(|row| (&row.0, &row.1))
+        .into_iter()
+        .map(|((id, name), values)| DrinkStats {
+            id: *id,
+            name: name.clone(),
+            data: values
                 .map(|(_, _, date, amount)| StatsDataPoint {
                     date: *date,
                     count: *amount,
                 })
                 .collect(),
-            }
-    })
-    .collect::<Vec<_>>();
+        })
+        .collect::<Vec<_>>();
 
     Ok(result)
 }

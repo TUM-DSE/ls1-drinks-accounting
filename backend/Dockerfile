@@ -1,4 +1,4 @@
-FROM rust:latest as build
+FROM rust:1.70-bookworm as build
 
 # create a new empty shell project
 RUN USER=root cargo new --bin drinks-accounting
@@ -25,7 +25,7 @@ ENV SQLX_OFFLINE true
 RUN cargo build --release
 
 # our final base
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 

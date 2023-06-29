@@ -18,7 +18,7 @@ default_platform(:ios)
 platform :ios do
   desc "Description of what the lane does"
   lane :build do
-    set_info_plist_value(path: "./LS1DrinksAccounting/Info.plist", key: "APP_VERSION", value: sh("git describe --tags --dirty --always | tr -d '\n'"))
+    set_info_plist_value(path: "./LS1DrinksAccounting/Info.plist", key: "APP_VERSION", value: sh("git describe --tags --dirty --always | sed 's/^v\(.*\)/\1/' | tr -d 'v\n'"))
     build_app(
       configuration: "Release",
       export_method: "development"

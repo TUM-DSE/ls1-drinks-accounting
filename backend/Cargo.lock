@@ -381,23 +381,13 @@ checksum = "9cace84e55f07e7301bae1c519df89cdad8cc3cd868413d3fdbdeca9ff3db484"
 
 [[package]]
 name = "cron"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d76219e9243e100d5a37676005f08379297f8addfebc247613299600625c734d"
+checksum = "1ff76b51e4c068c52bfd2866e1567bee7c567ae8f24ada09fd4307019e25eab7"
 dependencies = [
  "chrono",
  "nom",
  "once_cell",
-]
-
-[[package]]
-name = "cronjob"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e596f513d5b176f3cb139af86439c9f97c1ba61ff15eb266059afc8fab27f6dc"
-dependencies = [
- "chrono",
- "cron",
 ]
 
 [[package]]
@@ -525,7 +515,6 @@ dependencies = [
  "axum-macros",
  "chrono",
  "clap",
- "cronjob",
  "dotenv",
  "env_logger",
  "futures",
@@ -541,6 +530,7 @@ dependencies = [
  "sqlx",
  "time 0.3.20",
  "tokio",
+ "tokio-cron-scheduler",
  "tower",
  "tower-http",
  "tracing",
@@ -1209,6 +1199,17 @@ dependencies = [
  "autocfg",
  "num-integer",
  "num-traits",
+]
+
+[[package]]
+name = "num-derive"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "876a53fff98e03a936a674b29568b0e605f06b29372c2489ff4de23f1949743d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -2071,6 +2072,21 @@ dependencies = [
  "socket2",
  "tokio-macros",
  "windows-sys 0.45.0",
+]
+
+[[package]]
+name = "tokio-cron-scheduler"
+version = "0.9.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de2c1fd54a857b29c6cd1846f31903d0ae8e28175615c14a277aed45c58d8e27"
+dependencies = [
+ "chrono",
+ "cron",
+ "num-derive",
+ "num-traits",
+ "tokio",
+ "tracing",
+ "uuid",
 ]
 
 [[package]]

@@ -47,7 +47,8 @@ async fn main() -> anyhow::Result<()> {
                     .context("Config option 'SMTP_HOST' is missing")?,
             },
             db.clone(),
-        );
+        )
+        .await?;
     }
 
     http::serve(config, db).await?;

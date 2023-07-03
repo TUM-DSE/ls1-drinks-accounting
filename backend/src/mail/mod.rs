@@ -2,12 +2,12 @@ use crate::db;
 use crate::db::users::User;
 use crate::types::users::{Transaction, TransactionType};
 use anyhow::{anyhow, Context, Result};
-use cronjob::CronJob;
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use log::{error, info};
 use sqlx::PgPool;
+use tokio_cron_scheduler::{Job, JobScheduler};
 
 #[derive(Debug, Clone)]
 pub struct SmtpConfig {
@@ -17,22 +17,29 @@ pub struct SmtpConfig {
     pub host: String,
 }
 
-pub fn setup_cron(config: SmtpConfig, pool: PgPool) {
-    let mut cron = CronJob::new("", move |_: &str| {
-        let config = config.clone();
-        let pool = pool.clone();
-        tokio::spawn(async move {
-            process_users(&config, &pool)
-                .await
-                .context("Failed to send emails to users")
-                .unwrap();
-        });
-    });
-    cron.day_of_month("1");
-    cron.seconds("0");
-    cron.hours("0");
-    cron.minutes("0");
-    cron.start_job();
+pub async fn setup_cron(config: SmtpConfig, pool: PgPool) -> Result<()> {
+    let sched = JobScheduler::new().await?;
+
+    sched
+        .add(
+            Job::new_async("0 0 0 1 * *", move |_, _| {
+                let config = config.clone();
+                let pool = pool.clone();
+                Box::pin(async move {
+                    if let Err(e) = process_users(&config.clone(), &pool.clone()).await {
+                        error!("Failed to send email to users: {:#}", e);
+                    } else {
+                        info!("Cron: email job finished");
+                    }
+                })
+            })
+            .unwrap(),
+        )
+        .await?;
+
+    sched.start().await?;
+
+    Ok(())
 }
 
 async fn process_users(config: &SmtpConfig, pool: &PgPool) -> Result<()> {

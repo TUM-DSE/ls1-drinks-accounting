@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update drinks set amount = amount - 1 where id = $1 and amount is not null",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "62dfb18106be3b4fe4783e241c003fb80fe9b2371db55e0fd6cfef82d03b2216"
+}

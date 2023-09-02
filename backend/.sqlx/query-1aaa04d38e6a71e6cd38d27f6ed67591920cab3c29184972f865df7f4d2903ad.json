@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select dp.* from drinks inner join drink_prices dp on dp.id = drinks.price where drinks.id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "sale_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "buy_price",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "date",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "1aaa04d38e6a71e6cd38d27f6ed67591920cab3c29184972f865df7f4d2903ad"
+}

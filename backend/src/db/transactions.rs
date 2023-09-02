@@ -13,7 +13,7 @@ pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), DbErr
         drink
     )
         .map(|row| row.id)
-        .fetch_one(&mut tx)
+        .fetch_one(&mut *tx)
         .await?;
 
     sqlx::query_scalar!(
@@ -23,7 +23,7 @@ pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), DbErr
         drink,
         price
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     sqlx::query_scalar!(
@@ -31,7 +31,7 @@ pub async fn buy_drink(db: &PgPool, user: Uuid, drink: Uuid) -> Result<(), DbErr
         r#"update drinks set amount = amount - 1 where id = $1 and amount is not null"#,
         drink
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     tx.commit().await?;

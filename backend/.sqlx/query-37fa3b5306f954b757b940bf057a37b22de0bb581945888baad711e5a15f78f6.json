@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update drinks set name = $2, icon = $3, price = $4, amount = $5 where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Uuid",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "37fa3b5306f954b757b940bf057a37b22de0bb581945888baad711e5a15f78f6"
+}

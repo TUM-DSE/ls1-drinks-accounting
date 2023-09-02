@@ -6,36 +6,36 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6.1", features = ["tower-log"] }
-serde = { version = "1.0.150", features = ["derive"] }
-serde_json = "1.0.89"
-tokio = { version = "1.23.0", features = ["full"] }
+axum = { version = "0.6.20", features = ["tower-log"] }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.105"
+tokio = { version = "1.32.0", features = ["full"] }
 tower = "0.4.13"
 tracing = "0.1.37"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-uuid = { version = "1.2.2", features = ["v4", "serde", "macro-diagnostics"] }
-sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "offline"] }
-time = "0.3.17"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+uuid = { version = "1.4.1", features = ["v4", "serde", "macro-diagnostics"] }
+sqlx = { version = "0.7.1", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
+time = "0.3.28"
 dotenv = "0.15.0"
 env_logger = "0.10.0"
-anyhow = "1.0.48"
-log = "0.4.17"
-clap = { version = "4.0.29", features = ["derive", "env"] }
-tower-http = { version = "0.3.5", features = ["trace", "cors"] }
+anyhow = "1.0.75"
+log = "0.4.20"
+clap = { version = "4.4.2", features = ["derive", "env"] }
+tower-http = { version = "0.4.4", features = ["trace", "cors"] }
 rand = "0.8.5"
-rust-argon2 = "1.0.0"
-jsonwebtoken = "8.2.0"
-chrono = { version = "0.4.23", features = ["serde"] }
-axum-macros = "0.3.0"
-semver = { version = "1.0.16", features = ["serde"] }
+rust-argon2 = "2.0.0"
+jsonwebtoken = "8.3.0"
+chrono = { version = "0.4.28", features = ["serde"] }
+axum-macros = "0.3.8"
+semver = { version = "1.0.18", features = ["serde"] }
 lettre = "0.10.4"
 futures = "0.3.28"
-itertools = "0.10.5"
+itertools = "0.11.0"
 tokio-cron-scheduler = "0.9.4"
 
 [build-dependencies]
-sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
-tokio = { version = "1.23.0", features = ["full"] }
+sqlx = { version = "0.7.1", features = ["runtime-tokio-rustls", "postgres", "uuid"] }
+tokio = { version = "1.32.0", features = ["full"] }
 dotenv = "0.15.0"
-clap = { version = "4.0.29", features = ["derive", "env"] }
-anyhow = "1.0.48"
+clap = { version = "4.4.2", features = ["derive", "env"] }
+anyhow = "1.0.75"

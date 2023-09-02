@@ -31,7 +31,7 @@ pub async fn insert(
         to_cents(sale_price),
         buy_price.map(to_cents),
     )
-    .fetch_one(&mut tx)
+    .fetch_one(&mut *tx)
     .await?;
 
     let id = sqlx::query_scalar!(
@@ -42,7 +42,7 @@ pub async fn insert(
         price_id,
         count,
     )
-    .fetch_one(&mut tx)
+    .fetch_one(&mut *tx)
     .await?;
 
     tx.commit().await?;
@@ -63,7 +63,7 @@ pub async fn update(
         id
     )
     .map(|row| (row.id, to_euros(row.sale_price)))
-    .fetch_one(&mut tx)
+    .fetch_one(&mut *tx)
     .await?;
 
     if old_price != price {
@@ -72,7 +72,7 @@ pub async fn update(
             r#"insert into drink_prices (sale_price) values ($1) returning id"#,
             to_cents(price)
         )
-        .fetch_one(&mut tx)
+        .fetch_one(&mut *tx)
         .await?;
     }
 
@@ -84,7 +84,7 @@ pub async fn update(
         icon,
         price_id,
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     tx.commit().await?;
@@ -107,7 +107,7 @@ pub async fn update_admin(
         id
     )
     .map(|row| (row.id, to_euros(row.sale_price), row.buy_price.map(to_euros)))
-    .fetch_one(&mut tx)
+    .fetch_one(&mut *tx)
     .await?;
 
     if old_sale_price != sale_price || old_buy_price != buy_price {
@@ -117,7 +117,7 @@ pub async fn update_admin(
             to_cents(sale_price),
             buy_price.map(to_cents),
         )
-        .fetch_one(&mut tx)
+        .fetch_one(&mut *tx)
         .await?;
     }
 
@@ -127,7 +127,7 @@ pub async fn update_admin(
         id
     )
     .map(|r| r.amount)
-    .fetch_one(&mut tx)
+    .fetch_one(&mut *tx)
     .await?;
 
     if old_amount != amount {
@@ -138,7 +138,7 @@ pub async fn update_admin(
             id,
             diff
         )
-        .execute(&mut tx)
+        .execute(&mut *tx)
         .await?;
     }
 
@@ -151,7 +151,7 @@ pub async fn update_admin(
         price_id,
         amount,
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     tx.commit().await?;

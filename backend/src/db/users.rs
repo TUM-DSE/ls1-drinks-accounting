@@ -39,7 +39,7 @@ pub async fn update_pin(db: &PgPool, id: Uuid, pin: Option<String>) -> Result<()
         pin,
         id
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     if result.rows_affected() != 1 {
@@ -123,7 +123,7 @@ pub async fn delete_user(db: &PgPool, id: Uuid) -> Result<(), DbError> {
         r#"update users set deleted = true where id = $1"#,
         id
     )
-    .execute(&mut tx)
+    .execute(&mut *tx)
     .await?;
 
     if result.rows_affected() != 1 {

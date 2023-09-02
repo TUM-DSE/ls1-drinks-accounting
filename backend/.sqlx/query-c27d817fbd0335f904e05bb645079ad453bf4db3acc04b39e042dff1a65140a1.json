@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select d.amount from drinks d where d.id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "amount",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "c27d817fbd0335f904e05bb645079ad453bf4db3acc04b39e042dff1a65140a1"
+}

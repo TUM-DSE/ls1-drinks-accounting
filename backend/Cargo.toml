@@ -15,7 +15,7 @@ tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 uuid = { version = "1.4.1", features = ["v4", "serde", "macro-diagnostics"] }
 sqlx = { version = "0.7.2", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
-time = "0.3.29"
+time = "0.3.30"
 dotenv = "0.15.0"
 env_logger = "0.10.0"
 anyhow = "1.0.75"

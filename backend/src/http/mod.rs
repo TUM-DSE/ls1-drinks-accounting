@@ -32,8 +32,8 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
         .layer(CorsLayer::permissive())
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
-    axum::Server::bind(&"0.0.0.0:8080".parse()?)
-        .serve(app.into_make_service())
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+    axum::serve(listener, app.into_make_service())
         .await
         .context("error running HTTP server")
 }

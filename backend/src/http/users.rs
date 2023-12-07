@@ -38,14 +38,15 @@ pub async fn create_user(
     let user_id =
         db::users::insert(&state.db, &body.first_name, &body.last_name, &body.email).await?;
 
-    let user = UserResponse {
-        id: user_id,
-        first_name: body.first_name,
-        last_name: body.last_name,
-        email: body.email,
-        balance: 0.0,
-        has_pin: false,
-    };
+    let user =
+        UserResponse {
+            id: user_id,
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            balance: 0.0,
+            has_pin: false,
+        };
 
     Ok((StatusCode::CREATED, Json(user)))
 }

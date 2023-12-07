@@ -35,13 +35,14 @@ pub async fn create_drink(
 ) -> Result<impl IntoResponse, ApiError> {
     let id = db::drinks::insert(&state.db, &body.name, &body.icon, body.price, None, None).await?;
 
-    let drink = Drink {
-        id,
-        name: body.name,
-        icon: body.icon,
-        price: body.price,
-        stock: None,
-    };
+    let drink =
+        Drink {
+            id,
+            name: body.name,
+            icon: body.icon,
+            price: body.price,
+            stock: None,
+        };
 
     Ok((StatusCode::CREATED, Json(drink)))
 }
@@ -54,13 +55,14 @@ pub async fn update_drink(
 ) -> Result<impl IntoResponse, ApiError> {
     let id = db::drinks::update(&state.db, drink_id, &body.name, &body.icon, body.price).await?;
 
-    let drink = Drink {
-        id,
-        name: body.name,
-        icon: body.icon,
-        price: body.price,
-        stock: None,
-    };
+    let drink =
+        Drink {
+            id,
+            name: body.name,
+            icon: body.icon,
+            price: body.price,
+            stock: None,
+        };
 
     Ok((StatusCode::OK, Json(drink)))
 }
@@ -92,24 +94,26 @@ pub async fn create_drink_admin(
     State(state): State<ApiContext>,
     Json(body): Json<CreateDrinkAdmin>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let id = db::drinks::insert(
-        &state.db,
-        &body.name,
-        &body.icon,
-        body.sale_price,
-        body.buy_price,
-        body.stock,
-    )
-    .await?;
+    let id =
+        db::drinks::insert(
+            &state.db,
+            &body.name,
+            &body.icon,
+            body.sale_price,
+            body.buy_price,
+            body.stock,
+        )
+        .await?;
 
-    let drink = FullDrink {
-        id,
-        name: body.name,
-        icon: body.icon,
-        sale_price: body.sale_price,
-        buy_price: body.buy_price,
-        stock: None,
-    };
+    let drink =
+        FullDrink {
+            id,
+            name: body.name,
+            icon: body.icon,
+            sale_price: body.sale_price,
+            buy_price: body.buy_price,
+            stock: None,
+        };
 
     Ok((StatusCode::CREATED, Json(drink)))
 }

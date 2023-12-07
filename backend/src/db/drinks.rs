@@ -25,15 +25,14 @@ pub async fn insert(
 ) -> Result<Uuid, DbError> {
     let mut tx = db.begin().await?;
 
-    let price_id =
-        sqlx::query_scalar!(
-            // language=postgresql
-            r#"insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"#,
-            to_cents(sale_price),
-            buy_price.map(to_cents),
-        )
-        .fetch_one(&mut *tx)
-        .await?;
+    let price_id = sqlx::query_scalar!(
+        // language=postgresql
+        r#"insert into drink_prices (sale_price, buy_price) values ($1, $2) returning id"#,
+        to_cents(sale_price),
+        buy_price.map(to_cents),
+    )
+    .fetch_one(&mut *tx)
+    .await?;
 
     let id = sqlx::query_scalar!(
         // language=postgresql

@@ -21,9 +21,9 @@ impl From<sqlx::Error> for DbError {
     fn from(e: sqlx::Error) -> Self {
         if let sqlx::Error::Database(e) = &e {
             if let Some(constraint) = e.constraint() {
-                return Self::ConstraintUnsatisfied(
-                    format!("Constraint {constraint} not satisfied")
-                );
+                return Self::ConstraintUnsatisfied(format!(
+                    "Constraint {constraint} not satisfied"
+                ));
             }
         }
 

@@ -15,7 +15,6 @@ struct Overview: View {
     
     @State private var selection: User?
     @State private var searchText: String = ""
-    @State private var showingSheet = false
     @State private var path: [User] = []
     
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
@@ -54,11 +53,6 @@ struct Overview: View {
                 await viewModel.loadUsers()
             })
             .searchable(text: $searchText)
-            .toolbar {
-                Button(action: { showingSheet = true }) {
-                    Image(systemName: "pencil")
-                }
-            }
         } detail: {
             NavigationStack(path: $path) {
                 if let selection {
@@ -75,9 +69,6 @@ struct Overview: View {
             Task {
                 await viewModel.loadUsers()
             }
-        }
-        .sheet(isPresented: $showingSheet) {
-            EditView()
         }
         .onChange(of: selection, perform: { _ in
             model.logoutUser()

@@ -1,6 +1,7 @@
 use crate::config::Config;
 use anyhow::Context;
 use axum::Router;
+use log::info;
 use sqlx::PgPool;
 use std::sync::Arc;
 use tower::ServiceBuilder;
@@ -33,6 +34,9 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
+
+    info!("Listening on 0.0.0.0:8080");
+
     axum::serve(listener, app.into_make_service())
         .await
         .context("error running HTTP server")

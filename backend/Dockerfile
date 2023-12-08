@@ -15,7 +15,7 @@ RUN rm src/*.rs
 # copy your source tree
 COPY ./migrations ./migrations
 COPY ./src ./src
-COPY sqlx-data.json sqlx-data.json
+COPY ./.sqlx ./.sqlx
 
 # build for release
 RUN rm target/release/deps/drinks_accounting*

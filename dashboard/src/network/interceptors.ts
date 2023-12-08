@@ -1,11 +1,11 @@
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import type {AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from "axios";
 import client from "@/network/client";
 import { TokenService } from "@/network/tokenService";
 import EventBus from "@/common/EventBus";
 
 const setupInterceptor = () => {
   client.interceptors.request.use(
-    (config: AxiosRequestConfig) => {
+    (config: InternalAxiosRequestConfig) => {
       const token = TokenService.getToken();
       if (token) {
         (config.headers as unknown as Record<string, any>)[

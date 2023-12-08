@@ -49,6 +49,48 @@ pub async fn insert(
     Ok(id)
 }
 
+pub async fn update(
+    db: &PgPool,
+    id: Uuid,
+    name: &str,
+    icon: &str,
+    price: f64,
+) -> Result<Uuid, DbError> {
+    let mut tx = db.begin().await?;
+    let (mut price_id, old_price) = sqlx::query!(
+        // language=postgresql
+        r#"select dp.id, dp.sale_price from drinks inner join drink_prices dp on drinks.price = dp.id where drinks.id = $1"#,
+        id
+    )
+    .map(|row| (row.id, to_euros(row.sale_price)))
+    .fetch_one(&mut *tx)
+    .await?;
+
+    if old_price != price {
+        price_id = sqlx::query_scalar!(
+            // language=postgresql
+            r#"insert into drink_prices (sale_price) values ($1) returning id"#,
+            to_cents(price)
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+    }
+
+    sqlx::query_scalar!(
+        // language=postgresql
+        r#"update drinks set name = $2, icon = $3, price = $4 where id = $1"#,
+        id,
+        name,
+        icon,
+        price_id,
+    )
+    .execute(&mut *tx)
+    .await?;
+
+    tx.commit().await?;
+    Ok(id)
+}
+
 pub async fn update_admin(
     db: &PgPool,
     id: Uuid,

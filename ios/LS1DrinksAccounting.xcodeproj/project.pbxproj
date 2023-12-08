@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5B6180762981C7B60066284E /* AppConfigApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6180752981C7B50066284E /* AppConfigApi.swift */; };
 		5B61807A2981C8400066284E /* EncodingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6180792981C8400066284E /* EncodingUtils.swift */; };
+		5B6B3052294632770053052B /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3051294632770053052B /* EditView.swift */; };
 		5B6B3054294634900053052B /* Drink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3053294634900053052B /* Drink.swift */; };
 		5B6B3058294755A80053052B /* AddPersonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B3057294755A80053052B /* AddPersonView.swift */; };
 		5B6B305A2947578C0053052B /* EditDrinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B30592947578C0053052B /* EditDrinksView.swift */; };
@@ -49,6 +50,7 @@
 		5B6180732981386B0066284E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5B6180752981C7B50066284E /* AppConfigApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigApi.swift; sourceTree = "<group>"; };
 		5B6180792981C8400066284E /* EncodingUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodingUtils.swift; sourceTree = "<group>"; };
+		5B6B3051294632770053052B /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		5B6B3053294634900053052B /* Drink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drink.swift; sourceTree = "<group>"; };
 		5B6B3057294755A80053052B /* AddPersonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPersonView.swift; sourceTree = "<group>"; };
 		5B6B30592947578C0053052B /* EditDrinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDrinksView.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		5B7230952945243800DFEBC9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5B6B3051294632770053052B /* EditView.swift */,
 				5B6B3057294755A80053052B /* AddPersonView.swift */,
 				5B6B30592947578C0053052B /* EditDrinksView.swift */,
 				5B6B305B294767860053052B /* SelectDrinkView.swift */,
@@ -288,6 +291,7 @@
 				5BFEF806295F379E00D9E7CA /* LoginView.swift in Sources */,
 				5B6B30692947A0070053052B /* BlurView.swift in Sources */,
 				5B61807A2981C8400066284E /* EncodingUtils.swift in Sources */,
+				5B6B3052294632770053052B /* EditView.swift in Sources */,
 				5B6B305F294772D00053052B /* OverviewViewModel.swift in Sources */,
 				5BEDC656294C798900D32DC7 /* NetworkConfig.swift in Sources */,
 				5BF75859298953C100EED233 /* AnimatableCurrencyModifier.swift in Sources */,

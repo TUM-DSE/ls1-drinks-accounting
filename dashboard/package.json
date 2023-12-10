@@ -16,7 +16,7 @@
     "@popperjs/core": "^2.11.8",
     "axios": "^1.6.2",
     "chart.js": "^4.4.0",
-    "vue": "^3.3.4",
+    "vue": "^3.3.11",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.1.6"
   },

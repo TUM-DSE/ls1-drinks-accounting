@@ -5,6 +5,6 @@
 	<key>API_BASE_URL</key>
 	<string>$(API_BASE_URL)</string>
 	<key>APP_VERSION</key>
-	<string>1.1.10</string>
+	<string>1.1.10-17-ge6ad66f-dirty</string>
 </dict>
 </plist>

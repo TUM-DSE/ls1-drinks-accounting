@@ -3,6 +3,7 @@ use anyhow::Context;
 use axum::Router;
 use log::info;
 use sqlx::PgPool;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::signal;
 use tower::ServiceBuilder;
@@ -26,6 +27,10 @@ pub struct ApiContext {
 }
 
 pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
+    let socket_addr: SocketAddr = format!("{}:{}", config.address, config.port)
+        .as_str()
+        .parse()?;
+
     let app = api_router()
         .with_state(ApiContext {
             config: Arc::new(config),
@@ -34,9 +39,8 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
         .layer(CorsLayer::permissive())
         .layer(ServiceBuilder::new().layer(TraceLayer::new_for_http()));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
-
-    info!("Listening on 0.0.0.0:8080");
+    info!("Listening on {}", socket_addr);
+    let listener = tokio::net::TcpListener::bind(socket_addr).await?;
 
     axum::serve(listener, app.into_make_service())
         .with_graceful_shutdown(shutdown_signal())

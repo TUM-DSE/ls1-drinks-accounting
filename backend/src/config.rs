@@ -13,24 +13,31 @@ pub struct Config {
     #[clap(long, env)]
     pub jwt_secret: String,
 
-    /// Enable email notifications if users have negative balance
+    /// Enable email notifications if users have negative balance.
     #[clap(long, env, default_value_t = false)]
     pub enable_email: bool,
 
-    /// Sender address which is used in the "From" field
-    /// Can be an email address only, or in the format "Name <email address>" (without quotes)
+    /// Sender address which is used in the "From" field.
+    /// The field can be an email address only, or in the format "Name <email address>" (without quotes).
     #[clap(env)]
     pub mail_sender: Option<String>,
 
-    /// The smtp username from which emails are sent
+    /// The smtp username from which emails are sent.
     #[clap(env)]
     pub smtp_user: Option<String>,
 
-    /// The smtp password for the user specified in smtp_user
+    /// The smtp password for the user specified in `smtp_user`.
     #[clap(env)]
     pub smtp_password: Option<String>,
 
-    /// Host from which the emails are sent
+    /// Host from which the emails are sent.
     #[clap(env)]
     pub smtp_host: Option<String>,
+
+    /// The address the server will be binding to.
+    #[clap(long, env, default_value = "0.0.0.0")]
+    pub address: String,
+    /// The port the server will be binding to.
+    #[clap(long, env, default_value = "8080")]
+    pub port: String,
 }

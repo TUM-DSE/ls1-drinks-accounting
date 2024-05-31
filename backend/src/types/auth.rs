@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -26,12 +27,11 @@ pub enum Role {
     User,
 }
 
-impl ToString for Role {
-    fn to_string(&self) -> String {
+impl Display for Role {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Role::Admin => "admin",
-            Role::User => "user",
+            Role::Admin => write!(f, "admin"),
+            Role::User => write!(f, "user"),
         }
-        .into()
     }
 }

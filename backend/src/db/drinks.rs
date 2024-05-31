@@ -178,7 +178,7 @@ order by id, date"#,
 
     let result = result
         .iter()
-        .group_by(|row| (&row.0, &row.1))
+        .chunk_by(|row| (&row.0, &row.1))
         .into_iter()
         .map(|((id, name), values)| DrinkStats {
             id: *id,

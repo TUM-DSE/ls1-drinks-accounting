@@ -1,4 +1,4 @@
-FROM rust:1.70-bookworm as build
+FROM rust:1.76-bookworm as build
 
 # create a new empty shell project
 RUN USER=root cargo new --bin drinks-accounting
@@ -18,7 +18,7 @@ COPY ./src ./src
 COPY ./.sqlx ./.sqlx
 
 # build for release
-RUN rm target/release/deps/drinks_accounting*
+RUN touch src/main.rs
 
 # sqlx should not check sql queries when building for production
 ENV SQLX_OFFLINE true

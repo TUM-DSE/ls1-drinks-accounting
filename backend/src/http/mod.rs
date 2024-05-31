@@ -4,6 +4,7 @@ use axum::Router;
 use log::info;
 use sqlx::PgPool;
 use std::sync::Arc;
+use tokio::signal;
 use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
@@ -38,6 +39,7 @@ pub async fn serve(config: Config, db: PgPool) -> anyhow::Result<()> {
     info!("Listening on 0.0.0.0:8080");
 
     axum::serve(listener, app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
         .await
         .context("error running HTTP server")
 }
@@ -50,4 +52,28 @@ fn api_router() -> Router<ApiContext> {
         .merge(app_configuration::router())
         .merge(health::router())
         .merge(stats::router())
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+        let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+        let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }

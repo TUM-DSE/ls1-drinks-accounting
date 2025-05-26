@@ -119,7 +119,7 @@ pub async fn update_admin(
 pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, DbError> {
     let drinks = sqlx::query!(
         // language=postgresql
-        r#"select drinks.*, dp.sale_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
+        r#"select drinks.*, dp.sale_price from drinks inner join drink_prices dp on dp.id = drinks.price where drinks.deleted = false"#
     )
     .map(|row| Drink {
         id: row.id,
@@ -137,7 +137,7 @@ pub async fn get_all(db: &PgPool) -> Result<Vec<Drink>, DbError> {
 pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, DbError> {
     let drinks = sqlx::query!(
         // language=postgresql
-        r#"select drinks.*, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on dp.id = drinks.price"#
+        r#"select drinks.*, dp.sale_price, dp.buy_price from drinks inner join drink_prices dp on dp.id = drinks.price where drinks.deleted = false"#
     )
     .map(|row| FullDrink {
         id: row.id,

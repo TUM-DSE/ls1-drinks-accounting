@@ -1,4 +1,4 @@
-FROM rust:1.76-bookworm as build
+FROM rust:1.87-bookworm as build
 
 # create a new empty shell project
 RUN USER=root cargo new --bin drinks-accounting

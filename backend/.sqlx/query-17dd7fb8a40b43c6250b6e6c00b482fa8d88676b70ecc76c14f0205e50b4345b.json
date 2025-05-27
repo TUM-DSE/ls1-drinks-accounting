@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update drinks set deleted = true where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "17dd7fb8a40b43c6250b6e6c00b482fa8d88676b70ecc76c14f0205e50b4345b"
+}

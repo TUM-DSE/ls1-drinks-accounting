@@ -15,4 +15,8 @@ export class DrinksService {
   static updateDrink(id: string, drink: Object): Promise<void> {
     return client.put(`/api/admin/drinks/${id}`, drink);
   }
+
+  static deleteDrink(id: string): Promise<void> {
+    return client.delete(`/api/admin/drinks/${id}`);
+  }
 }

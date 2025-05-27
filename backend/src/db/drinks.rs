@@ -153,6 +153,18 @@ pub async fn get_all_full(db: &PgPool) -> Result<Vec<FullDrink>, DbError> {
     Ok(drinks)
 }
 
+pub async fn delete_drink(db: &PgPool, id: Uuid) -> Result<bool, DbError> {
+    let query = sqlx::query!(
+        // language=postgresql
+        r#"update drinks set deleted = true where id = $1"#,
+        id
+    )
+    .execute(db)
+    .await?;
+
+    Ok(query.rows_affected() != 0)
+}
+
 pub async fn get_drink_stats_between(
     db: &PgPool,
     from: NaiveDate,

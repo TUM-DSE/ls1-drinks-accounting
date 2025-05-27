@@ -7,7 +7,7 @@ use anyhow::Result;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::routing::{get, post, put};
+use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
 use serde::Deserialize;
 use uuid::Uuid;
@@ -41,6 +41,20 @@ pub async fn get_drinks_admin(
     drinks.sort_by_key(|drink| drink.name.to_lowercase());
 
     Ok((StatusCode::OK, Json(drinks)))
+}
+
+pub async fn delete_drink(
+    _admin: AdminUser,
+    State(state): State<ApiContext>,
+    Path(drink_id): Path<Uuid>,
+) -> Result<impl IntoResponse, ApiError> {
+    let was_deleted = db::drinks::delete_drink(&state.db, drink_id).await?;
+
+    if was_deleted {
+        Ok((StatusCode::OK, Json(())))
+    } else {
+        Ok((StatusCode::NOT_FOUND, Json(())))
+    }
 }
 
 pub async fn create_drink_admin(
@@ -105,4 +119,5 @@ pub fn router() -> Router<ApiContext> {
         .route("/api/admin/drinks", get(get_drinks_admin))
         .route("/api/admin/drinks", post(create_drink_admin))
         .route("/api/admin/drinks/:id", put(update_drink_admin))
+        .route("/api/admin/drinks/:id", delete(delete_drink))
 }

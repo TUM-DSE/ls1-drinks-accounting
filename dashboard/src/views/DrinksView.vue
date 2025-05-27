@@ -2,13 +2,14 @@
 import HeaderView from "@/components/HeaderView.vue";
 import ProgressView from "@/components/ProgressView.vue";
 import CurrencyFormatter from "../format/CurrencyFormatter";
-import { PencilIcon, PlusIcon } from "@heroicons/vue/20/solid";
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/vue/20/solid";
 </script>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { DrinksService } from "@/network/services/DrinksService";
 import type { Drink } from "@/network/types/Drink";
+import { UsersService } from "@/network/services/UsersService";
 
 export default defineComponent({
   props: {},
@@ -17,6 +18,7 @@ export default defineComponent({
       drinks: [] as Drink[],
       error: null,
       loading: false,
+      deleting: null as Drink | null,
     };
   },
   created() {
@@ -25,6 +27,7 @@ export default defineComponent({
   methods: {
     fetch() {
       this.loading = true;
+      this.deleting = null;
       DrinksService.loadDrinks()
         .then((drinks) => {
           this.drinks = drinks;
@@ -40,6 +43,14 @@ export default defineComponent({
     },
     newDrink() {
       this.$router.push({ name: "addDrink" });
+    },
+    deleteDrink() {
+      const deleting = this.deleting;
+      if (!deleting) {
+        return;
+      }
+
+      DrinksService.deleteDrink(deleting.id).then(() => this.fetch());
     },
   },
 });
@@ -99,15 +110,50 @@ export default defineComponent({
               class="inline-flex items-center text-sm text-gray-500 truncate"
             >
               <button
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mr-2"
                 @click="editDrink(drink.id)"
               >
                 <PencilIcon class="block h-4 w-4" />
+              </button>
+              <button
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center"
+                @click="deleting = drink"
+              >
+                <TrashIcon class="block h-4 w-4" />
               </button>
             </div>
           </div>
         </li>
       </ul>
+    </div>
+    <div
+      v-if="!!deleting"
+      class="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative"
+    >
+      <div class="md:flex items-center">
+        <div class="mt-4 md:mt-0 text-center md:text-left">
+          <p class="font-bold">Delete {{ deleting.name }}</p>
+          <p class="text-sm text-gray-700 mt-1">
+            {{ deleting.name }} will be deleted. Past transactions will not be
+            deleted, but the item will not be visible anymore. It will still
+            show up in user transactions.
+          </p>
+        </div>
+      </div>
+      <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2"
+          @click="deleteDrink()"
+        >
+          Delete
+        </button>
+        <button
+          class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1"
+          @click="deleting = null"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   </main>
 </template>

@@ -163,6 +163,7 @@ pub async fn get_drink_stats_between(
         r#"(select d.id, d.name, dr.date::date as "date", SUM(dr.amount) as "amount" from drink_restocks dr
 inner join drinks d on d.id = dr.drink
 where date::date >= $1::date and date::date <= $2::date
+  and d.deleted = false
 group by d.id, d.name, date::date
 union
 select d.id, d.name, tr.date::date as "date", -count(*) as "amount" from transactions tr

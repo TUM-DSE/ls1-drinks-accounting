@@ -63,50 +63,53 @@ struct SelectDrinkView: View {
                         .frame(maxWidth: 400)
                     }
                 } else {
-                    List {
-                        Section("Drinks") {
-                            if let error = viewModel.errorBuyingDrink {
-                                Text("Error selecting drink: \(error)")
-                            }
-                            ZStack {
-                                grid
-                            }
-                        }
-                        
-                        Section("Balance") {
-                            NavigationLink(destination: {
-                                TransactionsView(model: model, person: user)
-                            }, label: {
-                                HStack {
-                                    Text("Current balance")
-                                    Spacer()
-                                    Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
-                                        .animation(nil)
-                                        .modifier(AnimatableCurrencyModifier(number: user.balance))
-                                        .foregroundColor(user.balance < 0 ? Color.red : nil)
-                                        .animation(.linear, value: user.balance)
-                                }
-                            })
-                        }
-                    }
-                    .listStyle(.insetGrouped)
-                    .refreshable {
-                        await viewModel.loadDrinks()
-                    }
-                    .toolbar {
-                        if viewModel.shouldShowEnterPin {
-                            Group {}
-                        } else {
+                    VStack(alignment: .leading) {
+                        NavigationLink {
+                            TransactionsView(model: model, person: user)
+                        } label: {
                             HStack {
-                                if viewModel.user?.has_pin == true {
-                                    Button(action: { model.logoutUser() }) {
-                                        Label("Lock", systemImage: "lock.fill")
+                                Text(formatter.string(from: NSNumber(value: user.balance)) ?? "")
+                                    .animation(nil)
+                                    .modifier(AnimatableCurrencyModifier(number: user.balance))
+                                    .animation(.linear, value: user.balance)
+                                    .font(.title)
+                                    .padding(.leading)
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.primary)
+                            }
+                            .foregroundColor(user.balance < 0 ? Color.red : .secondary)
+                        }
+
+                        List {
+                            Section("Drinks") {
+                                if let error = viewModel.errorBuyingDrink {
+                                    Text("Error selecting drink: \(error)")
+                                }
+                                ZStack {
+                                    grid
+                                }
+                            }
+                        }
+                        .listStyle(.insetGrouped)
+                        .refreshable {
+                            await viewModel.loadDrinks()
+                        }
+                        .toolbar {
+                            if viewModel.shouldShowEnterPin {
+                                Group {}
+                            } else {
+                                HStack {
+                                    if viewModel.user?.has_pin == true {
+                                        Button(action: { model.logoutUser() }) {
+                                            Label("Lock", systemImage: "lock.fill")
+                                                .labelStyle(.titleAndIcon)
+                                        }
+                                    }
+                                    Button(action: { showingChangePasswordDialog = true }) {
+                                        Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")
                                             .labelStyle(.titleAndIcon)
                                     }
-                                }
-                                Button(action: { showingChangePasswordDialog = true }) {
-                                    Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")
-                                        .labelStyle(.titleAndIcon)
                                 }
                             }
                         }

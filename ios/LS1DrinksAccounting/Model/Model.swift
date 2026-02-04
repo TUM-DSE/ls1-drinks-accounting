@@ -92,8 +92,13 @@ class Model: ObservableObject {
         drinks.append(drink)
     }
     
-    func loadTransactions(for user: User) async throws -> [Transaction] {
-        return try await usersApi.getTransactions(for: user.id)
+    func loadTransactions(for user: User, limit: Int? = nil, before: Transaction? = nil) async throws -> [Transaction] {
+        return try await usersApi.getTransactions(
+            for: user.id,
+            limit: limit,
+            before: before?.timestamp,
+            beforeId: before?.id
+        )
     }
     
     func buy(drink: Drink, for user: User) async throws {

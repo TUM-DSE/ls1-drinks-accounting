@@ -4,11 +4,12 @@ use crate::http::ApiContext;
 use crate::types::auth::{AdminUser, AuthUser};
 use crate::types::users::UserResponse;
 use anyhow::Result;
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
+use chrono::{DateTime, Utc};
 use rand::Rng;
 use serde::Deserialize;
 use uuid::Uuid;
@@ -29,6 +30,15 @@ pub struct UpdatePin {
 pub struct CheckPin {
     user_pin: Option<String>,
 }
+
+#[derive(Deserialize)]
+pub struct TransactionsQuery {
+    limit: Option<i64>,
+    before: Option<DateTime<Utc>>,
+    before_id: Option<Uuid>,
+}
+
+const MAX_TRANSACTIONS_LIMIT: i64 = 500;
 
 pub async fn create_user(
     _user: AuthUser,
@@ -66,9 +76,30 @@ pub async fn get_users(
 pub async fn get_user_transactions(
     _user: AuthUser,
     Path(user_id): Path<Uuid>,
+    Query(query): Query<TransactionsQuery>,
     State(state): State<ApiContext>,
 ) -> Result<impl IntoResponse, ApiError> {
-    let transactions = db::transactions::get_transactions(&state.db, user_id).await?;
+    let (before, before_id) = match (query.before, query.before_id) {
+        (Some(before), Some(before_id)) => (Some(before), Some(before_id)),
+        (None, None) => (None, None),
+        _ => {
+            return Err(ApiError::BadRequest(
+                "before and before_id must be provided together".to_string(),
+            ))
+        }
+    };
+
+    let limit = query
+        .limit
+        .map(|limit| limit.clamp(1, MAX_TRANSACTIONS_LIMIT));
+    if limit.is_none() && before.is_some() {
+        return Err(ApiError::BadRequest(
+            "limit must be provided when using before".to_string(),
+        ));
+    }
+
+    let transactions =
+        db::transactions::get_transactions(&state.db, user_id, limit, before, before_id).await?;
 
     Ok((StatusCode::OK, Json(transactions)))
 }

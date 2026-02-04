@@ -1,6 +1,7 @@
 use crate::db::errors::DbError;
 use crate::types::users::{Purchase, Transaction, TransactionType};
 use anyhow::Result;
+use chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -52,7 +53,13 @@ pub async fn insert_deposit(db: &PgPool, user: Uuid, amount: f64) -> Result<(), 
     Ok(())
 }
 
-pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction>, DbError> {
+pub async fn get_transactions(
+    db: &PgPool,
+    user: Uuid,
+    limit: Option<i64>,
+    before: Option<DateTime<Utc>>,
+    before_id: Option<Uuid>,
+) -> Result<Vec<Transaction>, DbError> {
     let count = sqlx::query_scalar!(
         // language=postgresql
         r#"select count(*) from users where id = $1"#,
@@ -65,40 +72,60 @@ pub async fn get_transactions(db: &PgPool, user: Uuid) -> Result<Vec<Transaction
         return Err(DbError::NotFound("User not found".to_string()));
     };
 
-    let mut deposits = sqlx::query!(
+    // some arbitrary limit, will remove this later on when we have migrated
+    // all apps.
+    let limit = limit.unwrap_or(2000);
+    let rows = sqlx::query!(
         // language=postgresql
-        r#"select * from deposits where "user" = $1"#,
-        user
+        r#"
+        select
+            t.id as "id!",
+            t.date as "date!",
+            (-dp.sale_price) as "amount_cents!",
+            d.name as "name?",
+            d.icon as "icon?"
+        from transactions t
+        inner join drinks d on d.id = t.drink
+        inner join drink_prices dp on dp.id = t.price
+        where t."user" = $1
+            and ($2::timestamptz is null or $3::uuid is null or (t.date, t.id) < ($2, $3))
+        union all
+        select
+            d.id as "id!",
+            d.date as "date!",
+            d.amount as "amount_cents!",
+            null::text as "name?",
+            null::text as "icon?"
+        from deposits d
+        where d."user" = $1
+            and ($2::timestamptz is null or $3::uuid is null or (d.date, d.id) < ($2, $3))
+        order by 2 desc, 1 desc
+        limit $4
+        "#,
+        user,
+        before,
+        before_id,
+        limit
     )
-    .map(|row| Transaction {
-        id: row.id,
-        timestamp: row.date,
-        amount: (row.amount as f64) / 100.0,
-        transaction_type: TransactionType::MoneyDeposit,
-    })
     .fetch_all(db)
     .await?;
 
-    let transactions = sqlx::query!(
-        // language=postgresql
-        r#"select t.id, t.date, dp.sale_price, d.name, d.icon from transactions t inner join drinks d on d.id = t.drink inner join drink_prices dp on dp.id = t.price where t."user" = $1"#,
-        user
-    )
-    .map(|row| {
-       Transaction {
-           id: row.id,
-           timestamp: row.date,
-           amount: (row.sale_price as f64) / -100.0,
-           transaction_type: TransactionType::Purchase(Purchase {
-               icon: row.icon,
-               name: row.name,
-           })
-       }
-    })
-    .fetch_all(db)
-    .await?;
+    let transactions = rows
+        .into_iter()
+        .map(|row| {
+            let transaction_type = match (row.name, row.icon) {
+                (Some(name), Some(icon)) => TransactionType::Purchase(Purchase { icon, name }),
+                _ => TransactionType::MoneyDeposit,
+            };
 
-    deposits.extend(transactions);
+            Transaction {
+                id: row.id,
+                timestamp: row.date,
+                amount: (row.amount_cents as f64) / 100.0,
+                transaction_type,
+            }
+        })
+        .collect();
 
-    Ok(deposits)
+    Ok(transactions)
 }

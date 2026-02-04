@@ -39,6 +39,13 @@ struct TransactionsView: View {
                             section(for: date)
                         }
                     }
+                    if viewModel.isLoadingMore {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    }
                 }
             }
         }
@@ -77,6 +84,13 @@ struct TransactionsView: View {
             Text(formatter.string(from: NSNumber(value: transaction.amount)) ?? "")
             Spacer()
             Text(transaction.timestamp, style: .time)
+        }
+        .onAppear {
+            if transaction.id == viewModel.transactions.last?.id {
+                Task {
+                    await viewModel.loadMore()
+                }
+            }
         }
     }
     

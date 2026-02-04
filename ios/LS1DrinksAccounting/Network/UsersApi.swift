@@ -24,6 +24,11 @@ struct UpdatePin: Encodable {
 
 class UsersApi {
     let networking: Networking
+    private let isoFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
     
     init(_ networking: Networking) {
         self.networking = networking
@@ -53,8 +58,30 @@ class UsersApi {
         return result
     }
     
-    func getTransactions(for userId: UUID) async throws -> [Transaction] {
-        guard let request = try await networking.get(path: "/api/users/\(userId)/transactions", authorized: true) else {
+    func getTransactions(for userId: UUID, limit: Int? = nil, before: Date? = nil, beforeId: String? = nil) async throws -> [Transaction] {
+        var path = "/api/users/\(userId)/transactions"
+        var queryItems: [URLQueryItem] = []
+
+        if let limit = limit {
+            queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
+        }
+        if let before = before {
+            queryItems.append(URLQueryItem(name: "before", value: isoFormatter.string(from: before)))
+        }
+        if let beforeId = beforeId {
+            queryItems.append(URLQueryItem(name: "before_id", value: beforeId))
+        }
+
+        if !queryItems.isEmpty {
+            var components = URLComponents()
+            components.path = path
+            components.queryItems = queryItems
+            if let queryPath = components.string {
+                path = queryPath
+            }
+        }
+
+        guard let request = try await networking.get(path: path, authorized: true) else {
             throw NetworkError.invalidUrl
         }
 

@@ -64,7 +64,7 @@ async fn process_users(config: &SmtpConfig, pool: &PgPool) -> Result<()> {
 }
 
 async fn process_user(pool: &PgPool, config: &SmtpConfig, user: &User) -> Result<()> {
-    let mut transactions = db::transactions::get_transactions(pool, user.id)
+    let mut transactions = db::transactions::get_transactions(pool, user.id, None, None, None)
         .await
         .map_err(|e| anyhow!("Failed to get users: {e}"))?;
     transactions.sort_by_key(|t| t.timestamp);

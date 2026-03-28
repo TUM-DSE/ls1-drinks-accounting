@@ -62,6 +62,15 @@ struct SelectDrinkView: View {
                         }
                         .frame(maxWidth: 400)
                     }
+                    .toolbar {
+                        Button(action: {
+                            model.logoutUser()
+                            onDismiss()
+                        }) {
+                            Label("Lock", systemImage: "xmark")
+                                .labelStyle(.iconOnly)
+                        }
+                    }
                 } else {
                     VStack(alignment: .leading) {
                         NavigationLink {
@@ -100,16 +109,16 @@ struct SelectDrinkView: View {
                                 Group {}
                             } else {
                                 HStack {
+                                    Button(action: { showingChangePasswordDialog = true }) {
+                                        Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")
+                                            .labelStyle(.titleAndIcon)
+                                    }
                                     Button(action: {
                                         model.logoutUser()
                                         onDismiss()
                                     }) {
-                                        Label("Lock", systemImage: "lock.fill")
-                                            .labelStyle(.titleAndIcon)
-                                    }
-                                    Button(action: { showingChangePasswordDialog = true }) {
-                                        Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")
-                                            .labelStyle(.titleAndIcon)
+                                        Label("Lock", systemImage: "xmark")
+                                            .labelStyle(.iconOnly)
                                     }
                                 }
                             }

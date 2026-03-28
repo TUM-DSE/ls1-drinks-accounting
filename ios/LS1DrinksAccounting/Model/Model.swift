@@ -15,6 +15,7 @@ class Model: ObservableObject {
     private let authApi: AuthApi
     private let authManager: AuthManager
     private let appConfigApi: AppConfigApi
+    private let statsApi: StatsApi
     let apiBaseUrl: String
     
     private init(baseUrl: String) {
@@ -29,6 +30,7 @@ class Model: ObservableObject {
         self.transactionsApi = TransactionsApi(networking)
         self.authApi = AuthApi(config)
         self.appConfigApi = AppConfigApi(networking)
+        self.statsApi = StatsApi(networking)
     }
     
     static let shared = {
@@ -175,5 +177,9 @@ class Model: ObservableObject {
         if let isLatestAppVersion = try? await appConfigApi.isLatestAppVersion(version: appVersion) {
             self.isLatestAppVersion = isLatestAppVersion
         }
+    }
+
+    func loadWeeklyDrinkStats() async throws -> WeeklyDrinkStatsResponse {
+        try await statsApi.getWeeklyDrinkStats()
     }
 }

@@ -59,9 +59,7 @@ struct Overview: View {
                     SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
                         .navigationTitle(selection.name)
                 } else {
-                    Text("Pick a person")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color(UIColor.secondarySystemBackground))
+                    WeeklyStatisticsView(model: model)
                 }
             }
         }

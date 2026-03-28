@@ -100,11 +100,12 @@ struct SelectDrinkView: View {
                                 Group {}
                             } else {
                                 HStack {
-                                    if viewModel.user?.has_pin == true {
-                                        Button(action: { model.logoutUser() }) {
-                                            Label("Lock", systemImage: "lock.fill")
-                                                .labelStyle(.titleAndIcon)
-                                        }
+                                    Button(action: {
+                                        model.logoutUser()
+                                        onDismiss()
+                                    }) {
+                                        Label("Lock", systemImage: "lock.fill")
+                                            .labelStyle(.titleAndIcon)
                                     }
                                     Button(action: { showingChangePasswordDialog = true }) {
                                         Label("Set pin", systemImage: "rectangle.and.pencil.and.ellipsis")

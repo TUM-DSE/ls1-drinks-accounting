@@ -129,3 +129,25 @@ pub async fn get_transactions(
 
     Ok(transactions)
 }
+
+pub async fn get_drink_purchase_timestamps_between(
+    db: &PgPool,
+    from: DateTime<Utc>,
+    to: DateTime<Utc>,
+) -> Result<Vec<DateTime<Utc>>, DbError> {
+    let rows = sqlx::query_scalar(
+        // language=postgresql
+        r#"
+        select t.date
+        from transactions t
+        where t.date >= $1 and t.date < $2
+        order by t.date asc
+        "#,
+    )
+    .bind(from)
+    .bind(to)
+    .fetch_all(db)
+    .await?;
+
+    Ok(rows)
+}

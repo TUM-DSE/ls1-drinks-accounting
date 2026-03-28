@@ -1,0 +1,49 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select\n            t.id as \"id!\",\n            t.date as \"date!\",\n            (-dp.sale_price) as \"amount_cents!\",\n            d.name as \"name?\",\n            d.icon as \"icon?\"\n        from transactions t\n        inner join drinks d on d.id = t.drink\n        inner join drink_prices dp on dp.id = t.price\n        where t.\"user\" = $1\n            and ($2::timestamptz is null or $3::uuid is null or (t.date, t.id) < ($2, $3))\n        union all\n        select\n            d.id as \"id!\",\n            d.date as \"date!\",\n            d.amount as \"amount_cents!\",\n            null::text as \"name?\",\n            null::text as \"icon?\"\n        from deposits d\n        where d.\"user\" = $1\n            and ($2::timestamptz is null or $3::uuid is null or (d.date, d.id) < ($2, $3))\n        order by 2 desc, 1 desc\n        limit $4\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "date!",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 2,
+        "name": "amount_cents!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "name?",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "icon?",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Timestamptz",
+        "Uuid",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "e4bcc2b98aadbc1f5b81fcd56f41fc8870b75091d37f2fb67f6165a4952d9cfc"
+}

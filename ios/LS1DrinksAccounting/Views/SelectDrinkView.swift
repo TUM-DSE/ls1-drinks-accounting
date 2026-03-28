@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SelectDrinkView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     @EnvironmentObject var model: Model
 
     @ObservedObject
@@ -117,7 +119,7 @@ struct SelectDrinkView: View {
                         .foregroundColor(user.balance < 0 ? Color.red : .primary)
                     }
                     .buttonStyle(.plain)
-                    .liquidGlassCard()
+                    .lightweightPanelStyle(colorScheme: colorScheme)
 
                     VStack(alignment: .leading, spacing: 18) {
                         HStack {
@@ -201,6 +203,8 @@ struct SelectDrinkView: View {
 }
 
 struct DrinkItemView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let item: Drink
     let viewModel: DrinksViewModel
     let formatter: NumberFormatter
@@ -231,7 +235,12 @@ struct DrinkItemView: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, minHeight: 160)
-            .liquidGlassCard()
+            .padding(18)
+            .background(tileFillColor, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(tileStrokeColor, lineWidth: 1)
+            }
         }
         .buttonStyle(.plain)
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -255,7 +264,7 @@ struct DrinkItemView: View {
             ZStack {
                 if viewModel.loadingDrink == item.id {
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(.ultraThinMaterial)
+                        .fill(tileOverlayColor)
                     ProgressView()
                 }
 
@@ -271,8 +280,56 @@ struct DrinkItemView: View {
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .transition(.opacity.combined(with: .scale))
         }
-        .scaleEffect(viewModel.loadingDrink == item.id ? 0.98 : 1)
-        .animation(.spring(response: 0.24, dampingFraction: 0.84), value: viewModel.loadingDrink == item.id)
+        .scaleEffect(viewModel.loadingDrink == item.id ? 0.99 : 1)
+        .animation(.easeOut(duration: 0.12), value: viewModel.loadingDrink == item.id)
+    }
+
+    private var tileFillColor: Color {
+        colorScheme == .dark
+            ? Color.white.opacity(0.08)
+            : Color.white.opacity(0.52)
+    }
+
+    private var tileStrokeColor: Color {
+        colorScheme == .dark
+            ? Color.white.opacity(0.10)
+            : Color.white.opacity(0.55)
+    }
+
+    private var tileOverlayColor: Color {
+        colorScheme == .dark
+            ? Color.black.opacity(0.22)
+            : Color.white.opacity(0.55)
+    }
+}
+
+private struct LightweightPanelModifier: ViewModifier {
+    let colorScheme: ColorScheme
+    var cornerRadius: CGFloat = 28
+    var padding: CGFloat = 20
+
+    func body(content: Content) -> some View {
+        content
+            .padding(padding)
+            .background(panelFillColor, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(panelStrokeColor, lineWidth: 1)
+            }
+    }
+
+    private var panelFillColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.07) : Color.white.opacity(0.46)
+    }
+
+    private var panelStrokeColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.10) : Color.white.opacity(0.50)
+    }
+}
+
+private extension View {
+    func lightweightPanelStyle(colorScheme: ColorScheme, cornerRadius: CGFloat = 28, padding: CGFloat = 20) -> some View {
+        modifier(LightweightPanelModifier(colorScheme: colorScheme, cornerRadius: cornerRadius, padding: padding))
     }
 }
 

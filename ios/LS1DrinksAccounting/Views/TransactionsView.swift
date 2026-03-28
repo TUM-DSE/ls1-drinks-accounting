@@ -30,6 +30,8 @@ struct TransactionsView: View {
     
     var body: some View {
         ZStack {
+            LiquidGlassBackground()
+
             if viewModel.isLoading {
                 ProgressView()
             } else {
@@ -47,6 +49,8 @@ struct TransactionsView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
             }
         }
         .onAppear {
@@ -84,7 +88,10 @@ struct TransactionsView: View {
             Text(formatter.string(from: NSNumber(value: transaction.amount)) ?? "")
             Spacer()
             Text(transaction.timestamp, style: .time)
+                .foregroundStyle(.secondary)
         }
+        .padding(.vertical, 6)
+        .listRowBackground(Color.white.opacity(0.24))
         .onAppear {
             if transaction.id == viewModel.transactions.last?.id {
                 Task {

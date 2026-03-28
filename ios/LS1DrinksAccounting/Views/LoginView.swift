@@ -20,8 +20,7 @@ struct LoginView: View {
         NavigationStack {
             GeometryReader { geometry in
                 ZStack {
-                    Color(.systemGroupedBackground)
-                        .ignoresSafeArea()
+                    LiquidGlassBackground()
 
                     if isWideLayout(for: geometry.size) {
                         wideLayout
@@ -44,6 +43,7 @@ struct LoginView: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: 320, alignment: .leading)
+            .liquidGlassCard()
 
             loginCard
                 .frame(width: 420)
@@ -84,15 +84,11 @@ struct LoginView: View {
                     .textContentType(.username)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .liquidGlassField()
 
                 SecureField("Password", text: $password)
                     .textContentType(.password)
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .liquidGlassField()
             }
 
             if let error = viewModel.error {
@@ -114,8 +110,7 @@ struct LoginView: View {
                         Spacer()
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(LiquidGlassButtonStyle(tint: .blue))
                 .disabled(viewModel.loading || username.isEmpty || password.isEmpty)
 
                 if viewModel.loading {
@@ -124,10 +119,7 @@ struct LoginView: View {
                 }
             }
         }
-        .padding(28)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.08), radius: 20, y: 8)
+        .liquidGlassCard(cornerRadius: 28, padding: 28)
     }
 
     private func isWideLayout(for size: CGSize) -> Bool {

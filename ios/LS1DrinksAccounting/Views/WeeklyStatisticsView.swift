@@ -15,20 +15,26 @@ public struct WeeklyStatisticsView: View {
     let timer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
 
     init(model: Model) {
-        _viewModel = StateObject(wrappedValue: WeeklyStatisticsViewModel(model: model))
+        _viewModel = StateObject(
+            wrappedValue: WeeklyStatisticsViewModel(model: model)
+        )
     }
 
     public var body: some View {
-        ScrollView {
+        ZStack {
+            LiquidGlassBackground()
+
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Coffee Statistics")
                         .font(.largeTitle)
                         .fontWeight(.bold)
 
-                    Text("Cumulative drinks from Monday to Sunday, updated hourly.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Text(
+                        "Cumulative drinks from Monday to Sunday."
+                    )
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                 }
 
                 if viewModel.isLoading {
@@ -38,8 +44,14 @@ public struct WeeklyStatisticsView: View {
                             .padding(.vertical, 60)
                         Spacer()
                     }
+                    .liquidGlassCard()
                 } else if let error = viewModel.error {
-                    ContentUnavailableView("Could not load statistics", systemImage: "chart.xyaxis.line", description: Text(error))
+                    ContentUnavailableView(
+                        "Could not load statistics",
+                        systemImage: "chart.xyaxis.line",
+                        description: Text(error)
+                    )
+                    .liquidGlassCard()
                 } else if let statistics = viewModel.statistics {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack(spacing: 12) {
@@ -77,12 +89,19 @@ public struct WeeklyStatisticsView: View {
                             statistics.previous_week.title: Color.gray
                         ])
                         .chartXAxis {
-                            AxisMarks(values: Array(stride(from: 0, through: 144, by: 24))) { value in
+                            AxisMarks(
+                                values: Array(
+                                    stride(from: 0, through: 144, by: 24)
+                                )
+                            ) { value in
                                 AxisGridLine()
                                 AxisTick()
                                 AxisValueLabel {
                                     if let slot = value.as(Int.self) {
-                                        Text(statistics.current_week.points[slot].day_label)
+                                        Text(
+                                            statistics.current_week
+                                                .points[slot].day_label
+                                        )
                                     }
                                 }
                             }
@@ -93,15 +112,12 @@ public struct WeeklyStatisticsView: View {
                         .chartYScale(domain: 0...statistics.maxCount)
                         .chartLegend(position: .top, alignment: .leading)
                         .frame(minHeight: 320)
-                        .padding()
-                        .background(Color(UIColor.tertiarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .liquidGlassCard(cornerRadius: 20, padding: 20)
                     }
                 }
             }
             .padding(24)
         }
-        .background(Color(UIColor.secondarySystemBackground))
         .task {
             await viewModel.loadStatistics()
         }
@@ -140,9 +156,7 @@ private struct SummaryCard: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(20)
-        .background(Color(UIColor.tertiarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .liquidGlassCard()
     }
 }
 
@@ -194,12 +208,18 @@ private extension WeeklyDrinkStatsResponse {
         let weekday = calendar.component(.weekday, from: now)
         let isoWeekday = (weekday + 5) % 7
         let hour = calendar.component(.hour, from: now)
-        return min((isoWeekday * 24) + hour, max(current_week.points.count - 1, 0))
+        return min(
+            (isoWeekday * 24) + hour,
+            max(current_week.points.count - 1, 0)
+        )
     }
 
     var maxCount: Int {
         max(
-            current_week.points.prefix(currentSlotIndex + 1).map(\.count).max() ?? 0,
+            current_week.points
+                .prefix(currentSlotIndex + 1)
+                .map(\.count)
+                .max() ?? 0,
             previous_week.points.map(\.count).max() ?? 0,
             1
         )

@@ -9,19 +9,20 @@ import SwiftUI
 import Combine
 
 struct PinEntryButton: View {
-    let title: any View
+    let title: AnyView
+    let isPlaceholder: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            AnyView(title)
-                .font(.title)
-                .foregroundColor(Color(UIColor.label))
-                .frame(width: 60, height: 60)
-                .background(Color(UIColor.secondarySystemFill))
-                .cornerRadius(30)
-//                .shadow(color: .gray, radius: 3, x: 0, y: 2)
+            title
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.primary)
+                .frame(width: 78, height: 78)
         }
+        .glassEffect(.regular.interactive())
+        .opacity(isPlaceholder ? 0 : 1)
+        .disabled(isPlaceholder)
     }
 }
 
@@ -45,15 +46,25 @@ public struct PasscodeField: View {
     @State var pin: String = ""
     var showPin = false
     @State var isDisabled = false
-    
-    @FocusState private var isFocused: Bool
-    
+
     var handler: (String, @escaping (Bool) -> Void) -> Void
     
     public var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 28) {
+            pinHeader
             pinDots
             buttons
+        }
+    }
+
+    private var pinHeader: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "lock.circle.fill")
+                .font(.system(size: 34))
+                .foregroundStyle(.primary.opacity(0.82))
+
+            Text(showPin ? "Set your passcode" : "Enter your passcode")
+                .font(.title3.weight(.semibold))
         }
     }
     
@@ -63,24 +74,25 @@ public struct PasscodeField: View {
                 HStack(spacing: 20) {
                     ForEach(1...3, id: \.self) { col in
                         let number = row * 3 + col
-                        PinEntryButton(title: Text("\(number)")) {
+                        PinEntryButton(title: AnyView(Text("\(number)")), isPlaceholder: false) {
                             appendToPin(number)
                         }
                     }
                 }
             }
             HStack(spacing: 20) {
-                PinEntryButton(title: Text("")) {
+                PinEntryButton(title: AnyView(Text("")), isPlaceholder: true) {
                 }
-                .opacity(0)
-                PinEntryButton(title: Text("0")) {
+                PinEntryButton(title: AnyView(Text("0")), isPlaceholder: false) {
                     appendToPin(0)
                 }
-                PinEntryButton(title: Image(systemName: "delete.backward")) {
+                PinEntryButton(title: AnyView(Image(systemName: "delete.backward")), isPlaceholder: false) {
                     deleteFromPin()
                 }
             }
         }
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.6 : 1)
     }
     
     private func appendToPin(_ digit: Int) {
@@ -105,9 +117,31 @@ public struct PasscodeField: View {
     private var pinDots: some View {
         HStack(spacing: 20) {
             ForEach(0..<maxDigits) { index in
-                Image(systemName: self.getImageName(at: index))
-                    .font(.largeTitle)
+                ZStack {
+                    Circle()
+                        .fill(pin.count > index ? Color.primary.opacity(0.78) : Color.black.opacity(0.12))
+                        .frame(width: 18, height: 18)
+                        .overlay {
+                            Circle()
+                                .strokeBorder(pin.count > index ? Color.white.opacity(0.35) : Color.black.opacity(0.18), lineWidth: 1)
+                        }
+
+                    if showPin, index < pin.count {
+                        Text("\(pin.digits[index])")
+                            .font(.footnote.weight(.bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .frame(width: 34, height: 34)
+                .background(Color.white.opacity(0.24), in: Circle())
             }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(Color.black.opacity(0.14), in: Capsule())
+        .overlay {
+            Capsule()
+                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
         }
         .modifier(Shake(animatableData: CGFloat(attempts)))
     }
@@ -126,8 +160,8 @@ public struct PasscodeField: View {
                         pin = ""
                         attempts += 1
                     }
-                    isDisabled = false
                 }
+                isDisabled = false
             }
         }
         
@@ -139,17 +173,6 @@ public struct PasscodeField: View {
         }
     }
     
-    private func getImageName(at index: Int) -> String {
-        if index >= self.pin.count {
-            return "circle"
-        }
-        
-        if self.showPin {
-            return self.pin.digits[index].numberString + ".circle"
-        }
-        
-        return "circle.fill"
-    }
 }
 
 struct PasscodeField_Previews: PreviewProvider {
@@ -177,14 +200,4 @@ extension String {
         return result
     }
     
-}
-
-extension Int {
-    
-    var numberString: String {
-        
-        guard self < 10 else { return "0" }
-        
-        return String(self)
-    }
 }

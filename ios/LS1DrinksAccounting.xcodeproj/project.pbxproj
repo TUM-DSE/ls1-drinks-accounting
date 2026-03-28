@@ -43,6 +43,7 @@
 		5BFEF8132962DC4F00D9E7CA /* Overview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFEF8122962DC4F00D9E7CA /* Overview.swift */; };
 		9C4E0C2A2CDE100100000001 /* WeeklyStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4E0C292CDE100100000001 /* WeeklyStatisticsView.swift */; };
 		9C4E0C2C2CDE100100000001 /* StatsApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4E0C2B2CDE100100000001 /* StatsApi.swift */; };
+		9C4E0C2E2CDE100100000001 /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4E0C2D2CDE100100000001 /* LiquidGlass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,7 @@
 		5BFEF8122962DC4F00D9E7CA /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
 		9C4E0C292CDE100100000001 /* WeeklyStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyStatisticsView.swift; sourceTree = "<group>"; };
 		9C4E0C2B2CDE100100000001 /* StatsApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsApi.swift; sourceTree = "<group>"; };
+		9C4E0C2D2CDE100100000001 /* LiquidGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlass.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +187,7 @@
 				5BFEF805295F379E00D9E7CA /* LoginView.swift */,
 				5BFEF8122962DC4F00D9E7CA /* Overview.swift */,
 				9C4E0C292CDE100100000001 /* WeeklyStatisticsView.swift */,
+				9C4E0C2D2CDE100100000001 /* LiquidGlass.swift */,
 				5BB364DD29706DA200860681 /* PasscodeField.swift */,
 				5BF75858298953C100EED233 /* AnimatableCurrencyModifier.swift */,
 			);
@@ -316,6 +319,7 @@
 				5BB364DE29706DA200860681 /* PasscodeField.swift in Sources */,
 				5BFEF808295F38C400D9E7CA /* LoginViewModel.swift in Sources */,
 				9C4E0C2A2CDE100100000001 /* WeeklyStatisticsView.swift in Sources */,
+				9C4E0C2E2CDE100100000001 /* LiquidGlass.swift in Sources */,
 				9C4E0C2C2CDE100100000001 /* StatsApi.swift in Sources */,
 				5B6CA0052944A0D800A709F8 /* LS1DrinksAccountingApp.swift in Sources */,
 				5BEDC658294C9A1100D32DC7 /* Errors.swift in Sources */,

@@ -22,12 +22,42 @@ struct EditDrinksView: View {
     private var viewModel: EditDrinksViewModel
     
     var body: some View {
-        Form {
-            TextField("Name", text: $name)
-            TextField("Price", text: $price)
-                .keyboardType(.numbersAndPunctuation)
-            if let error = viewModel.error {
-                Text("Could not submit: \(error)")
+        ZStack {
+            LiquidGlassBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    Text(drink == nil ? "Add drink" : "Edit drink")
+                        .font(.title2.bold())
+
+                    TextField("Name", text: $name)
+                        .liquidGlassField()
+                    TextField("Price", text: $price)
+                        .keyboardType(.numbersAndPunctuation)
+                        .liquidGlassField()
+
+                    if let error = viewModel.error {
+                        Text("Could not submit: \(error)")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                    }
+
+                    Button(action: {
+                        submit()
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text(viewModel.isLoading ? "Submitting..." : "Submit")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(LiquidGlassButtonStyle(tint: .orange))
+                    .disabled(viewModel.isLoading || name.isEmpty || price.isEmpty)
+                }
+                .liquidGlassCard(cornerRadius: 28, padding: 24)
+                .frame(maxWidth: 520)
+                .padding(24)
             }
         }
         .alert(isPresented: $malformedPrice) {
@@ -37,17 +67,8 @@ struct EditDrinksView: View {
         .onSubmit {
             submit()
         }
-        .navigationBarTitle(Text(drink == nil ? "Add drink" : "Edit drink"), displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            if viewModel.isLoading {
-                ProgressView()
-            }
-            Button(action: {
-                submit()
-            }) {
-                Text("Submit")
-            }.disabled(viewModel.isLoading)
-        })
+        .navigationTitle(drink == nil ? "Add drink" : "Edit drink")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.error = nil
         }

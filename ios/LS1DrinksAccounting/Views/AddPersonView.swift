@@ -18,31 +18,53 @@ struct AddPersonView: View {
     private var viewModel: AddPersonViewModel
     
     var body: some View {
-        Form {
-            TextField("First name", text: $first_name)
-            TextField("Last name", text: $last_name)
-            TextField("Email", text: $email)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-            if let error = viewModel.error {
-                Text("Could not submit: \(error)")
+        ZStack {
+            LiquidGlassBackground()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    Text("Add person")
+                        .font(.title2.bold())
+
+                    TextField("First name", text: $first_name)
+                        .liquidGlassField()
+                    TextField("Last name", text: $last_name)
+                        .liquidGlassField()
+                    TextField("Email", text: $email)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .liquidGlassField()
+
+                    if let error = viewModel.error {
+                        Text("Could not submit: \(error)")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                    }
+
+                    Button(action: {
+                        submit()
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text(viewModel.isLoading ? "Submitting..." : "Submit")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(LiquidGlassButtonStyle(tint: .blue))
+                    .disabled(viewModel.isLoading || first_name.isEmpty || last_name.isEmpty || email.isEmpty)
+                }
+                .liquidGlassCard(cornerRadius: 28, padding: 24)
+                .frame(maxWidth: 520)
+                .padding(24)
             }
         }
         .disableAutocorrection(true)
         .onSubmit {
             submit()
         }
-        .navigationBarTitle(Text("Add person"), displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            if viewModel.isLoading {
-                ProgressView()
-            }
-            Button(action: {
-                submit()
-            }) {
-                Text("Submit")
-            }.disabled(viewModel.isLoading)
-        })
+        .navigationTitle("Add person")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.error = nil
         }

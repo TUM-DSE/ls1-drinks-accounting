@@ -37,29 +37,38 @@ struct Overview: View {
     
     var body: some View {
         NavigationSplitView {
-            List(selection: $selection) {
-                ForEach(sections, id: \.self) { section in
-                    Section(section) {
-                        ForEach(peopleByLastNamePrefix[section]!) { person in
-                            NavigationLink(value: person) {
-                                Text(person.name)
+            ZStack {
+                List(selection: $selection) {
+                    ForEach(sections, id: \.self) { section in
+                        Section(section) {
+                            ForEach(peopleByLastNamePrefix[section]!) { person in
+                                NavigationLink(value: person) {
+                                    Text(person.name)
+                                }
                             }
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
+                .padding(12)
             }
-            .listStyle(.grouped)
+            .navigationTitle("People")
+            .searchable(text: $searchText)
             .refreshable(action: {
                 await viewModel.loadUsers()
             })
-            .searchable(text: $searchText)
         } detail: {
             NavigationStack(path: $path) {
-                if let selection {
-                    SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
-                        .navigationTitle(selection.name)
-                } else {
-                    WeeklyStatisticsView(model: model)
+                ZStack {
+//                    LiquidGlassBackground()
+
+                    if let selection {
+                        SelectDrinkView(selection.id, model: model, onDismiss: { self.selection = nil })
+                            .navigationTitle(selection.name)
+                    } else {
+                        WeeklyStatisticsView(model: model)
+                    }
                 }
             }
         }

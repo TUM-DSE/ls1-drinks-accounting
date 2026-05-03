@@ -1,0 +1,319 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+:root {
+	font-family:
+		Avenir Next, Avenir, ui-rounded, Nunito, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+	background: #e2e8f0;
+}
+
+button,
+input {
+	font: inherit;
+}
+
+button:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+.glass-card {
+	border: 1px solid rgba(255, 255, 255, 0.58);
+	border-radius: 1.75rem;
+	background: rgba(255, 255, 255, 0.48);
+	box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
+	backdrop-filter: blur(22px) saturate(1.25);
+}
+
+.glass-input {
+	width: 100%;
+	border: 1px solid rgba(255, 255, 255, 0.72);
+	border-radius: 1.1rem;
+	background: rgba(255, 255, 255, 0.6);
+	padding: 0.9rem 1rem;
+	color: #0f172a;
+	outline: none;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.glass-input:focus {
+	border-color: rgba(245, 158, 11, 0.8);
+	box-shadow:
+		0 0 0 4px rgba(245, 158, 11, 0.18),
+		inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.field-label {
+	display: block;
+	margin-bottom: 0.4rem;
+	font-size: 0.8rem;
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+.primary-button,
+.secondary-button,
+.icon-button {
+	border: 1px solid rgba(255, 255, 255, 0.65);
+	border-radius: 999px;
+	font-weight: 800;
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease,
+		background 120ms ease;
+}
+
+.primary-button {
+	background: linear-gradient(135deg, #f59e0b, #ef4444);
+	padding: 0.9rem 1.2rem;
+	color: white;
+	box-shadow: 0 14px 30px rgba(239, 68, 68, 0.24);
+}
+
+.secondary-button {
+	background: rgba(255, 255, 255, 0.56);
+	padding: 0.65rem 1rem;
+	color: #0f172a;
+}
+
+.icon-button {
+	display: grid;
+	height: 2.4rem;
+	width: 2.4rem;
+	place-items: center;
+	background: rgba(255, 255, 255, 0.56);
+	font-size: 1.3rem;
+	line-height: 1;
+	color: #0f172a;
+}
+
+.primary-button:hover:not(:disabled),
+.secondary-button:hover:not(:disabled),
+.icon-button:hover:not(:disabled) {
+	transform: translateY(-1px);
+	box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+}
+
+.person-row {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	border-radius: 1rem;
+	padding: 0.8rem 0.85rem;
+	text-align: left;
+	font-weight: 700;
+	color: #0f172a;
+}
+
+.person-row:hover,
+.selected-person {
+	background: rgba(255, 255, 255, 0.64);
+}
+
+.negative {
+	color: #dc2626;
+}
+
+.balance-card,
+.summary-card,
+.transaction-row,
+.drink-tile {
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	border-radius: 1.5rem;
+	background: rgba(255, 255, 255, 0.46);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+	backdrop-filter: blur(18px);
+}
+
+.balance-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.25rem;
+}
+
+.summary-card {
+	border-top-width: 0.45rem;
+	padding: 1.35rem;
+}
+
+.transaction-row {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 0.9rem;
+}
+
+.drink-tile {
+	position: relative;
+	display: flex;
+	min-height: 10rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	overflow: hidden;
+	padding: 1rem;
+	text-align: center;
+}
+
+.drink-tile:hover:not(:disabled) {
+	transform: translateY(-1px);
+	box-shadow: 0 16px 34px rgba(15, 23, 42, 0.14);
+}
+
+.tile-overlay {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	background: rgba(255, 255, 255, 0.72);
+	font-weight: 900;
+}
+
+.pin-slots {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.28);
+	border-radius: 999px;
+	background: rgba(15, 23, 42, 0.12);
+	padding: 0.85rem 1rem;
+}
+
+.pin-slot {
+	display: grid;
+	height: 2.45rem;
+	width: 2.45rem;
+	place-items: center;
+	border: 1px solid rgba(15, 23, 42, 0.14);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.34);
+	color: white;
+	font-size: 1rem;
+	font-weight: 900;
+}
+
+.pin-slot::after {
+	display: block;
+	height: 1rem;
+	width: 1rem;
+	border-radius: 999px;
+	background: rgba(15, 23, 42, 0.16);
+	content: '';
+}
+
+.pin-slot.filled::after {
+	background: rgba(15, 23, 42, 0.8);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.pin-slot.filled:not(:empty)::after {
+	display: none;
+}
+
+.pin-pad {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(4.8rem, 1fr));
+	gap: 1rem;
+	justify-items: center;
+}
+
+.pin-key {
+	display: grid;
+	height: 4.9rem;
+	width: 4.9rem;
+	place-items: center;
+	border: 1px solid rgba(255, 255, 255, 0.62);
+	border-radius: 1.55rem;
+	background: rgba(255, 255, 255, 0.5);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.58),
+		0 12px 26px rgba(15, 23, 42, 0.1);
+	font-size: 1.55rem;
+	font-weight: 900;
+	color: #0f172a;
+	touch-action: manipulation;
+	user-select: none;
+}
+
+.pin-key:hover:not(:disabled) {
+	transform: translateY(-1px);
+	background: rgba(255, 255, 255, 0.68);
+}
+
+.pin-key:active:not(:disabled) {
+	transform: translateY(1px) scale(0.98);
+}
+
+.pin-key-secondary {
+	font-size: 0.95rem;
+	color: #64748b;
+}
+
+.pin-pad-disabled {
+	opacity: 0.6;
+}
+
+.pin-loading {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	border-radius: 1.6rem;
+	background: rgba(255, 255, 255, 0.64);
+	font-weight: 900;
+	color: #0f172a;
+	backdrop-filter: blur(10px);
+}
+
+.pin-shake {
+	animation: pin-shake 280ms linear;
+}
+
+@keyframes pin-shake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-8px);
+	}
+	75% {
+		transform: translateX(8px);
+	}
+}
+
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	display: grid;
+	place-items: center;
+	background: rgba(15, 23, 42, 0.32);
+	padding: 1rem;
+	backdrop-filter: blur(10px);
+}
+
+.modal-scrim {
+	position: absolute;
+	inset: 0;
+	cursor: default;
+}
+
+.modal-card {
+	position: relative;
+	z-index: 1;
+	width: min(100%, 32rem);
+	border: 1px solid rgba(255, 255, 255, 0.68);
+	border-radius: 1.75rem;
+	background: rgba(248, 250, 252, 0.86);
+	padding: 1.5rem;
+	box-shadow: 0 30px 90px rgba(15, 23, 42, 0.26);
+	backdrop-filter: blur(24px);
+}

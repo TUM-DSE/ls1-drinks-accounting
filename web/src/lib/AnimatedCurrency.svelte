@@ -12,6 +12,7 @@
 		currency: 'EUR'
 	});
 	const durationMs = 350;
+	const easeInOut = cubicBezier(.25,.1,.25,1);
 
 	let displayedValue = value;
 	let mounted = false;
@@ -46,7 +47,8 @@
 		const startedAt = performance.now();
 		const tick = (now: number) => {
 			const progress = Math.min((now - startedAt) / durationMs, 1);
-			displayedValue = from + (to - from) * progress;
+			const easedProgress = easeInOut(progress);
+			displayedValue = from + (to - from) * easedProgress;
 
 			if (progress < 1) {
 				animationFrame = requestAnimationFrame(tick);
@@ -66,6 +68,29 @@
 			cancelAnimationFrame(animationFrame);
 			animationFrame = null;
 		}
+	}
+
+	function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+		const sampleCurveX = (t: number) =>
+			((1 - 3 * x2 + 3 * x1) * t + (3 * x2 - 6 * x1)) * t * t + 3 * x1 * t;
+		const sampleCurveY = (t: number) =>
+			((1 - 3 * y2 + 3 * y1) * t + (3 * y2 - 6 * y1)) * t * t + 3 * y1 * t;
+		const sampleCurveDerivativeX = (t: number) =>
+			(3 * (1 - 3 * x2 + 3 * x1) * t + 2 * (3 * x2 - 6 * x1)) * t + 3 * x1;
+
+		return (x: number) => {
+			let t = x;
+			for (let i = 0; i < 4; i += 1) {
+				const currentX = sampleCurveX(t) - x;
+				const derivative = sampleCurveDerivativeX(t);
+				if (Math.abs(currentX) < 0.001 || Math.abs(derivative) < 0.001) {
+					break;
+				}
+				t -= currentX / derivative;
+			}
+
+			return sampleCurveY(Math.max(0, Math.min(1, t)));
+		};
 	}
 </script>
 

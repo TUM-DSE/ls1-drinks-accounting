@@ -712,9 +712,6 @@
 											<span class="text-xs tabular-nums" style="color: var(--color-text-muted)"
 												>{currencyFormatter.format(drink.price)}</span
 											>
-											{#if loadingDrinkId === drink.id}
-												<span class="tile-overlay">Loading…</span>
-											{/if}
 										</button>
 									{/each}
 								</div>

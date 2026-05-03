@@ -2,7 +2,8 @@
 
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
+	import AnimatedCurrency from '$lib/AnimatedCurrency.svelte';
 	import PinPad from '$lib/PinPad.svelte';
 	import {
 		buyDrink,
@@ -33,6 +34,7 @@
 	const dateFormatter = new Intl.DateTimeFormat(undefined, {
 		dateStyle: 'medium'
 	});
+	const pinSlotIndexes = [0, 1, 2, 3];
 	const pageSize = 100;
 	const statisticsDisabled = import.meta.env.VITE_DISABLE_STATISTICS !== 'false';
 
@@ -102,6 +104,12 @@
 			.finally(() => {
 				loadStats();
 			});
+	});
+
+	onDestroy(() => {
+		if (refreshTimer) {
+			clearInterval(refreshTimer);
+		}
 	});
 
 	async function handleLogin() {
@@ -297,6 +305,8 @@
 
 		try {
 			const updatedUser = await buyDrink(selectedUser.id, drink.id, currentPin);
+			confirmingDrink = null;
+			await tick();
 			people = [...people.filter((person) => person.id !== updatedUser.id), updatedUser];
 		} catch (error) {
 			drinkError = messageFor(error);
@@ -386,22 +396,25 @@
 	}
 
 	function groupTransactions(items: Transaction[]) {
-		return items.reduce<{ key: string; title: string; transactions: Transaction[] }[]>((groups, item) => {
-			const date = new Date(item.timestamp);
-			const key = date.toDateString();
-			let group = groups.find((entry) => entry.key === key);
-			if (!group) {
-				const today = new Date().toDateString();
-				group = {
-					key,
-					title: key === today ? 'today' : dateFormatter.format(date),
-					transactions: []
-				};
-				groups.push(group);
-			}
-			group.transactions.push(item);
-			return groups;
-		}, []);
+		return items.reduce<{ key: string; title: string; transactions: Transaction[] }[]>(
+			(groups, item) => {
+				const date = new Date(item.timestamp);
+				const key = date.toDateString();
+				let group = groups.find((entry) => entry.key === key);
+				if (!group) {
+					const today = new Date().toDateString();
+					group = {
+						key,
+						title: key === today ? 'today' : dateFormatter.format(date),
+						transactions: []
+					};
+					groups.push(group);
+				}
+				group.transactions.push(item);
+				return groups;
+			},
+			[]
+		);
 	}
 
 	function isPurchase(transaction: Transaction): transaction is Transaction & {
@@ -445,7 +458,10 @@
 	function currentSlotIndex(statistics: WeeklyDrinkStatsResponse) {
 		const now = new Date();
 		const mondayBasedDay = (now.getDay() + 6) % 7;
-		return Math.min(mondayBasedDay * 24 + now.getHours(), statistics.current_week.points.length - 1);
+		return Math.min(
+			mondayBasedDay * 24 + now.getHours(),
+			statistics.current_week.points.length - 1
+		);
 	}
 
 	function linePath(points: { slot_index: number; count: number }[], maxCount: number) {
@@ -471,81 +487,79 @@
 	<title>LS1 Drinks</title>
 </svelte:head>
 
-<main class="h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,#fef3c7,transparent_34rem),radial-gradient(circle_at_bottom_right,#dbeafe,transparent_32rem),linear-gradient(135deg,#f8fafc,#e2e8f0)] text-slate-950">
+<main class="h-screen overflow-hidden">
 	{#if loggedIn === null}
 		<div class="flex min-h-screen items-center justify-center p-8">
-			<div class="glass-card px-8 py-6 text-lg font-semibold">Loading...</div>
+			<div class="text-sm" style="color: var(--color-text-muted)">Loading...</div>
 		</div>
 	{:else if !loggedIn}
 		<section class="grid min-h-screen place-items-center p-6">
-			<div class="grid w-full max-w-5xl gap-8 lg:grid-cols-[1fr_420px] lg:items-center">
-				<div class="glass-card hidden p-10 lg:block">
-					<p class="text-sm font-semibold uppercase tracking-[0.28em] text-amber-700">LS1 Drinks</p>
-					<h1 class="mt-4 text-5xl font-black tracking-tight">Accounting without the queue.</h1>
-					<p class="mt-5 text-xl text-slate-600">Sign in to access the drinks app.</p>
+			<form
+				class="surface-card w-full max-w-sm p-6"
+				onsubmit={(event) => (event.preventDefault(), handleLogin())}
+			>
+				<div class="mb-6">
+					<h1 class="text-2xl font-semibold tracking-tight">LS1 Drinks</h1>
+					<p class="mt-1 text-sm" style="color: var(--color-text-muted)">Sign in to continue.</p>
 				</div>
 
-				<form class="glass-card p-7" onsubmit={(event) => (event.preventDefault(), handleLogin())}>
-					<div class="mb-7 text-center lg:text-left">
-						<h1 class="text-4xl font-black tracking-tight">LS1 Drinks</h1>
-						<p class="mt-2 text-slate-600">Sign in to access the accounting app.</p>
-					</div>
+				<label class="field-label" for="username">Username</label>
+				<input id="username" class="surface-input" autocomplete="username" bind:value={username} />
 
-					<label class="field-label" for="username">Username</label>
-					<input id="username" class="glass-input" autocomplete="username" bind:value={username} />
+				<label class="field-label mt-4" for="password">Password</label>
+				<input
+					id="password"
+					class="surface-input"
+					type="password"
+					autocomplete="current-password"
+					bind:value={password}
+				/>
 
-					<label class="field-label mt-4" for="password">Password</label>
-					<input
-						id="password"
-						class="glass-input"
-						type="password"
-						autocomplete="current-password"
-						bind:value={password}
-					/>
+				{#if loginError}
+					<p class="error-banner mt-4">{loginError}</p>
+				{/if}
 
-					{#if loginError}
-						<p class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
-							Error logging in: {loginError}
-						</p>
-					{/if}
-
-					<button class="primary-button mt-6 w-full" disabled={loginLoading || !username || !password}>
-						{loginLoading ? 'Logging in...' : 'Login'}
-					</button>
-				</form>
-			</div>
+				<button
+					class="primary-button mt-6 w-full"
+					disabled={loginLoading || !username || !password}
+				>
+					{loginLoading ? 'Signing in…' : 'Sign in'}
+				</button>
+			</form>
 		</section>
 	{:else}
-		<section class="grid h-full min-h-0 grid-rows-[minmax(0,42vh)_minmax(0,1fr)] gap-4 p-3 md:grid-cols-[330px_minmax(0,1fr)] md:grid-rows-none md:p-5">
-			<aside class="glass-card flex h-full min-h-0 flex-col overflow-hidden p-0">
-				<div class="border-b border-white/50 p-4">
+		<section
+			class="grid h-full min-h-0 grid-rows-[minmax(0,42vh)_minmax(0,1fr)] gap-4 p-4 md:grid-cols-[300px_minmax(0,1fr)] md:grid-rows-none md:p-6"
+		>
+			<aside class="surface-card flex h-full min-h-0 flex-col overflow-hidden p-0">
+				<div class="p-4" style="border-bottom: 1px solid var(--color-border)">
 					<div class="flex items-center justify-between gap-3">
-						<h1 class="text-2xl font-black">People</h1>
-						<div class="flex gap-2">
-							<button class="icon-button" title="Refresh" onclick={loadOverview}>↻</button>
-						</div>
+						<h1 class="text-base font-semibold">People</h1>
+						<button class="icon-button" title="Refresh" onclick={loadOverview} aria-label="Refresh"
+							>↻</button
+						>
 					</div>
 					<input
-						class="glass-input mt-4"
-						placeholder="Search people"
+						class="surface-input mt-3"
+						placeholder="Search"
 						type="search"
 						bind:value={search}
 					/>
 					{#if overviewError}
-						<p class="mt-3 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{overviewError}</p>
+						<p class="error-banner mt-3">{overviewError}</p>
 					{/if}
 				</div>
 
-				<div class="flex-1 overflow-auto p-3">
+				<div class="flex-1 overflow-auto p-2">
 					{#if loadingOverview && people.length === 0}
-						<p class="p-4 text-slate-600">Loading people...</p>
+						<p class="p-4 text-sm" style="color: var(--color-text-muted)">Loading…</p>
 					{:else}
-						{#each sections as section}
-							<h2 class="px-3 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+						{#each sections as section (section.title)}
+							<h2 class="section-label px-3 pt-3 pb-1">
 								{section.title}
 							</h2>
-							<div class="space-y-1">
-								{#each section.people as person}
+							<div class="space-y-0.5">
+								{#each section.people as person (person.id)}
 									<button
 										class:selected-person={selectedUserId === person.id}
 										class="person-row"
@@ -560,13 +574,16 @@
 				</div>
 			</aside>
 
-			<section class="glass-card h-full min-h-0 overflow-hidden p-0">
+			<section class="surface-card h-full min-h-0 overflow-hidden p-0">
 				{#if selectedUser}
 					<div class="flex h-full flex-col">
-						<header class="flex items-center justify-between gap-4 border-b border-white/50 p-4">
+						<header
+							class="flex items-center justify-between gap-4 p-4"
+							style="border-bottom: 1px solid var(--color-border)"
+						>
 							<div>
-								<p class="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">Selected</p>
-								<h2 class="text-2xl font-black">{fullName(selectedUser)}</h2>
+								<p class="section-label">Selected</p>
+								<h2 class="mt-0.5 text-xl font-semibold">{fullName(selectedUser)}</h2>
 							</div>
 							<div class="flex items-center gap-2">
 								{#if !requiresPin}
@@ -574,26 +591,31 @@
 										{selectedUser.has_pin ? 'Change PIN' : 'Set PIN'}
 									</button>
 								{/if}
-								<button class="icon-button" title="Lock" onclick={clearSelection}>×</button>
+								<button
+									class="icon-button"
+									title="Close"
+									onclick={clearSelection}
+									aria-label="Close">×</button
+								>
 							</div>
 						</header>
 
 						{#if requiresPin}
 							<div class="grid flex-1 place-items-center p-6">
-								<div class="glass-card w-full max-w-md p-7">
+								<div class="w-full max-w-sm">
 									<div class="text-center">
-										<div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white/60 text-3xl">
-											⌾
-										</div>
-										<h3 class="mt-3 text-2xl font-black">Enter your passcode</h3>
+										<h3 class="text-lg font-semibold">Enter passcode</h3>
+										<p class="mt-1 text-sm" style="color: var(--color-text-muted)">
+											{fullName(selectedUser)}
+										</p>
 									</div>
 									<div class:pin-shake={pinError} class="pin-slots mt-6">
-										{#each Array(4) as _, index}
+										{#each pinSlotIndexes as index (index)}
 											<div class:filled={pinValue.length > index} class="pin-slot"></div>
 										{/each}
 									</div>
 									{#if pinError}
-										<p class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{pinError}</p>
+										<p class="error-banner mt-4">{pinError}</p>
 									{/if}
 									<PinPad
 										disabled={checkingPin}
@@ -606,31 +628,42 @@
 							</div>
 						{:else if showingTransactions}
 							<div class="flex min-h-0 flex-1 flex-col">
-								<div class="flex items-center justify-between border-b border-white/50 p-4">
-									<h3 class="text-xl font-black">History</h3>
-									<button class="secondary-button" onclick={() => (showingTransactions = false)}>Back</button>
+								<div
+									class="flex items-center justify-between p-4"
+									style="border-bottom: 1px solid var(--color-border)"
+								>
+									<h3 class="text-base font-semibold">History</h3>
+									<button class="secondary-button" onclick={() => (showingTransactions = false)}
+										>Back</button
+									>
 								</div>
-								<div class="flex-1 overflow-auto p-4" onscroll={handleTransactionsScroll}>
+								<div class="flex-1 overflow-auto p-3" onscroll={handleTransactionsScroll}>
 									{#if transactionsLoading}
-										<p class="text-slate-600">Loading history...</p>
+										<p class="p-2 text-sm" style="color: var(--color-text-muted)">Loading…</p>
 									{:else if transactionsError}
-										<p class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{transactionsError}</p>
+										<p class="error-banner">{transactionsError}</p>
 									{:else}
-										{#each transactionSections as section}
-											<h4 class="px-2 py-3 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+										{#each transactionSections as section (section.key)}
+											<h4 class="section-label px-3 pt-3 pb-1">
 												{section.title}
 											</h4>
-											<div class="space-y-2">
-												{#each section.transactions as transaction}
+											<div class="space-y-0.5">
+												{#each section.transactions as transaction (transaction.id)}
 													<div class="transaction-row">
-														<span class="grid h-9 w-9 place-items-center rounded-full bg-white/60 text-lg">
+														<span class="transaction-icon">
 															{transactionIcon(transaction)}
 														</span>
-														<span class="font-semibold">{transactionLabel(transaction)}</span>
-														<span class:negative={transaction.amount < 0} class="ml-auto font-bold">
+														<span class="font-medium">{transactionLabel(transaction)}</span>
+														<span
+															class:negative={transaction.amount < 0}
+															class="ml-auto font-medium tabular-nums"
+														>
 															{currencyFormatter.format(transaction.amount)}
 														</span>
-														<span class="text-sm text-slate-500">
+														<span
+															class="text-sm tabular-nums"
+															style="color: var(--color-text-subtle)"
+														>
 															{timeFormatter.format(new Date(transaction.timestamp))}
 														</span>
 													</div>
@@ -638,8 +671,8 @@
 											</div>
 										{/each}
 										{#if transactionsHasMore}
-											<div class="py-5 text-center text-sm font-semibold text-slate-500">
-												{transactionsLoadingMore ? 'Loading more...' : 'Scroll for more'}
+											<div class="py-5 text-center text-sm" style="color: var(--color-text-subtle)">
+												{transactionsLoadingMore ? 'Loading more…' : ''}
 											</div>
 										{/if}
 									{/if}
@@ -647,28 +680,25 @@
 							</div>
 						{:else}
 							<div class="min-h-0 flex-1 overflow-auto p-4 md:p-6">
-								<button class="balance-card w-full text-left" onclick={openTransactions}>
+								<button class="balance-card" onclick={openTransactions}>
 									<span>
-										<span class="block text-sm font-semibold text-slate-500">Current balance</span>
-										<span class:negative={selectedUser.balance < 0} class="mt-2 block text-4xl font-black">
-											{currencyFormatter.format(selectedUser.balance)}
-										</span>
+										<span class="section-label block">Current balance</span>
+										<AnimatedCurrency
+											value={selectedUser.balance}
+											className="mt-1 block text-3xl font-semibold tabular-nums"
+										/>
 									</span>
-									<span class="text-3xl">›</span>
+									<span class="text-xl" style="color: var(--color-text-subtle)">›</span>
 								</button>
 
-								<div class="mt-6 flex items-center justify-between gap-3">
-									<h3 class="text-2xl font-black">Select a drink</h3>
-								</div>
+								<h3 class="mt-6 text-base font-semibold">Select a drink</h3>
 
 								{#if drinkError}
-									<p class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
-										Error selecting drink: {drinkError}
-									</p>
+									<p class="error-banner mt-3">{drinkError}</p>
 								{/if}
 
-								<div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-									{#each sortedDrinks as drink}
+								<div class="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+									{#each sortedDrinks as drink (drink.id)}
 										<button
 											class="drink-tile"
 											disabled={Boolean(loadingDrinkId)}
@@ -677,11 +707,13 @@
 												confirmingDrink = drink;
 											}}
 										>
-											<span class="text-4xl">{drink.icon}</span>
-											<span class="text-lg font-bold">{drink.name}</span>
-											<span class="font-semibold text-slate-500">{currencyFormatter.format(drink.price)}</span>
+											<span class="text-3xl">{drink.icon}</span>
+											<span class="text-sm font-medium">{drink.name}</span>
+											<span class="text-xs tabular-nums" style="color: var(--color-text-muted)"
+												>{currencyFormatter.format(drink.price)}</span
+											>
 											{#if loadingDrinkId === drink.id}
-												<span class="tile-overlay">Loading...</span>
+												<span class="tile-overlay">Loading…</span>
 											{/if}
 										</button>
 									{/each}
@@ -690,69 +722,113 @@
 						{/if}
 					</div>
 				{:else}
-					<div class="h-full overflow-auto p-6">
+					<div class="h-full overflow-auto p-6 md:p-8">
 						{#if statisticsDisabled}
 							<div class="grid min-h-full place-items-center text-center">
-								<p class="text-2xl font-black">Select a person</p>
+								<p class="text-base" style="color: var(--color-text-muted)">
+									Select a person to continue.
+								</p>
 							</div>
 						{:else}
-							<h2 class="text-4xl font-black tracking-tight">Coffee Statistics</h2>
-							<p class="mt-2 text-slate-600">Cumulative drinks from Monday to Sunday.</p>
+							<h2 class="text-2xl font-semibold tracking-tight">Coffee statistics</h2>
+							<p class="mt-1 text-sm" style="color: var(--color-text-muted)">
+								Cumulative drinks from Monday to Sunday.
+							</p>
 
 							{#if statsLoading && !stats}
-							<div class="glass-card mt-6 p-8 text-center">Loading statistics...</div>
-						{:else if statsError}
-							<div class="glass-card mt-6 p-8">
-								<p class="font-bold">Could not load statistics</p>
-								<p class="mt-2 text-sm text-slate-600">{statsError}</p>
-							</div>
-						{:else if stats && chart}
-							<div class="mt-6 grid gap-4 lg:grid-cols-2">
-								<div class="summary-card border-amber-300">
-									<p class="text-lg font-bold">{stats.current_week.title}</p>
-									<p class="text-sm text-slate-500">{stats.current_week.range_label}</p>
-									<p class="mt-4 text-5xl font-black">{stats.current_week.total}</p>
-									<p class="text-sm text-slate-500">drinks</p>
+								<div
+									class="surface-card mt-6 p-6 text-center text-sm"
+									style="color: var(--color-text-muted)"
+								>
+									Loading…
 								</div>
-								<div class="summary-card border-slate-300">
-									<p class="text-lg font-bold">{stats.previous_week.title}</p>
-									<p class="text-sm text-slate-500">{stats.previous_week.range_label}</p>
-									<p class="mt-4 text-5xl font-black">{stats.previous_week.total}</p>
-									<p class="text-sm text-slate-500">drinks</p>
+							{:else if statsError}
+								<div class="surface-card mt-6 p-6">
+									<p class="font-medium">Could not load statistics</p>
+									<p class="mt-1 text-sm" style="color: var(--color-text-muted)">{statsError}</p>
 								</div>
-							</div>
-
-							<div class="glass-card mt-4 p-5">
-								<div class="mb-3 flex gap-4 text-sm font-semibold">
-									<span class="text-amber-600">This week</span>
-									<span class="text-slate-500">Last week</span>
-									<span class="ml-auto text-slate-500">max {chart.maxCount}</span>
-								</div>
-								<svg viewBox="0 0 100 112" class="h-[22rem] w-full overflow-visible">
-									<path d="M 0 96 H 100" stroke="rgba(15,23,42,.16)" stroke-width="0.4" />
-									{#each chart.labels as label}
-										<line
-											x1={(label.slot_index / 167) * 100}
-											x2={(label.slot_index / 167) * 100}
-											y1="4"
-											y2="96"
-											stroke="rgba(15,23,42,.12)"
-											stroke-width="0.35"
-										/>
-										<text
-											x={(label.slot_index / 167) * 100}
-											y="109"
-											text-anchor="middle"
-											class="fill-slate-500 text-[3px] font-semibold"
+							{:else if stats && chart}
+								<div class="mt-6 grid gap-3 lg:grid-cols-2">
+									<div class="summary-card">
+										<p class="section-label">{stats.current_week.title}</p>
+										<p class="mt-3 text-3xl font-semibold tabular-nums">
+											{stats.current_week.total}
+										</p>
+										<p class="mt-1 text-xs" style="color: var(--color-text-subtle)">
+											drinks · {stats.current_week.range_label}
+										</p>
+									</div>
+									<div class="summary-card">
+										<p class="section-label">{stats.previous_week.title}</p>
+										<p
+											class="mt-3 text-3xl font-semibold tabular-nums"
+											style="color: var(--color-text-muted)"
 										>
-											{label.day_label}
-										</text>
-									{/each}
-									<path d={chart.previousPath} fill="none" stroke="#64748b" stroke-width="1.4" />
-									<path d={chart.currentPath} fill="none" stroke="#f59e0b" stroke-width="2.2" />
-								</svg>
-							</div>
-						{/if}
+											{stats.previous_week.total}
+										</p>
+										<p class="mt-1 text-xs" style="color: var(--color-text-subtle)">
+											drinks · {stats.previous_week.range_label}
+										</p>
+									</div>
+								</div>
+
+								<div class="surface-card mt-3 p-5">
+									<div class="mb-3 flex gap-4 text-xs font-medium">
+										<span class="flex items-center gap-1.5" style="color: var(--color-accent)">
+											<span class="inline-block h-0.5 w-3" style="background: var(--color-accent)"
+											></span>
+											This week
+										</span>
+										<span class="flex items-center gap-1.5" style="color: var(--color-text-muted)">
+											<span
+												class="inline-block h-0.5 w-3"
+												style="background: var(--color-text-subtle)"
+											></span>
+											Last week
+										</span>
+										<span class="ml-auto tabular-nums" style="color: var(--color-text-subtle)"
+											>max {chart.maxCount}</span
+										>
+									</div>
+									<svg viewBox="0 0 100 112" class="h-[20rem] w-full overflow-visible">
+										<path d="M 0 96 H 100" style="stroke: var(--color-border)" stroke-width="0.4" />
+										{#each chart.labels as label (label.slot_index)}
+											<line
+												x1={(label.slot_index / 167) * 100}
+												x2={(label.slot_index / 167) * 100}
+												y1="4"
+												y2="96"
+												style="stroke: var(--color-border)"
+												stroke-width="0.3"
+											/>
+											<text
+												x={(label.slot_index / 167) * 100}
+												y="109"
+												text-anchor="middle"
+												style="fill: var(--color-text-subtle)"
+												class="text-[3px]"
+											>
+												{label.day_label}
+											</text>
+										{/each}
+										<path
+											d={chart.previousPath}
+											fill="none"
+											style="stroke: var(--color-text-subtle)"
+											stroke-width="1.2"
+											stroke-dasharray="2 2"
+										/>
+										<path
+											d={chart.currentPath}
+											fill="none"
+											style="stroke: var(--color-accent)"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									</svg>
+								</div>
+							{/if}
 						{/if}
 					</div>
 				{/if}
@@ -771,16 +847,14 @@
 		></button>
 		<div class="modal-card">
 			<div class="text-center">
-				<div class="mx-auto text-6xl">{confirmingDrink.icon}</div>
-				<h2 class="mt-4 text-2xl font-black">Buy {confirmingDrink.name}?</h2>
-				<p class="mt-2 text-lg font-semibold text-slate-600">
+				<div class="text-5xl">{confirmingDrink.icon}</div>
+				<h2 class="mt-3 text-lg font-semibold">Buy {confirmingDrink.name}?</h2>
+				<p class="mt-1 text-sm tabular-nums" style="color: var(--color-text-muted)">
 					{currencyFormatter.format(confirmingDrink.price)}
 				</p>
 			</div>
 			{#if drinkError}
-				<p class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
-					Error selecting drink: {drinkError}
-				</p>
+				<p class="error-banner mt-4">{drinkError}</p>
 			{/if}
 			<div class="mt-6 flex gap-3">
 				<button
@@ -797,7 +871,7 @@
 					disabled={Boolean(loadingDrinkId)}
 					onclick={() => confirmingDrink && buy(confirmingDrink)}
 				>
-					{loadingDrinkId === confirmingDrink.id ? 'Buying...' : `Buy ${confirmingDrink.name}`}
+					{loadingDrinkId === confirmingDrink.id ? 'Buying…' : 'Confirm'}
 				</button>
 			</div>
 		</div>
@@ -814,18 +888,18 @@
 		></button>
 		<form class="modal-card" onsubmit={(event) => (event.preventDefault(), setPin())}>
 			<div class="text-center">
-				<div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white/60 text-3xl">⌾</div>
-				<h2 class="mt-3 text-2xl font-black">Set your passcode</h2>
+				<h2 class="text-lg font-semibold">
+					{selectedUser.has_pin ? 'Change passcode' : 'Set passcode'}
+				</h2>
+				<p class="mt-1 text-sm" style="color: var(--color-text-muted)">{fullName(selectedUser)}</p>
 			</div>
 			<div class="pin-slots mt-6">
-				{#each Array(4) as _, index}
-					<div class:filled={newPin.length > index} class="pin-slot">
-						{#if newPin[index]}{newPin[index]}{/if}
-					</div>
+				{#each pinSlotIndexes as index (index)}
+					<div class:filled={newPin.length > index} class="pin-slot"></div>
 				{/each}
 			</div>
 			{#if setPinError}
-				<p class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{setPinError}</p>
+				<p class="error-banner mt-4">{setPinError}</p>
 			{/if}
 			<PinPad
 				disabled={setPinLoading}
@@ -835,7 +909,11 @@
 				onClear={() => clearPin('set')}
 			/>
 			<div class="mt-6 flex gap-3">
-				<button class="secondary-button flex-1" type="button" onclick={() => (showingSetPin = false)}>
+				<button
+					class="secondary-button flex-1"
+					type="button"
+					onclick={() => (showingSetPin = false)}
+				>
 					Cancel
 				</button>
 			</div>

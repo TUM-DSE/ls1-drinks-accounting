@@ -32,3 +32,6 @@ Temporary Items
 *.icloud
 
 .idea
+
+# direnv
+.direnv/

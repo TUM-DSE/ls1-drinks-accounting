@@ -52,6 +52,7 @@ jobs:
           build-args: |
             VITE_API_ENDPOINT=${{ vars.VITE_API_ENDPOINT }}
             VITE_DISABLE_STATISTICS=true
+            VITE_BASE_PATH=/web
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ls1-drinks-accounting-web:latest, ${{ secrets.DOCKERHUB_USERNAME }}/ls1-drinks-accounting-web:${{ github.ref_name }}
   build-backend:
     runs-on: ubuntu-latest

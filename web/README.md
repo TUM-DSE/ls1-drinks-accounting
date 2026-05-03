@@ -35,6 +35,7 @@ The web app reads these public environment variables:
 
 - `VITE_API_ENDPOINT`: backend URL. When omitted, dev uses `http://localhost:8080` and production uses relative `/api/...` paths like the dashboard.
 - `VITE_DISABLE_STATISTICS=false`: enables the weekly statistics panel. Statistics are disabled by default.
+- `VITE_BASE_PATH=/web`: builds the app for a subpath. Leave unset when serving at the domain root.
 
 ## Building
 

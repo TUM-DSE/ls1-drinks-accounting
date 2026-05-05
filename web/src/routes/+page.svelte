@@ -585,7 +585,7 @@
 								<p class="section-label">Selected</p>
 								<h2 class="mt-0.5 text-xl font-semibold">{fullName(selectedUser)}</h2>
 							</div>
-							<div class="flex items-center gap-2">
+							<div class="flex items-center gap-5">
 								{#if !requiresPin}
 									<button class="secondary-button" onclick={() => (showingSetPin = true)}>
 										{selectedUser.has_pin ? 'Change PIN' : 'Set PIN'}

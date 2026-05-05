@@ -132,11 +132,6 @@ button:disabled {
 		border-color 120ms ease;
 }
 
-.primary-button:hover:not(:disabled) {
-	background: var(--color-accent-hover);
-	border-color: var(--color-accent-hover);
-}
-
 @media (prefers-color-scheme: dark) {
 	.primary-button {
 		color: #0b1220;
@@ -159,11 +154,6 @@ button:disabled {
 		border-color 120ms ease;
 }
 
-.secondary-button:hover:not(:disabled) {
-	background: var(--color-surface-muted);
-	border-color: var(--color-border-strong);
-}
-
 .icon-button {
 	display: grid;
 	height: 2.25rem;
@@ -180,11 +170,6 @@ button:disabled {
 		color 120ms ease;
 }
 
-.icon-button:hover:not(:disabled) {
-	background: var(--color-surface-muted);
-	color: var(--color-text);
-}
-
 .person-row {
 	position: relative;
 	display: flex;
@@ -197,10 +182,6 @@ button:disabled {
 	font-weight: 500;
 	color: var(--color-text);
 	transition: background 120ms ease;
-}
-
-.person-row:hover {
-	background: var(--color-surface-muted);
 }
 
 .person-row.selected-person {
@@ -229,11 +210,6 @@ button:disabled {
 		border-color 120ms ease;
 }
 
-.balance-card:hover {
-	background: var(--color-surface-muted);
-	border-color: var(--color-border-strong);
-}
-
 .summary-card {
 	border: 1px solid var(--color-border);
 	border-radius: 12px;
@@ -247,10 +223,6 @@ button:disabled {
 	gap: 0.75rem;
 	border-radius: 8px;
 	padding: 0.625rem 0.75rem;
-}
-
-.transaction-row:hover {
-	background: var(--color-surface-muted);
 }
 
 .transaction-icon {
@@ -282,11 +254,6 @@ button:disabled {
 	transition:
 		background 120ms ease,
 		border-color 120ms ease;
-}
-
-.drink-tile:hover:not(:disabled) {
-	background: var(--color-accent-soft);
-	border-color: var(--color-accent);
 }
 
 .tile-overlay {
@@ -357,10 +324,6 @@ button:disabled {
 		transform 80ms ease;
 }
 
-.pin-key:hover:not(:disabled) {
-	background: var(--color-border);
-}
-
 .pin-key:active:not(:disabled) {
 	transform: scale(0.96);
 }
@@ -427,4 +390,43 @@ button:disabled {
 	background: var(--color-surface);
 	padding: 1.5rem;
 	box-shadow: var(--color-modal-shadow);
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.primary-button:hover:not(:disabled) {
+		background: var(--color-accent-hover);
+		border-color: var(--color-accent-hover);
+	}
+
+	.secondary-button:hover:not(:disabled) {
+		background: var(--color-surface-muted);
+		border-color: var(--color-border-strong);
+	}
+
+	.icon-button:hover:not(:disabled) {
+		background: var(--color-surface-muted);
+		color: var(--color-text);
+	}
+
+	.person-row:hover {
+		background: var(--color-surface-muted);
+	}
+
+	.balance-card:hover {
+		background: var(--color-surface-muted);
+		border-color: var(--color-border-strong);
+	}
+
+	.transaction-row:hover {
+		background: var(--color-surface-muted);
+	}
+
+	.drink-tile:hover:not(:disabled) {
+		background: var(--color-accent-soft);
+		border-color: var(--color-accent);
+	}
+
+	.pin-key:hover:not(:disabled) {
+		background: var(--color-border);
+	}
 }
